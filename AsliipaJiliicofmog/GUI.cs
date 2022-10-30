@@ -178,7 +178,7 @@ namespace AsliipaJiliicofmog
 			}
 			public Hitbox ButtonBounds()
 			{
-				return new Hitbox(Position, Position + new Point((int)StringDim.X, (int)StringDim.Y) + Padding);
+				return new Hitbox(Position.ToVector2(), Position.ToVector2() + new Vector2(StringDim.X, StringDim.Y) + Padding.ToVector2());
 			}
 			public Button(Point pos, Point Dimension, Color color, string label, Action onclick) : base(pos, Dimension)
 			{
@@ -188,7 +188,7 @@ namespace AsliipaJiliicofmog
 				Padding = new(10);
 				Update = (ve, gt) =>
 				{
-					Point mousePos = new(Mouse.GetState().X, Mouse.GetState().Y);
+					Vector2 mousePos = new(Mouse.GetState().X, Mouse.GetState().Y);
 					if (ButtonBounds().Test(mousePos))
 					{
 						RenderColor = ButtonColor * 2.7f;
@@ -250,11 +250,11 @@ namespace AsliipaJiliicofmog
 					SliderCursorSize = new(Dimension.X / 10, Dimension.Y);
 					//Calculate cursor shift:
 					//1. get hitbox of slider cursor
-					var slider = Hitbox.FromSize(SliderCursorPos + Position + new Point(CursorShift, 0), SliderCursorSize);
+					var slider = Hitbox.FromSize(SliderCursorPos.ToVector2() + Position.ToVector2() + new Vector2(CursorShift, 0), SliderCursorSize.ToVector2());
 					int mx = Mouse.GetState().X;
 					int my = Mouse.GetState().Y;
 
-					bool hover = slider.Test(new Point(mx, my));
+					bool hover = slider.Test(new Vector2(mx, my));
 					if (hover)
 						SliderColor = Color.DarkGray;
 					else
@@ -534,7 +534,7 @@ namespace AsliipaJiliicofmog
 			}
 			public Hitbox DropdownBounds()
 			{
-				return new Hitbox(Position, Position + new Point((int)StringDim.X, Dimension.Y));
+				return new Hitbox(Position.ToVector2(), Position.ToVector2() + new Vector2((int)StringDim.X, Dimension.Y));
 			}
 			public void RedoDropdown()
 			{
@@ -559,7 +559,7 @@ namespace AsliipaJiliicofmog
 					if (Dropped)
 						DroppedOptions.Update(DroppedOptions, gt);
 					//if pressed
-					Point mousePos = new(Mouse.GetState().X, Mouse.GetState().Y);
+					Vector2 mousePos = new(Mouse.GetState().X, Mouse.GetState().Y);
 					if (InputHandler.LMBState() == KeyStates.JReleased)
 					{
 						if (DropdownBounds().Test(mousePos))

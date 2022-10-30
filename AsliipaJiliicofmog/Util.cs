@@ -131,5 +131,35 @@ namespace AsliipaJiliicofmog
 		{
             System.Diagnostics.Debug.WriteLine(text);
 		}
+
+        static public Vector2 RandomNear(Vector2 center, Vector2? maxdist_n = null)
+		{
+            Vector2 maxdist = maxdist_n ?? new(Tile.TextureSize * 5);
+            var randx = Asliipa.Random.Next((int)(center.X - maxdist.X), (int)(center.X + maxdist.X));
+            var randy = Asliipa.Random.Next((int)(center.Y - maxdist.Y), (int)(center.Y + maxdist.Y));
+            return new(randx, randy);
+        }
+
+        static public Vector2 NormThis(this Vector2 a)
+		{
+            a.Normalize();
+            return a;
+		}
+        static public Vector2 Abs(this Vector2 a)
+		{
+            return new(Math.Abs(a.X), Math.Abs(a.Y));
+		}
+        static public float Deg2Rad(float deg)
+		{
+            return (float)(deg * Math.PI / 180f);
+		}
+        static public Vector2 Rotate(this Vector2 a, float angle_degree)
+		{
+            float angle = Deg2Rad(angle_degree);
+            var x = a.X * Math.Cos(angle) - a.Y * Math.Sin(angle);
+            var y = a.X * Math.Sin(angle) + a.Y * Math.Cos(angle);
+            return new((float)x, (float)y);
+            
+		}
     }
 }

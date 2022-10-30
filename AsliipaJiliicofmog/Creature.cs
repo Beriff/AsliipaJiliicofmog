@@ -7,83 +7,15 @@ using System.Text;
 
 namespace AsliipaJiliicofmog
 {
-	enum BpToken
-	{
-		Internal,
-		External,
-		Vital,
-		Muscle,
-		Hold,
-		Walk,
-		Eat,
-		Sight,
-		Breath
-	}
-	class Bodypart
-	{
-		public List<BpToken> Properties;
-		public string Name;
-		public bool Bloody;
-
-		public Bodypart Parent;
-		public List<Bodypart> Children;
-
-		public int MaxHealth;
-		public int Health;
-
-		public void AddChild(Bodypart other)
-		{
-			other.Parent = this;
-			Children.Add(other);
-		}
-		public Bodypart SetParent(Bodypart other)
-		{
-			Parent = other;
-			other.Children.Add(this);
-			return this;
-		}
-
-		public Bodypart(string name, int health)
-		{
-			Children = new();
-			Bloody = true;
-			Name = name;
-			Health = MaxHealth = health;
-			Properties = new();
-		}
-		public Bodypart WithProperties(params BpToken[] tokens)
-		{
-			Properties.AddRange(tokens);
-			return this;
-		}
-
-		//Get humanoid anatomy
-		public Bodypart[] GetHumanoid()
-		{
-			var torso = new Bodypart("torso", 100).WithProperties(BpToken.Vital, BpToken.External);
-			var head = new Bodypart("head", 50).WithProperties(BpToken.Vital, BpToken.External).SetParent(torso);
-			var lefteye = new Bodypart("left eye", 15).WithProperties(BpToken.Sight, BpToken.External).SetParent(head);
-			var righteye = new Bodypart("right eye", 15).WithProperties(BpToken.Sight, BpToken.External).SetParent(head);
-			var lefthand = new Bodypart("left hand", 50).WithProperties(BpToken.Hold, BpToken.External).SetParent(torso);
-			var righthand = new Bodypart("right hand", 50).WithProperties(BpToken.Hold, BpToken.External).SetParent(torso);
-			var leftleg = new Bodypart("left leg", 40).WithProperties(BpToken.Walk, BpToken.External).SetParent(torso);
-			var rightleg = new Bodypart("right leg", 40).WithProperties(BpToken.Walk, BpToken.External).SetParent(torso);
-			var heart = new Bodypart("heart", 20).WithProperties(BpToken.Vital, BpToken.Internal).SetParent(torso);
-			var jaw = new Bodypart("jaw", 70).WithProperties(BpToken.Eat, BpToken.External).SetParent(head);
-			var stomach = new Bodypart("stomach", 50).WithProperties(BpToken.Vital, BpToken.Internal).SetParent(torso);
-			var lungs = new Bodypart("lungs", 40).WithProperties(BpToken.Breath, BpToken.Internal).SetParent(torso);
-
-			return new Bodypart[] { torso, head, lefteye, righteye, lefthand, righthand, leftleg, rightleg, heart, jaw, stomach, lungs };
-		}
-	}
 	public class Creature : Entity
 	{
-		Bodypart[] Anatomy;
 		StateMachine Machine;
+		//Used for AI
+		public Vector2 Node = new(0);
 
-		public int Speed = 1;
+		public float Speed = 1;
 
-		public Creature(Vector2 pos, Texture2D texture, string name, Vector2? anchor = null, string? desc = null) : base(pos, texture, name, anchor: anchor, desc: desc)
+		public Creature(Texture2D texture, string name, Vector2? anchor = null, string? desc = null, Vector2? pos = null) : base(pos ?? new(0), texture, name, anchor: anchor, desc: desc)
 		{
 			
 		}
@@ -96,14 +28,23 @@ namespace AsliipaJiliicofmog
 			Hitbox schitbox = ScreenCoordsHitbox(offset);
 			var mousepos = InputHandler.GetMousePos();
 
-			if (schitbox.Test(mousepos.ToPoint()))
+			if (schitbox.Test(mousepos))
 			{
 				VisualElements.Label nametag = new(Name);
-				nametag.Position = new Point(schitbox.Start.X + nametag.GetSize().X / 2 - 5, schitbox.Start.Y - nametag.GetSize().Y);
+				nametag.Position = new Vector2(schitbox.Start.X + nametag.GetSize().X / 2 - 5, schitbox.Start.Y - nametag.GetSize().Y).ToPoint();
 				nametag.Render(sb);
 			}
 
 			base.Render(sb, offset, gt, gc);
+		}
+		public override object Clone()
+		{
+			var creature = new Creature(EntityTexture, Name, Anchor, Description, Position);
+			creature._OnUpdate = OnUpdate;
+			creature._OnClick = OnClick;
+			creature.Node = Node;
+			creature.EntityHitbox = EntityHitbox.Clone();
+			return creature;
 		}
 	}
 
@@ -114,10 +55,11 @@ namespace AsliipaJiliicofmog
 				_OnUpdate = Behavior.PlayerController(this) + value;
 			}
 		}
-		public Player(Texture2D texture, string name) : base(new(70), texture, name)
+		public Player(Texture2D texture, string name) : base(texture, name, pos: new(70))
 		{
 			Description = "Controllable creature";
 			GenerateInfobox();
+			Speed = 2;
 		}
 	}
 
@@ -144,6 +86,37 @@ namespace AsliipaJiliicofmog
 				{
 					mob.Move(gc, InputHandler.LEFT * mob.Speed);
 				}
+			};
+		}
+		public static Action<GameClient> RandomWalk(Creature mob)
+		{
+			return (gc) =>
+			{
+
+				Vector2 error = (mob.Position - mob.Node).Abs();
+				var range = 5;
+
+				//divide the error by speed, to allow bigger errors on higher speeds
+				//same effect as just increasing the "1f" threshold below
+				error /= mob.Speed;
+				if (error.X < 1f && error.Y < 1f)
+				{
+
+					mob.Node = Util.RandomNear(mob.Position);
+				} else
+				{
+					var offset = (mob.Node - mob.Position).NormThis() * mob.Speed;
+					//if movement was unsuccessful, set new node
+					//new node is set in the opposite (relative to the movement) direction +- 90 degrees
+					if(!mob.Move(gc, offset))
+					{
+						var leftover = mob.Node - mob.Position;
+						var opposite = -leftover;
+						opposite = opposite.Rotate(Asliipa.Random.Next(-90, 90));
+						mob.Node = mob.Position + opposite;
+					}
+				}
+
 			};
 		}
 	}

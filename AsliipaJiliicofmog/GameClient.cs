@@ -143,6 +143,7 @@ namespace AsliipaJiliicofmog
 			Sb = sb;
 			CreateGUI();
 			new Player(Registry.TextureRegistry["dummy"], "Ben Dover").AddToRender(this);
+			Registry.GetCreature("pig").AddToRender(this);
 		}
 	}
 }

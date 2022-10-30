@@ -1,13 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog
 {
-	public abstract class Entity
+	public abstract class Entity : ICloneable
 	{
 		public Vector2 Position;
 		public Hitbox EntityHitbox;
@@ -27,15 +24,21 @@ namespace AsliipaJiliicofmog
 		public VisualElements.Infobox EntityInfobox;
 
 		protected Action _OnClick;
-		public virtual Action OnClick { get => _OnClick; set
+		public virtual Action OnClick
+		{
+			get => _OnClick; set
 			{
 				_OnClick = () =>
 				{
 					value();
 				};
-			} }
+			}
+		}
 		protected Action<GameClient> _OnUpdate;
-		public virtual Action<GameClient> OnUpdate { get => _OnUpdate; set {
+		public virtual Action<GameClient> OnUpdate
+		{
+			get => _OnUpdate; set
+			{
 
 				_OnUpdate = (gc) =>
 				{
@@ -43,15 +46,16 @@ namespace AsliipaJiliicofmog
 					value(gc);
 				};
 
-			} }
+			}
+		}
 
 		public virtual void SetHitbox()
 		{
-			EntityHitbox = Hitbox.FromSize(new Point((int)Position.X, (int)(Position.Y + EntityTexture.Height * .6f)), new Point(EntityTexture.Width, (int)(EntityTexture.Height * .3f)));
+			EntityHitbox = Hitbox.FromSize(new Vector2(Position.X, Position.Y + EntityTexture.Height * .6f), new Vector2(EntityTexture.Width, EntityTexture.Height * .3f));
 		}
 
 		public Entity
-			(Vector2 pos, Texture2D texture, string name, 
+			(Vector2 pos, Texture2D texture, string name,
 			Color? col = null, Color? tint = null, string? desc = null,
 			Vector2? anchor = null, Hitbox? hitbox = null, bool coll = false)
 		{
@@ -76,26 +80,26 @@ namespace AsliipaJiliicofmog
 		}
 		protected Hitbox ScreenCoordsHitbox(Vector2 offset)
 		{
-			return Hitbox.FromSize((Position + offset + AnchorOffset()).ToPoint(), new Point(Tile.TextureSize));
+			return Hitbox.FromSize(Position + offset + AnchorOffset(), new Vector2(Tile.TextureSize));
 		}
 		public virtual void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
 			//if debug is enabled, draw hitboxes
-			if(GUI.GUIDEBUG)
+			if (GUI.GUIDEBUG)
 				sb.Draw(GUI.Flatcolor, offset + Position, EntityHitbox.ToRect(), Color.Lerp(Color.Red, Color.Black, .3f));
 			sb.Draw(EntityTexture, Position + offset + AnchorOffset(), Color.Lerp(Color.White, Tint, .3f));
 			//draw infobox
 			Hitbox schitbox = ScreenCoordsHitbox(offset);
 			var mousepos = InputHandler.GetMousePos();
-			
-			if (schitbox.Test(mousepos.ToPoint()))
+
+			if (schitbox.Test(mousepos))
 			{
 				Tint = Color.Black * Easing.Signaling((float)gt.TotalGameTime.TotalSeconds);
 				EntityInfobox.Position = (mousepos).ToPoint();
 				EntityInfobox.Render(sb, null);
-				
+
 				//if clicked on entity, toggle sidebar
-				if(InputHandler.LMBState() == KeyStates.JPressed)
+				if (InputHandler.LMBState() == KeyStates.JPressed)
 				{
 					gc.UpdateSidebar(EntityTexture, Name, Description);
 					gc.ToggleSidebar();
@@ -105,7 +109,7 @@ namespace AsliipaJiliicofmog
 			{
 				Tint = Color;
 			}
-			
+
 		}
 		public virtual void AddToRender(GameClient gc)
 		{
@@ -120,18 +124,23 @@ namespace AsliipaJiliicofmog
 		/// <returns>true if movement was successful, false if movement was blocked</returns>
 		public virtual bool Move(GameClient gc, Vector2 offset)
 		{
-			var target_hitbox = EntityHitbox + offset.ToPoint();
-			foreach(var entity in gc.EntityList())
+			var thitbox = EntityHitbox + offset;
+			foreach (var entity in gc.EntityList())
 			{
-				if (entity.EntityHitbox.Test(target_hitbox) && entity != this)
+				if (entity.EntityHitbox.Test(thitbox) && entity != this)
 				{
 					//Util.DPrint()
 					return false;
 				}
-					
+				else if (thitbox.Start.X < 0 || thitbox.End.X > Scene.SceneSizePixels || thitbox.Start.Y < 0 || thitbox.End.Y > Scene.SceneSizePixels)
+				{
+					return false;
+				}
+
 			}
+			offset = new(offset.X, offset.Y);
 			Position += offset;
-			EntityHitbox = target_hitbox;
+			EntityHitbox += offset;
 			return true;
 		}
 
@@ -145,6 +154,12 @@ namespace AsliipaJiliicofmog
 			EntityInfobox = new(Name, $"[{EntityType()}]\n{Description}");
 		}
 
+		//Never called
+		//I mean if you're trying to copy an instance of an ABSTRACT class, something totally has gone wrong
+		public virtual object Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 	class ParticleEmitter : Entity
 	{
@@ -152,21 +167,22 @@ namespace AsliipaJiliicofmog
 		public Hitbox RandomOffset;
 		public float Chance;
 		public float Radius;
-		public override Action<GameClient> OnUpdate 
-		{ 
+		public override Action<GameClient> OnUpdate
+		{
 			get => base.OnUpdate;
-			set 
-			{ _OnUpdate = (gc) => 
-				{
-					if(Asliipa.Random.NextDouble() < Chance)
-					{
-						var particle = Instance.Copy();
-						particle.StartPosition = new(Asliipa.Random.Next(RandomOffset.Start.X, RandomOffset.End.X), Asliipa.Random.Next(RandomOffset.Start.Y, RandomOffset.End.Y));
-						particle.StartPosition += Position;
-						gc.FocusedScene.Particles.Add(particle);
-					}
-				}; 
-			} 
+			set
+			{
+				_OnUpdate = (gc) =>
+				  {
+					  if (Asliipa.Random.NextDouble() < Chance)
+					  {
+						  var particle = Instance.Copy();
+						  particle.StartPosition = new(Asliipa.Random.Next((int)RandomOffset.Start.X, (int)RandomOffset.End.X), Asliipa.Random.Next((int)RandomOffset.Start.Y, (int)RandomOffset.End.Y));
+						  particle.StartPosition += Position;
+						  gc.FocusedScene.Particles.Add(particle);
+					  }
+				  };
+			}
 		}
 		public ParticleEmitter(Vector2 pos, Particle instance, float chance = 1f, Hitbox? offset = null) : base(pos, null, $"p.emitter", hitbox: new(Rectangle.Empty))
 		{
@@ -174,7 +190,7 @@ namespace AsliipaJiliicofmog
 			Instance.StartPosition = Position;
 			RenderEnabled = false;
 			Chance = chance;
-			RandomOffset = offset ?? new(Point.Zero, new(Tile.TextureSize));
+			RandomOffset = offset ?? new(Vector2.Zero, new(Tile.TextureSize));
 		}
 
 		public static ParticleEmitter Campfire(Vector2 position)
@@ -212,13 +228,11 @@ namespace AsliipaJiliicofmog
 				}
 			};
 			return circle_emitter;
-		} 
-	}
-	class Prop : Entity
-	{
-		public Prop(Vector2 position, Texture2D texture, string name, string desc, Vector2? anchor = null) : base(position, texture, name, desc: desc, coll: true, anchor: anchor)
+		}
+		public override object Clone()
 		{
-
+			return new ParticleEmitter(Position, Instance.Copy(), Chance, RandomOffset);
 		}
 	}
+
 }

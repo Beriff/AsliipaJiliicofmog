@@ -13,8 +13,12 @@ namespace AsliipaJiliicofmog
 		public const int SceneSizePixels = SceneSize * Tile.TextureSize;
 
 		public List<Particle> Particles;
-		public List<Entity> Entities;
 		public Tile GetAt(int x, int y) => Space[x, y];
+		public Tile GetAtWorldPos(int x, int y)
+		{
+			return Space[(int)Math.Ceiling(x / (float)Tile.TextureSize), (int)Math.Ceiling(y / (float)Tile.TextureSize)];
+
+		}
 		public void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
 			if(!Asliipa.UIFocused)
@@ -69,7 +73,6 @@ namespace AsliipaJiliicofmog
 		{
 			Space = new Tile[SceneSize, SceneSize];
 			Particles = new();
-			Entities = new();
 			Util.EachXY(SceneSize, SceneSize, (x, y) =>
 			{
 				Space[x, y] = (Tile)tile.Clone();
@@ -88,12 +91,6 @@ namespace AsliipaJiliicofmog
 			}
 			foreach (var particle in removelist)
 				Particles.Remove(particle);
-
-			foreach (var entity in Entities)
-			{
-				entity.OnUpdate(gc);
-			}
-				
 		}
 	}
 }

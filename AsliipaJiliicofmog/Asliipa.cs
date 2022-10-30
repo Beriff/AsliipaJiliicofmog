@@ -12,7 +12,7 @@ namespace AsliipaJiliicofmog
 	public class Asliipa : Game
 	{
 		public static Random Random = new();
-		public const string TEXTUREPATH = @"C:\Users\Maxim\Desktop\assets\textures";
+		public const string ASSETSPATH = @"C:\Users\Maxim\Desktop\assets\";
 
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
@@ -53,8 +53,10 @@ namespace AsliipaJiliicofmog
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			GUI.Init(GraphicsDevice);
-			Registry.LoadTextureDirectory(TEXTUREPATH, GraphicsDevice);
 			GameFont = Content.Load<SpriteFont>("GameFont");
+			Registry.LoadTextureDirectory(ASSETSPATH + "textures", GraphicsDevice);
+			Registry.LoadCreatureDirectory(ASSETSPATH + @"gamedata\creatures");
+
 			GameAudio.SFX["click"] = Content.Load<SoundEffect>("click");
 
 
@@ -62,7 +64,7 @@ namespace AsliipaJiliicofmog
 			Client = new GameClient(scene, _spriteBatch);
 
 			ParticleEmitter.Circle(new(25), 300, 10).AddToRender(Client);
-			new Creature(new(25), Registry.TextureRegistry["crate"], "crate").AddToRender(Client);
+			new Creature(Registry.TextureRegistry["crate"], "crate", pos: new(150)).AddToRender(Client);
 			//Animator.Add(new(500, 0, (a, b) => { (scene.Entities[0] as ParticleEmitter).Radius -= 1; }));
 
 			
@@ -144,7 +146,7 @@ namespace AsliipaJiliicofmog
 		protected override void Update(GameTime gameTime)
 		{
 			if (Keyboard.GetState().IsKeyDown(Keys.Z))
-				GUI.GUIDEBUG = !GUI.GUIDEBUG;
+				Client.EntityProcessor.Entities[1].Move(Client, new(-1, -1));
 
 			
 			base.Update(gameTime);
