@@ -519,7 +519,7 @@ namespace AsliipaJiliicofmog
 			//Scroll list only supports UI elements of the same height
 			public ScrollList(Point pos, Point size) : base(pos, size)
 			{
-
+				AddOnUpdate((ve,gt) => { });
 			}
 			public override void AddElement(VisualElement element)
 			{
@@ -530,7 +530,13 @@ namespace AsliipaJiliicofmog
 			}
 			public override void Render(SpriteBatch sb, Point? position = null)
 			{
-				var pos = position ?? Position;
+				if (GUI.GUIDEBUG)
+				{
+					sb.Draw(GUI.Flatcolor, Position.ToVector2(), new Rectangle(new(0, 0), new(2, Elements.Count > 0 ? Elements[^1].Position.Y : 5)), Util.ChangeA(Color.Red, 15));
+					sb.DrawString(Asliipa.GameFont, $"DBG ColumnList [{GetHashCode()}]", Position.ToVector2(), Color.Black);
+				}
+
+				//var pos = position ?? Position;
 				int amount = Dimension.Y / (int)ElementHeight;
 				//amount = Math.Max(amount, Elements.Count);
 
@@ -546,10 +552,10 @@ namespace AsliipaJiliicofmog
 			}
 			public override void AddOnUpdate(Action<VisualElement, GameTime> act)
 			{
-				int amount = Dimension.Y / (int)ElementHeight;
 				Update = (ve, gt) =>
 				{
-					if(GetUIBounds().Test(InputHandler.GetMousePos()))
+					int amount = Dimension.Y / (int)ElementHeight;
+					if (GetUIBounds().Test(InputHandler.GetMousePos()))
 					{
 						if (InputHandler.Scroll > 0)
 						{

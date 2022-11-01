@@ -37,7 +37,7 @@ namespace AsliipaJiliicofmog
 			InvSpace = new();
 			Name = name;
 			InvUIWindow = Window.LabeledWindow(invui_offset, invui_offset.Mult(2), Asliipa.MainGUIColor, Name).SetPopup() as Window;
-			InvUIWindow.AddElement(new ColumnList(new(0, 15), invui_offset));
+			InvUIWindow.AddElement(new ScrollList(new(0, 15), invui_offset));
 			InvUIWindow.AddElement(new ColumnList(new(invui_offset.X, 15), new(invui_offset.X, 15)));
 			InvUIWindow.AddOnUpdate((ve, gt) => { if (InputHandler.GetKeyState(gc.GameControls.Inv) == KeyStates.JPressed) { ve.Enabled = !ve.Enabled; } });
 
@@ -46,9 +46,9 @@ namespace AsliipaJiliicofmog
 
 		public void Update()
 		{
-			var columnlist = InvUIWindow[2] as ColumnList;
-			InvUIWindow[2] = new ColumnList(columnlist.Position, columnlist.Dimension);
-			columnlist = InvUIWindow[2] as ColumnList;
+			var columnlist = InvUIWindow[2] as ScrollList;
+			InvUIWindow[2] = new ScrollList(columnlist.Position, columnlist.Dimension);
+			columnlist = InvUIWindow[2] as ScrollList;
 			for (int i = 0; i < InvSpace.Count; i++)
 			{
 				columnlist.AddElement(
