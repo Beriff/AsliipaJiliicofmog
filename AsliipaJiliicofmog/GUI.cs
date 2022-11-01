@@ -536,9 +536,9 @@ namespace AsliipaJiliicofmog
 					sb.DrawString(Asliipa.GameFont, $"DBG ColumnList [{GetHashCode()}]", Position.ToVector2(), Color.Black);
 				}
 
-				//var pos = position ?? Position;
+				//max amount of elements that can be rendered
 				int amount = Dimension.Y / (int)ElementHeight;
-				//amount = Math.Max(amount, Elements.Count);
+				Scroll = Math.Min(Scroll, Elements.Count - amount);
 
 				for(int i = Scroll; i < amount + Scroll; i++)
 				{
@@ -546,6 +546,7 @@ namespace AsliipaJiliicofmog
 						break;
 
 					var element = Elements[i];
+					element.Position = new (element.Position.X, Position.Y + (i - Scroll) * (int)ElementHeight);
 					element.Render(sb, element.Position);
 				}
 
