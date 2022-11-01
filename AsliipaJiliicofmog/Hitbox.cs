@@ -41,6 +41,10 @@ namespace AsliipaJiliicofmog
 		{
 			return new Hitbox(a, a + b);
 		}
+		public static Hitbox FromSize(Point a, Point b)
+		{
+			return new Hitbox(a.ToVector2(), a.ToVector2() + b.ToVector2());
+		}
 		public static Hitbox operator * (Hitbox self, int other)
 		{
 			return new(self.Start * new Vector2(other), self.End * new Vector2(other));

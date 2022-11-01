@@ -27,6 +27,8 @@ namespace AsliipaJiliicofmog
 
 		static KeyboardState newKState = new();
 		static MouseState newMState = new();
+		static int prevScrollValue = 0;
+		public static int Scroll = 0;
 
 		public static Point MouseDragOffset;
 		static Point DragMousePos;
@@ -73,7 +75,8 @@ namespace AsliipaJiliicofmog
 
 		public static void Update(GameClient client, KeyboardState newKstate, MouseState newMstate)
 		{
-
+			//calculate scroll
+			Scroll = prevScrollValue - newMstate.ScrollWheelValue;
 
 			//	calculate drag
 			if (released(prevMState.LeftButton) && pressed(newMstate.LeftButton))
@@ -100,6 +103,7 @@ namespace AsliipaJiliicofmog
 			//	set states
 			prevMState = newMstate;
 			prevKState = newKstate;
+			prevScrollValue = prevMState.ScrollWheelValue;
 		}
 		public static Vector2 GetMousePos()
 		{

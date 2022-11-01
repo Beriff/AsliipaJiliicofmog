@@ -126,6 +126,10 @@ namespace AsliipaJiliicofmog
         {
             return new(self.X / other, self.Y / other);
         }
+        static public Point Mult(this Point self, int other)
+		{
+            return new(self.X * other, self.Y * other);
+		}
 
         static public void DPrint(string text)
 		{

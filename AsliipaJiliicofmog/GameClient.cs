@@ -40,7 +40,7 @@ namespace AsliipaJiliicofmog
 		public List<Action<SpriteBatch, GameTime>> OnUpdateEvents;
 		public List<Action> OnLClickEvents;
 		public SpriteBatch Sb;
-		public Controls GameControls;
+		public Controls GameControls = new();
 		public OrderedEntityProcessor EntityProcessor = new();
 
 		public void AddUpdateEvent(Action<SpriteBatch, GameTime> _event)
@@ -142,7 +142,9 @@ namespace AsliipaJiliicofmog
 			OnUpdateEvents = new();
 			Sb = sb;
 			CreateGUI();
-			new Player(Registry.TextureRegistry["dummy"], "Ben Dover").AddToRender(this);
+			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
+			player.AddToRender(this);
+			player.Inventory.AddItem(new Item(Registry.TextureRegistry["pig"], "test item 1", "yeah"));
 			Registry.GetCreature("pig").AddToRender(this);
 		}
 	}

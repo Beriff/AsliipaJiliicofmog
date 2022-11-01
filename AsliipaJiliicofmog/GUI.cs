@@ -82,6 +82,10 @@ namespace AsliipaJiliicofmog
 			{
 				Update = act;
 			}
+			public Hitbox GetUIBounds()
+			{
+				return Hitbox.FromSize(Position, Dimension);
+			}
 		}
 		public class ProgressBar : VisualElement
 		{
@@ -508,6 +512,62 @@ namespace AsliipaJiliicofmog
 			}
 		}
 
+		public class ScrollList : UIContainer
+		{
+			public int Scroll;
+			public int? ElementHeight;
+			//Scroll list only supports UI elements of the same height
+			public ScrollList(Point pos, Point size) : base(pos, size)
+			{
+
+			}
+			public override void AddElement(VisualElement element)
+			{
+				if (ElementHeight == null) { ElementHeight = element.Dimension.Y; }
+				else { if (ElementHeight != element.Dimension.Y) { throw new Exception("ScrollList doesn't support elements with different height"); } }
+				element.Position = new(element.Position.X, Position.Y + Elements.Count * (int)ElementHeight);
+				Elements.Add(element);
+			}
+			public override void Render(SpriteBatch sb, Point? position = null)
+			{
+				var pos = position ?? Position;
+				int amount = Dimension.Y / (int)ElementHeight;
+				//amount = Math.Max(amount, Elements.Count);
+
+				for(int i = Scroll; i < amount + Scroll; i++)
+				{
+					if (i >= Elements.Count)
+						break;
+
+					var element = Elements[i];
+					element.Render(sb, element.Position);
+				}
+
+			}
+			public override void AddOnUpdate(Action<VisualElement, GameTime> act)
+			{
+				int amount = Dimension.Y / (int)ElementHeight;
+				Update = (ve, gt) =>
+				{
+					if(GetUIBounds().Test(InputHandler.GetMousePos()))
+					{
+						if (InputHandler.Scroll > 0)
+						{
+							Scroll++;
+						}
+						else if (InputHandler.Scroll < 0) { Scroll--; }
+						Scroll = Math.Clamp(Scroll, 0, Elements.Count);
+					}
+					for(int i = Scroll; i < amount + Scroll; i++)
+					{
+						if (i >= Elements.Count)
+							break;
+						Elements[i].Update(ve, gt);
+					}
+					act(ve, gt);
+				};
+			}
+		}
 		class Dropdown : VisualElement
 		{
 			public override Point Position { get => base.Position; set { base.Position = value; DroppedOptions = new(Position + new Point((int)StringDim.X, Dimension.Y), Dimension); } }

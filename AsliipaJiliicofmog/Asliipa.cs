@@ -145,8 +145,8 @@ namespace AsliipaJiliicofmog
 
 		protected override void Update(GameTime gameTime)
 		{
-			if (Keyboard.GetState().IsKeyDown(Keys.Z))
-				Client.EntityProcessor.Entities[1].Move(Client, new(-1, -1));
+			if (InputHandler.GetKeyState(Keys.Z) == KeyStates.JPressed)
+				GUI.GUIDEBUG = !GUI.GUIDEBUG;
 
 			
 			base.Update(gameTime);
