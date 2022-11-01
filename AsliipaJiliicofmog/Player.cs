@@ -37,7 +37,7 @@ namespace AsliipaJiliicofmog
 			InvSpace = new();
 			Name = name;
 			InvUIWindow = Window.LabeledWindow(invui_offset, invui_offset.Mult(2), Asliipa.MainGUIColor, Name).SetPopup() as Window;
-			InvUIWindow.AddElement(new ScrollList(new(0, 15), invui_offset));
+			InvUIWindow.AddElement(new ScrollList(new(0), invui_offset));
 			InvUIWindow.AddElement(new ColumnList(new(invui_offset.X, 15), new(invui_offset.X, 15)));
 			InvUIWindow.AddOnUpdate((ve, gt) => { if (InputHandler.GetKeyState(gc.GameControls.Inv) == KeyStates.JPressed) { ve.Enabled = !ve.Enabled; } });
 

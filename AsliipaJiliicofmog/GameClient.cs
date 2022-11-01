@@ -144,9 +144,9 @@ namespace AsliipaJiliicofmog
 			CreateGUI();
 			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
 			player.AddToRender(this);
-			for(int i = 0; i < 20; i++)
+			for(int i = 0; i < 25; i++)
 				player.Inventory.AddItem(new Item(Registry.TextureRegistry["pig"], $"test item {i}", "yeah"));
-			Registry.GetCreature("pig").AddToRender(this);
+			Registry.GetCreature("zip jr").AddToRender(this);
 		}
 	}
 }

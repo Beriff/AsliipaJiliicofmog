@@ -516,6 +516,7 @@ namespace AsliipaJiliicofmog
 		{
 			public int Scroll;
 			public int? ElementHeight;
+			public int Padding = 6;
 			//Scroll list only supports UI elements of the same height
 			public ScrollList(Point pos, Point size) : base(pos, size)
 			{
@@ -546,9 +547,16 @@ namespace AsliipaJiliicofmog
 						break;
 
 					var element = Elements[i];
-					element.Position = new (element.Position.X, Position.Y + (i - Scroll) * (int)ElementHeight);
-					element.Render(sb, element.Position);
+					element.Position = new (element.Position.X, Position.Y + (i - Scroll) * (int)(ElementHeight + Padding));
+					element.Render(sb, element.Position + new Point(7, 0));
 				}
+
+				//Render vertical slider
+				var slider_bgy = amount * (int)ElementHeight;
+				var slider_height = slider_bgy / (Elements.Count - amount);
+				sb.Draw(GUI.Flatcolor, Position.ToVector2(), new Rectangle(new(0), new(5, slider_bgy)), Color.Black);
+				sb.Draw(GUI.Flatcolor, new Vector2(Position.X, Position.Y + slider_height * Scroll), new Rectangle(new(0), new(5, slider_height)), Color.Gray);
+
 
 			}
 			public override void AddOnUpdate(Action<VisualElement, GameTime> act)
