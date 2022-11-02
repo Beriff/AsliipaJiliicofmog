@@ -25,6 +25,30 @@ namespace AsliipaJiliicofmog
 		public static float OutExpo(float x) => x == 1 ? 1 : 1 - (float)Math.Pow(2, -10 * x);
 
 		public static float Signaling(float x) => (float)((Math.Sin((x * Math.PI % Math.PI) + Math.PI / 2f) * 2 + 1) / 2f);
+		public static float Parabolic(float x) => (1 - (2 * x - 1) * (2 * x - 1));
+
+		public static float OutBounce(float x)
+		{
+			float n1 = 7.5625f;
+			float d1 = 2.75f;
+
+			if (x < 1 / d1)
+			{
+				return n1 * x * x;
+			}
+			else if (x < 2 / d1)
+			{
+				return n1 * (x -= 1.5f / d1) * x + 0.75f;
+			}
+			else if (x < 2.5 / d1)
+			{
+				return n1 * (x -= 2.25f / d1) * x + 0.9375f;
+			}
+			else
+			{
+				return n1 * (x -= 2.625f / d1) * x + 0.984375f;
+			}
+		}
 
 	}
 

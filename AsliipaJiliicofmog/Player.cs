@@ -26,11 +26,21 @@ namespace AsliipaJiliicofmog
 		public List<Item> InvSpace;
 		public Window InvUIWindow;
 		public string Name;
+		public GameClient Client;
 
 		public Item? FocusedItem;
+		bool UpdateRequired = false;
 		
-		public Inventory(GameClient gc, string name = "inventory")
+		public Item this[int i]
 		{
+			get => InvSpace[i];
+			set { InvSpace[i] = value; UpdateRequired = true; }
+		}
+
+		public Inventory(GameClient gc, Vector2 pos, string name = "inventory")
+		{
+			Client = gc;
+
 			var viewport = gc.Sb.GraphicsDevice.Viewport;
 			Point invui_offset = new Point(viewport.Width / 4, viewport.Height / 4);
 
@@ -39,29 +49,98 @@ namespace AsliipaJiliicofmog
 			InvUIWindow = Window.LabeledWindow(invui_offset, invui_offset.Mult(2), Asliipa.MainGUIColor, Name).SetPopup() as Window;
 			InvUIWindow.AddElement(new ScrollList(new(0), invui_offset));
 			InvUIWindow.AddElement(new ColumnList(new(invui_offset.X, 15), new(invui_offset.X, 15)));
-			InvUIWindow.AddOnUpdate((ve, gt) => { if (InputHandler.GetKeyState(gc.GameControls.Inv) == KeyStates.JPressed) { ve.Enabled = !ve.Enabled; } });
+			InvUIWindow.AddOnUpdate((ve, gt) => { if (UpdateRequired) { UpdateRequired = false; UpdateList(); }  if (InputHandler.GetKeyState(gc.GameControls.Inv) == KeyStates.JPressed) { ve.Enabled = !ve.Enabled; } });
+
+			//Add empty elements to second column (focused item)
+			var focusedcolumn = InvUIWindow[3] as ColumnList;
+			focusedcolumn.AddElement(new Image(focusedcolumn.Position, Registry.TextureRegistry["zip"]));
+			var header = new Label("focused item name");
+			header.Position = focusedcolumn.Position;
+			var desc = new Label("focused item desc");
+			desc.Position = focusedcolumn.Position;
+			focusedcolumn.AddElement(header);
+			focusedcolumn.AddElement(desc);
+			focusedcolumn.AddElement(new Button(focusedcolumn.Position, new(15), Asliipa.MainGUIColor, "Drop", 
+				() => { }));
 
 			InvUIWindow.AddToRender(gc);
 		}
 
-		public void Update()
+		public void UpdateList()
 		{
 			var columnlist = InvUIWindow[2] as ScrollList;
 			InvUIWindow[2] = new ScrollList(columnlist.Position, columnlist.Dimension);
 			columnlist = InvUIWindow[2] as ScrollList;
 			for (int i = 0; i < InvSpace.Count; i++)
 			{
-				columnlist.AddElement(
-					new Button(new(columnlist.Position.X, 0), new(columnlist.Dimension.X, 15), Asliipa.MainGUIColor, InvSpace[i].Name, () => { })
-					);
+				var button = new Button(new(columnlist.Position.X, 0), new(columnlist.Dimension.X, 15), Asliipa.MainGUIColor, InvSpace[i].Name, () => { });
+				var item = InvSpace[i];
+				button.OnClick = () => { SetFocusedItem(item); };
+				columnlist.AddElement(button);
 			}
+		}
+		public void SetFocusedItem(Item item)
+		{
+			FocusedItem = item;
+			var focusedcolumn = InvUIWindow[3] as ColumnList;
+			focusedcolumn[0] = new Image(focusedcolumn[0].Position, item.ItemTexture);
+			var header = new Label(Util.WordWrap(item.Name, focusedcolumn.Dimension.X));
+			header.Position = focusedcolumn[1].Position;
+			focusedcolumn[1] = header;
+			var desc = new Label(Util.WordWrap(item.Description, focusedcolumn.Dimension.X));
+			desc.Position = focusedcolumn[2].Position;
+			focusedcolumn[2] = desc;
+			focusedcolumn[3] = new Button(focusedcolumn.Position, new(15), Asliipa.MainGUIColor, "Drop",
+				() => { });
+			(focusedcolumn[3] as Button).OnClick = () => 
+			{ RemoveItem(FocusedItem); new DroppedItem(FocusedItem, Client.Player.Position).AddToRender(Client); };
 		}
 		public void AddItem(params Item[] items)
 		{
 			foreach(var item in items) { InvSpace.Add(item); }
-			Update();
+			UpdateList();
+		}
+		public void RemoveItem(Item item)
+		{
+			InvSpace.Remove(item);
+			UpdateRequired = true;
+			//SetFocusedItem(InvSpace[0]);
 		}
 	}
+
+	public class DroppedItem : Entity
+	{
+		public Item Item;
+		public DroppedItem(Item item, Vector2 position) 
+			: base(position, item.ItemTexture, item.Name, desc: item.Description)
+		{
+			Item = item;
+		}
+		public override void AddToRender(GameClient gc)
+		{
+			Animator.Add(new Animation(60, (int)Position.Y, (t, coeff) => 
+			{
+				Position.Y = coeff - Easing.Parabolic(Easing.OutBounce(t))*15;
+			}
+			));
+			Animator.Add(new Animation(60, (int)Position.X, (t, coeff) => { Position.X = coeff + 35 * t; }));
+			base.AddToRender(gc);
+		}
+		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
+		{
+			sb.Draw(EntityTexture, Position + offset + AnchorOffset(), Color.Lerp(Color.White, Tint, .3f));
+			if(ScreenCoordsHitbox(offset).Test(InputHandler.GetMousePos()))
+			{
+				Tint = Color.Black * Easing.Signaling((float)gt.TotalGameTime.TotalSeconds);
+				if (InputHandler.LMBState() == KeyStates.JPressed)
+				{
+					gc.Player.Inventory.AddItem(Item);
+					gc.RemoveEntity(this);
+				}
+			}
+		}
+	}
+
 	public class Player : Creature
 	{
 		public Inventory Inventory;
@@ -77,7 +156,7 @@ namespace AsliipaJiliicofmog
 			Description = "Controllable creature";
 			GenerateInfobox();
 			Speed = 2;
-			Inventory = new(gc, "Your Inventory");
+			Inventory = new(gc, Position, "Your Inventory");
 		}
 	}
 

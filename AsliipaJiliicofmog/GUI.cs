@@ -197,7 +197,10 @@ namespace AsliipaJiliicofmog
 					{
 						RenderColor = ButtonColor * 2.7f;
 						if (InputHandler.LMBState() == KeyStates.JReleased)
+						{
 							OnClick();
+						}
+							
 					}
 					else
 						RenderColor = ButtonColor;
@@ -690,10 +693,11 @@ namespace AsliipaJiliicofmog
 		{
 			public Texture2D ImageTexture;
 			public float ScalingFactor = 1f;
-			public Image(Point pos, Texture2D image) : base(pos, new(0))
+			public Image(Point pos, Texture2D image) : base(pos, new(image.Width, image.Height))
 			{
 				AddOnUpdate((ve, gt) => { });
 				ImageTexture = image;
+				
 			}
 			public Image(Point pos, Texture2D image, float size) : base(pos, new((int)size))
 			{

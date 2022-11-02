@@ -129,8 +129,8 @@ namespace AsliipaJiliicofmog
 			{
 				if (entity.EntityHitbox.Test(thitbox) && entity != this)
 				{
-					//Util.DPrint()
-					return false;
+					if(entity.Collidable)
+						return false;
 				}
 				else if (thitbox.Start.X < 0 || thitbox.End.X > Scene.SceneSizePixels || thitbox.Start.Y < 0 || thitbox.End.Y > Scene.SceneSizePixels)
 				{

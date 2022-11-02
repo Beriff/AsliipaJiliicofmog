@@ -43,6 +43,8 @@ namespace AsliipaJiliicofmog
 		public Controls GameControls = new();
 		public OrderedEntityProcessor EntityProcessor = new();
 
+		public Player Player;
+
 		public void AddUpdateEvent(Action<SpriteBatch, GameTime> _event)
 		{
 			OnUpdateEvents.Add(_event);
@@ -132,6 +134,10 @@ namespace AsliipaJiliicofmog
 			else
 				Animator.Add(new Animation(30, posx, (t, coeff) => { GetSidebar().Position = new(coeff - (int)(Easing.OutExpo(t) * sidebarsize.X), 0); }, "sidebar"));
 		}
+		public void RemoveEntity(Entity e)
+		{
+			EntityProcessor.Entities.Remove(e);
+		}
 
 		public GameClient(Scene scene, SpriteBatch sb)
 		{
@@ -144,8 +150,9 @@ namespace AsliipaJiliicofmog
 			CreateGUI();
 			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
 			player.AddToRender(this);
+			Player = player;
 			for(int i = 0; i < 25; i++)
-				player.Inventory.AddItem(new Item(Registry.TextureRegistry["pig"], $"test item {i}", "yeah"));
+				player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], $"test item {i}", "we are going to beat you to death you little punk"));
 			Registry.GetCreature("zip jr").AddToRender(this);
 		}
 	}

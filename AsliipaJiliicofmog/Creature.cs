@@ -17,7 +17,7 @@ namespace AsliipaJiliicofmog
 
 		public Creature(Texture2D texture, string name, Vector2? anchor = null, string? desc = null, Vector2? pos = null) : base(pos ?? new(0), texture, name, anchor: anchor, desc: desc)
 		{
-			
+			Collidable = true;
 		}
 		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
