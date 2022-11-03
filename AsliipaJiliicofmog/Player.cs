@@ -20,6 +20,16 @@ namespace AsliipaJiliicofmog
 			Name = name;
 			Description = desc;
 		}
+
+		public virtual List<(string name, Action action)> GetActions(Inventory inv)
+		{
+			return new() { new("Drop", () => 
+				{
+					inv.RemoveItem(inv.FocusedItem); 
+					new DroppedItem(inv.FocusedItem, inv.Client.Player.Position).AddToRender(inv.Client);
+				}
+			) };
+		}
 	}
 	public class Inventory
 	{
@@ -60,8 +70,8 @@ namespace AsliipaJiliicofmog
 			desc.Position = focusedcolumn.Position;
 			focusedcolumn.AddElement(header);
 			focusedcolumn.AddElement(desc);
-			focusedcolumn.AddElement(new Button(focusedcolumn.Position, new(15), Asliipa.MainGUIColor, "Drop", 
-				() => { }));
+			/*focusedcolumn.AddElement(new Button(focusedcolumn.Position, new(15), Asliipa.MainGUIColor, "Drop", 
+				() => { }));*/
 
 			InvUIWindow.AddToRender(gc);
 		}
@@ -83,17 +93,25 @@ namespace AsliipaJiliicofmog
 		{
 			FocusedItem = item;
 			var focusedcolumn = InvUIWindow[3] as ColumnList;
+			//Set focused item texture
 			focusedcolumn[0] = new Image(focusedcolumn[0].Position, item.ItemTexture);
+			//set the name of the item to the header
 			var header = new Label(Util.WordWrap(item.Name, focusedcolumn.Dimension.X));
 			header.Position = focusedcolumn[1].Position;
 			focusedcolumn[1] = header;
+			//set the description
 			var desc = new Label(Util.WordWrap(item.Description, focusedcolumn.Dimension.X));
 			desc.Position = focusedcolumn[2].Position;
 			focusedcolumn[2] = desc;
-			focusedcolumn[3] = new Button(focusedcolumn.Position, new(15), Asliipa.MainGUIColor, "Drop",
-				() => { });
-			(focusedcolumn[3] as Button).OnClick = () => 
-			{ RemoveItem(FocusedItem); new DroppedItem(FocusedItem, Client.Player.Position).AddToRender(Client); };
+			//remove the buttons provided by the previous focused item
+			focusedcolumn.Elements.RemoveRange(3, focusedcolumn.Elements.Count - 3);
+			//create new action buttons from item.GetActions()
+			foreach(var pair in item.GetActions(this))
+			{
+				var button = new Button(desc.Position, new(15), Asliipa.MainGUIColor, pair.name, () => { });
+				button.OnClick = pair.action;
+				focusedcolumn.AddElement(button);
+			}
 		}
 		public void AddItem(params Item[] items)
 		{

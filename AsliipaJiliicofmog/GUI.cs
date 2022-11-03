@@ -342,6 +342,7 @@ namespace AsliipaJiliicofmog
 				TextColor = color ?? Color.White;
 				Text = text;
 				Update = (v, g) => { };
+				Dimension = GetSize();
 			}
 		}
 

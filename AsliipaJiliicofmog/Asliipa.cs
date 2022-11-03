@@ -21,7 +21,7 @@ namespace AsliipaJiliicofmog
 		public GameClient Client;
 		Window MainMenu;
 		Window Settings;
-		public static Color MainGUIColor = new(50, 50, 50, 137);
+		public static Color MainGUIColor = new(32, 32, 32, 137);
 
 		public static SpriteFont GameFont;
 
