@@ -60,7 +60,7 @@ namespace AsliipaJiliicofmog
 			GameAudio.SFX["click"] = Content.Load<SoundEffect>("click");
 
 
-			scene = new Scene(new Tile("dirt", Registry.TextureRegistry["dirt"]));
+			scene = new Scene(new Tile("dirt", Registry.TextureRegistry["devtile"]));
 			Client = new GameClient(scene, _spriteBatch);
 
 			ParticleEmitter.Circle(new(25), 300, 10).AddToRender(Client);

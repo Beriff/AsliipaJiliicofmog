@@ -63,11 +63,11 @@ namespace AsliipaJiliicofmog
 
 		public static KeyStates RMBState()
 		{
-			if (pressed(prevMState.RightButton) && released(Mouse.GetState().RightButton))
+			if (pressed(prevMState.RightButton) && pressed(Mouse.GetState().RightButton))
 				return KeyStates.Hold;
-			else if (pressed(prevMState.RightButton) && !released(Mouse.GetState().RightButton))
+			else if (pressed(prevMState.RightButton) && released(Mouse.GetState().RightButton))
 				return KeyStates.JReleased;
-			else if (!pressed(prevMState.RightButton) && released(Mouse.GetState().RightButton))
+			else if (released(prevMState.RightButton) && pressed(Mouse.GetState().RightButton))
 				return KeyStates.JPressed;
 			else
 				return KeyStates.Released;

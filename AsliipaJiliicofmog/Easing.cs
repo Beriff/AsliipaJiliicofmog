@@ -56,12 +56,12 @@ namespace AsliipaJiliicofmog
 	{
 		public int FramesSpan;
 		int FrameProgress;
-		public Action<float, int> OnProgress;
+		public Action<float, float> OnProgress;
 		public bool Finished;
-		public int Coefficient;
+		public float Coefficient;
 		public string? Signature;
 
-		public Animation(int span, int coeff, Action<float, int> progress, string? signature = null)
+		public Animation(int span, float coeff, Action<float, float> progress, string? signature = null)
 		{
 			FramesSpan = span;
 			FrameProgress = 0;

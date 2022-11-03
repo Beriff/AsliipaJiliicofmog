@@ -11,8 +11,10 @@ namespace AsliipaJiliicofmog
 	public class Item
 	{
 		public Texture2D ItemTexture;
-		public string Name;
-		public string Description;
+		protected string _Name;
+		protected string _Description;
+		public virtual string Name { get => _Name; set => _Name = value; }
+		public virtual string Description { get => _Description; set => _Description = value; }
 
 		public Item(Texture2D texture, string name, string desc)
 		{
@@ -29,6 +31,35 @@ namespace AsliipaJiliicofmog
 					new DroppedItem(inv.FocusedItem, inv.Client.Player.Position).AddToRender(inv.Client);
 				}
 			) };
+		}
+	}
+	public class Equippable : Item
+	{
+		public Vector2 Anchor;
+		public Equippable(Texture2D texture, string name, string desc, Vector2? anchor = null) : base(texture, name, desc)
+		{
+			Anchor = anchor ?? new(0, 0);
+		}
+
+		public override List<(string name, Action action)> GetActions(Inventory inv)
+		{
+			return new()
+			{
+				new("Drop", () =>
+				{
+					inv.RemoveItem(inv.FocusedItem);
+					new DroppedItem(inv.FocusedItem, inv.Client.Player.Position).AddToRender(inv.Client);
+					if (inv.Client.Player.Equipped == this)
+						inv.Client.Player.Equipped = null;
+				}),
+				new("Equip", () =>
+				{
+					if (inv.Client.Player.Equipped == this)
+						inv.Client.Player.Equipped = null;
+					else
+						inv.Client.Player.Equipped = this;
+				})
+			};
 		}
 	}
 	public class Inventory
@@ -63,6 +94,7 @@ namespace AsliipaJiliicofmog
 
 			//Add empty elements to second column (focused item)
 			var focusedcolumn = InvUIWindow[3] as ColumnList;
+			focusedcolumn.Padding = 1;
 			focusedcolumn.AddElement(new Image(focusedcolumn.Position, Registry.TextureRegistry["zip"]));
 			var header = new Label("focused item name");
 			header.Position = focusedcolumn.Position;
@@ -108,7 +140,7 @@ namespace AsliipaJiliicofmog
 			//create new action buttons from item.GetActions()
 			foreach(var pair in item.GetActions(this))
 			{
-				var button = new Button(desc.Position, new(15), Asliipa.MainGUIColor, pair.name, () => { });
+				var button = new Button(desc.Position, new(20), Asliipa.MainGUIColor, pair.name, () => { });
 				button.OnClick = pair.action;
 				focusedcolumn.AddElement(button);
 			}
@@ -162,6 +194,7 @@ namespace AsliipaJiliicofmog
 	public class Player : Creature
 	{
 		public Inventory Inventory;
+		public Equippable Equipped;
 		public override Action<GameClient> OnUpdate
 		{
 			get => base.OnUpdate; set
@@ -175,6 +208,14 @@ namespace AsliipaJiliicofmog
 			GenerateInfobox();
 			Speed = 2;
 			Inventory = new(gc, Position, "Your Inventory");
+		}
+		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
+		{
+			
+			base.Render(sb, offset, gt, gc);
+			//render the equipped item
+			if (Equipped != null)
+				sb.Draw(Equipped.ItemTexture, offset + Position + Position * Anchor, Color.White);
 		}
 	}
 

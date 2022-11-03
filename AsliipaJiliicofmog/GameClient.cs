@@ -132,7 +132,7 @@ namespace AsliipaJiliicofmog
 			if(posx < 0)
 				Animator.Add(new Animation(30, posx, (t, coeff) => { GetSidebar().Position = new((int)(Easing.OutExpo(t) * sidebarsize.X + coeff), 0); }, "sidebar"));
 			else
-				Animator.Add(new Animation(30, posx, (t, coeff) => { GetSidebar().Position = new(coeff - (int)(Easing.OutExpo(t) * sidebarsize.X), 0); }, "sidebar"));
+				Animator.Add(new Animation(30, posx, (t, coeff) => { GetSidebar().Position = new((int)(coeff - (Easing.OutExpo(t) * sidebarsize.X)), 0); }, "sidebar"));
 		}
 		public void RemoveEntity(Entity e)
 		{
@@ -151,9 +151,14 @@ namespace AsliipaJiliicofmog
 			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
 			player.AddToRender(this);
 			Player = player;
-			for(int i = 0; i < 25; i++)
-				player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], $"test item {i}", "we are going to beat you to death you little punk"));
+			for(int i = 0; i < 10; i++)
+				player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], $"test item {i}", "henlo"));
+			player.Inventory.AddItem(new Tool(Registry.TextureRegistry["axe"], "stone axe", "tree cutting tool and a sharp weapon").WithTypes(ToolType.Cutting));
 			Registry.GetCreature("zip jr").AddToRender(this);
+
+			var tree = new Prop(Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.5f), ToolType.Cutting);
+			tree.Position = new(0);
+			tree.AddToRender(this);
 		}
 	}
 }

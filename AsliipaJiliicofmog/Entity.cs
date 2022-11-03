@@ -51,7 +51,8 @@ namespace AsliipaJiliicofmog
 
 		public virtual void SetHitbox()
 		{
-			EntityHitbox = Hitbox.FromSize(new Vector2(Position.X, Position.Y + EntityTexture.Height * .6f), new Vector2(EntityTexture.Width, EntityTexture.Height * .3f));
+			EntityHitbox = Hitbox.FromSize(new Vector2(Position.X, Position.Y + EntityTexture.Height - 9), new Vector2(EntityTexture.Width, 9));
+			EntityHitbox = EntityHitbox + AnchorOffset();
 		}
 
 		public Entity
@@ -80,13 +81,13 @@ namespace AsliipaJiliicofmog
 		}
 		protected Hitbox ScreenCoordsHitbox(Vector2 offset)
 		{
-			return Hitbox.FromSize(Position + offset + AnchorOffset(), new Vector2(Tile.TextureSize));
+			return Hitbox.FromSize(Position + offset + AnchorOffset(), new Vector2(EntityTexture.Width, EntityTexture.Height));
 		}
 		public virtual void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
 			//if debug is enabled, draw hitboxes
 			if (GUI.GUIDEBUG)
-				sb.Draw(GUI.Flatcolor, offset + Position, EntityHitbox.ToRect(), Color.Lerp(Color.Red, Color.Black, .3f));
+				sb.Draw(GUI.Flatcolor, offset + Position + AnchorOffset(), EntityHitbox.ToRect(), Color.Lerp(Color.Red, Color.Black, .3f));
 			sb.Draw(EntityTexture, Position + offset + AnchorOffset(), Color.Lerp(Color.White, Tint, .3f));
 			//draw infobox
 			Hitbox schitbox = ScreenCoordsHitbox(offset);
@@ -99,7 +100,7 @@ namespace AsliipaJiliicofmog
 				EntityInfobox.Render(sb, null);
 
 				//if clicked on entity, toggle sidebar
-				if (InputHandler.LMBState() == KeyStates.JPressed)
+				if (InputHandler.RMBState() == KeyStates.JPressed)
 				{
 					gc.UpdateSidebar(EntityTexture, Name, Description);
 					gc.ToggleSidebar();
