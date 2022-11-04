@@ -18,7 +18,7 @@ namespace AsliipaJiliicofmog
 		public int Durability;
 		public int MaxDurability;
 		public List<ToolType> ToolTypes;
-		public override string Name { get => $"{_Name} [{Durability / MaxDurability * 100}%]"; set => base.Name = value; }
+		public override string Name { get => $"{_Name} [{Durability / (float)MaxDurability * 100}%]"; set => base.Name = value; }
 		public override string Description { get => $"{_Description}\n(Durability: {Durability}/{MaxDurability})"; set => base.Description = value; }
 		public Tool(Texture2D texture, string name, string desc, int dur = 100, Vector2? anchor = null) : base(texture, name, desc, anchor)
 		{

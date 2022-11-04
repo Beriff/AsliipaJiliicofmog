@@ -190,13 +190,14 @@ namespace AsliipaJiliicofmog
 				SetLabel(label);
 				AddOnClick(onclick);
 				Padding = new(10);
+				Enabled = true;
 				Update = (ve, gt) =>
 				{
 					Vector2 mousePos = new(Mouse.GetState().X, Mouse.GetState().Y);
 					if (ButtonBounds().Test(mousePos))
 					{
 						RenderColor = ButtonColor * 2.7f;
-						if (InputHandler.LMBState() == KeyStates.JReleased)
+						if (InputHandler.LMBState() == KeyStates.JReleased && Enabled)
 						{
 							OnClick();
 						}
@@ -254,6 +255,8 @@ namespace AsliipaJiliicofmog
 			{
 				Update = (ve, gt) =>
 				{
+					if (!Enabled)
+						return;
 					SliderCursorSize = new(Dimension.X / 10, Dimension.Y);
 					//Calculate cursor shift:
 					//1. get hitbox of slider cursor

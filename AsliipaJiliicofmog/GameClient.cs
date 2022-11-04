@@ -156,8 +156,9 @@ namespace AsliipaJiliicofmog
 			player.Inventory.AddItem(new Tool(Registry.TextureRegistry["axe"], "stone axe", "tree cutting tool and a sharp weapon").WithTypes(ToolType.Cutting));
 			Registry.GetCreature("zip jr").AddToRender(this);
 
-			var tree = new Prop(Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.5f), ToolType.Cutting);
-			tree.Position = new(0);
+			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.5f), ToolType.Cutting);
+			tree.Drop = new Item(Registry.TextureRegistry["tree"], "tree", "chopped tree");
+			tree.Move(this, new(64*2));
 			tree.AddToRender(this);
 		}
 	}

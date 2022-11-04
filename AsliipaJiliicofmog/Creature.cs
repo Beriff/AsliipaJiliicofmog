@@ -65,13 +65,22 @@ namespace AsliipaJiliicofmog
 		public int Health;
 		public GameClient Gc;
 
-		public Prop(Texture2D texture, string name, string desc, int toughness, int health, Vector2? anchor, params ToolType[] harvest) : base(texture, name, desc: desc, anchor: anchor)
+		public Prop(GameClient gc, Texture2D texture, string name, string desc, int toughness, int health, Vector2? anchor, params ToolType[] harvest) : base(texture, name, desc: desc, anchor: anchor)
 		{
 			Toughness = toughness;
 			RequiredTool = new(harvest);
 			Health = 5;
+			Gc = gc;
 
-			OnClick = () => {  };
+			OnClick = () => 
+			{
+				if(Gc.Player.Equipped != null)
+				{
+					var tool = Gc.Player.Equipped as Tool;
+					if (CanHarvest(tool))
+						Harvest(tool);
+				} 
+			};
 		}
 		public bool CanHarvest(Tool tool)
 		{
