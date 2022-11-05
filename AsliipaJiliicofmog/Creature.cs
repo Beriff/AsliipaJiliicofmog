@@ -9,9 +9,10 @@ namespace AsliipaJiliicofmog
 {
 	public class Creature : Entity
 	{
-		StateMachine Machine;
+		//StateMachine Machine;
 		//Used for AI
 		public Vector2 Node = new(0);
+		public bool CastShadow = true;
 
 		public float Speed = 1;
 
@@ -23,9 +24,13 @@ namespace AsliipaJiliicofmog
 		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
 			//Draw entity shadow
-			Rectangle shadow_bounds = new((int)(Position.X + offset.X), (int)(Position.Y + EntityTexture.Height - 9 + offset.Y), EntityTexture.Width, 9);
-			shadow_bounds.Offset(AnchorOffset());
-			sb.Draw(GUI.Flatcolor, shadow_bounds, new Color(Color.Black, 137));
+			if(CastShadow)
+			{
+				Rectangle shadow_bounds = new((int)(Position.X + offset.X), (int)(Position.Y + EntityTexture.Height - 9 + offset.Y), EntityTexture.Width, 9);
+				shadow_bounds.Offset(AnchorOffset());
+				sb.Draw(GUI.Flatcolor, shadow_bounds, new Color(Color.Black, 137));
+			}
+			
 
 			
 
@@ -37,7 +42,7 @@ namespace AsliipaJiliicofmog
 			if (schitbox.Test(mousepos))
 			{
 				VisualElements.Label nametag = new(Name);
-				nametag.Position = new Vector2(schitbox.Start.X + nametag.GetSize().X / 2 - 5, schitbox.Start.Y - nametag.GetSize().Y).ToPoint();
+				nametag.Position = new Vector2(schitbox.Middle().X - nametag.GetSize().X / 2, schitbox.Start.Y - nametag.GetSize().Y).ToPoint();
 				nametag.Render(sb);
 				if (InputHandler.LMBState() == KeyStates.JReleased)
 					OnClick();
@@ -60,26 +65,26 @@ namespace AsliipaJiliicofmog
 	{
 		public List<ToolType> RequiredTool;
 		public int Toughness;
-		public Item Drop;
+		public WeightedList<Item> Drops;
 
 		public int Health;
 		public GameClient Gc;
-
-		public Prop(GameClient gc, Texture2D texture, string name, string desc, int toughness, int health, Vector2? anchor, params ToolType[] harvest) : base(texture, name, desc: desc, anchor: anchor)
+		public Prop(GameClient gc, Texture2D texture, string name, string desc, int toughness, int health, Vector2? anchor, ToolType[] tooltypes) : base(texture, name, desc: desc, anchor: anchor)
 		{
 			Toughness = toughness;
-			RequiredTool = new(harvest);
+			RequiredTool = new(tooltypes);
 			Health = 5;
 			Gc = gc;
+			Drops = new();
 
-			OnClick = () => 
+			OnClick = () =>
 			{
-				if(Gc.Player.Equipped != null)
+				if (Gc.Player.Equipped != null)
 				{
 					var tool = Gc.Player.Equipped as Tool;
 					if (CanHarvest(tool))
 						Harvest(tool);
-				} 
+				}
 			};
 		}
 		public bool CanHarvest(Tool tool)
@@ -106,9 +111,20 @@ namespace AsliipaJiliicofmog
 				Animator.Add(new(30, 0, (t, c) => { Tint = Color.Lerp(Color.Red, Color.White, t); }));
 			} else
 			{
-				new DroppedItem(Drop, Position).AddToRender(Gc);
+				Util.DPrint(Registry.GetProp("grassland commonweed").ToString());
+				new DroppedItem(Drops.Get(), Position).AddToRender(Gc);
 				Gc.RemoveEntity(this);
 			}
 		}
+		public override object Clone()
+		{
+			var prop = new Prop(Gc, EntityTexture, Name, Description, Toughness, Health, Anchor, RequiredTool.ToArray());
+			prop._OnUpdate = OnUpdate;
+			prop.EntityHitbox = EntityHitbox.Clone();
+			prop.Drops = WeightedList<Item>.CopyFrom(Drops);
+			prop.CastShadow = CastShadow;
+			return prop;
+		}
+
 	}
 }

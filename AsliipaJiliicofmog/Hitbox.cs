@@ -21,7 +21,7 @@ namespace AsliipaJiliicofmog
 		}
 		public Vector2 Middle()
 		{
-			return new((Start.X + (End.X - Start.X)) / 2, (Start.Y + (End.Y - Start.Y)) / 2);
+			return new(Start.X + (End.X - Start.X) / 2 , Start.Y + (End.Y - Start.Y) / 2 );
 		}
 		public bool Test(Vector2 b)
 		{

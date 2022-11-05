@@ -521,7 +521,7 @@ namespace AsliipaJiliicofmog
 
 		public class ScrollList : UIContainer
 		{
-			public int Scroll;
+			public int Scroll = 0;
 			public int? ElementHeight;
 			public int Padding = 6;
 			//Scroll list only supports UI elements of the same height
@@ -546,17 +546,31 @@ namespace AsliipaJiliicofmog
 
 				//max amount of elements that can be rendered
 				int amount = Dimension.Y / (int)ElementHeight;
-				Scroll = Math.Min(Scroll, Elements.Count - amount);
-
-				for(int i = Scroll; i < amount + Scroll; i++)
+				if(Elements.Count < amount)
 				{
-					if (i >= Elements.Count)
-						break;
-
-					var element = Elements[i];
-					element.Position = new (element.Position.X, Position.Y + (i - Scroll) * (int)(ElementHeight + Padding));
-					element.Render(sb, element.Position + new Point(7, 0));
+					for(int i = 0; i < Elements.Count; i++)
+					{
+						var element = Elements[i];
+						element.Position = new(element.Position.X, Position.Y + i * (int)(ElementHeight + Padding));
+						element.Render(sb, element.Position + new Point(7, 0));
+					}
 				}
+				else
+				{
+					Scroll = Math.Min(Scroll, Elements.Count - amount);
+
+					for (int i = Scroll; i < amount + Scroll; i++)
+					{
+						if (i >= Elements.Count)
+							break;
+
+						var element = Elements[i];
+						element.Position = new(element.Position.X, Position.Y + (i - Scroll) * (int)(ElementHeight + Padding));
+						element.Render(sb, element.Position + new Point(7, 0));
+					}
+				}
+
+				
 
 				//Render vertical slider
 				var slider_bgy = amount * (int)ElementHeight;
@@ -580,12 +594,19 @@ namespace AsliipaJiliicofmog
 						else if (InputHandler.Scroll < 0) { Scroll--; }
 						Scroll = Math.Clamp(Scroll, 0, Elements.Count);
 					}
-					for(int i = Scroll; i < amount + Scroll; i++)
+					if (Elements.Count < amount)
+						for (int i = 0; i < Elements.Count; i++)
+							Elements[i].Update(ve, gt);
+					else
 					{
-						if (i >= Elements.Count)
-							break;
-						Elements[i].Update(ve, gt);
+						for (int i = Scroll; i < amount + Scroll; i++)
+						{
+							if (i >= Elements.Count)
+								break;
+							Elements[i].Update(ve, gt);
+						}
 					}
+					
 					act(ve, gt);
 				};
 			}

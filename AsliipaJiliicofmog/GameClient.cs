@@ -151,14 +151,14 @@ namespace AsliipaJiliicofmog
 			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
 			player.AddToRender(this);
 			Player = player;
-			for(int i = 0; i < 10; i++)
-				player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], $"test item {i}", "henlo"));
 			player.Inventory.AddItem(new Tool(Registry.TextureRegistry["axe"], "stone axe", "tree cutting tool and a sharp weapon").WithTypes(ToolType.Cutting));
-			Registry.GetCreature("zip jr").AddToRender(this);
+			//Registry.GetCreature("zip jr").AddToRender(this);
+			//for(int i = 0; i < 20; i++)
+				//player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], "yea", "yea"));
 
-			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.5f), ToolType.Cutting);
-			tree.Drop = new Item(Registry.TextureRegistry["tree"], "tree", "chopped tree");
-			tree.Move(this, new(64*2));
+			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.5f), new ToolType[] { ToolType.Cutting });
+			tree.Drops.Add(new Item(Registry.TextureRegistry["tree"], "tree", "chopped tree"), 1);
+			tree.Move(this, new(64*4));
 			tree.AddToRender(this);
 		}
 	}

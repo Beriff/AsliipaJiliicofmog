@@ -56,12 +56,17 @@ namespace AsliipaJiliicofmog
 			GameFont = Content.Load<SpriteFont>("GameFont");
 			Registry.LoadTextureDirectory(ASSETSPATH + "textures", GraphicsDevice);
 			Registry.LoadCreatureDirectory(ASSETSPATH + @"gamedata\creatures");
+			
 
 			GameAudio.SFX["click"] = Content.Load<SoundEffect>("click");
 
 
-			scene = new Scene(new Tile("dirt", Registry.TextureRegistry["devtile"]));
+			scene = new Scene(new Tile("dirt", Registry.TextureRegistry["dirt"]));
 			Client = new GameClient(scene, _spriteBatch);
+			Registry.LoadPropDirectory(ASSETSPATH + @"gamedata\props", Client);
+			var grass = Registry.GetProp("grassland commonweed");
+			grass.AddToRender(Client);
+			grass.Move(Client, new(15));
 
 			ParticleEmitter.Circle(new(25), 300, 10).AddToRender(Client);
 			new Creature(Registry.TextureRegistry["crate"], "crate", pos: new(150)).AddToRender(Client);

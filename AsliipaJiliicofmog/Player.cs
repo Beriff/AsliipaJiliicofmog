@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AsliipaJiliicofmog
 {
-	public class Item
+	public class Item : ICloneable
 	{
 		public Texture2D ItemTexture;
 		protected string _Name;
@@ -31,6 +31,15 @@ namespace AsliipaJiliicofmog
 					new DroppedItem(inv.FocusedItem, inv.Client.Player.Position).AddToRender(inv.Client);
 				}
 			) };
+		}
+
+		public object Clone()
+		{
+			return new Item(ItemTexture, Name, Description);
+		}
+		public override string ToString()
+		{
+			return Name;
 		}
 	}
 	public class Equippable : Item

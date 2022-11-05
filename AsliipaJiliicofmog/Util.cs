@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -166,4 +167,41 @@ namespace AsliipaJiliicofmog
             
 		}
     }
+
+	public class WeightedList<T>
+	{
+        private Dictionary<T, int> _list = new();
+        private int totalWeight = 0;
+
+        public void Add(T element, int weight)
+		{
+            _list[element] = weight;
+            totalWeight += weight;
+		}
+        public T Get()
+		{
+            int r = Asliipa.Random.Next(0, totalWeight);
+            T selection = default;
+            foreach(var e in _list)
+			{
+                if(r < e.Value)
+				{
+                    selection = e.Key;
+                    break;
+				}
+                r -= e.Value;
+			}
+            return selection;
+		}
+        
+        public static WeightedList<V> CopyFrom<V>(WeightedList<V> other) where V : ICloneable
+		{
+            var newlist = new WeightedList<V>();
+            foreach(var pair in other._list)
+			{
+                newlist.Add((V)pair.Key.Clone(), pair.Value);
+			}
+            return newlist;
+		}
+	}
 }
