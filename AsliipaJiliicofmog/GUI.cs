@@ -545,7 +545,7 @@ namespace AsliipaJiliicofmog
 				}
 
 				//max amount of elements that can be rendered
-				int amount = Dimension.Y / (int)ElementHeight;
+				int amount = Dimension.Y / (int)(ElementHeight + 1);
 				if(Elements.Count < amount)
 				{
 					for(int i = 0; i < Elements.Count; i++)

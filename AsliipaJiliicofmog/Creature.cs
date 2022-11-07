@@ -79,12 +79,10 @@ namespace AsliipaJiliicofmog
 
 			OnClick = () =>
 			{
-				if (Gc.Player.Equipped != null)
-				{
-					var tool = Gc.Player.Equipped as Tool;
-					if (CanHarvest(tool))
-						Harvest(tool);
-				}
+
+				var tool = Gc.Player.Equipped as Tool;
+				if (CanHarvest(tool))
+					Harvest(tool);
 			};
 		}
 		public bool CanHarvest(Tool tool)
@@ -103,11 +101,12 @@ namespace AsliipaJiliicofmog
 		}
 		public void Harvest(Tool? htool = null)
 		{
-			var tool = htool ?? Gc.Player.Equipped as Tool;
+
 			if (Health > 0)
 			{
 				Health -= 1;
-				tool.Damage();
+				if(htool != null)
+					htool.Damage();
 				Animator.Add(new(30, 0, (t, c) => { Tint = Color.Lerp(Color.Red, Color.White, t); }));
 			} else
 			{
