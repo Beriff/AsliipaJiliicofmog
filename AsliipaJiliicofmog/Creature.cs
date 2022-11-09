@@ -89,9 +89,11 @@ namespace AsliipaJiliicofmog
 		{
 			if (RequiredTool.Count == 0)
 				return true;
+			if (tool == null)
+				return RequiredTool.Count == 0;
 			else
 			{
-				foreach(var type in tool.ToolTypes)
+				foreach (var type in tool.ToolTypes)
 				{
 					if (!RequiredTool.Contains(type))
 						return false;

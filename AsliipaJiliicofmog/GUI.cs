@@ -545,9 +545,14 @@ namespace AsliipaJiliicofmog
 				}
 
 				//max amount of elements that can be rendered
-				int amount = Dimension.Y / (int)(ElementHeight + 1);
+				int amount = Dimension.Y / (int)(ElementHeight + Padding);
+
+				//if there are less elements than the amount that can be rendered,
+				//render all elements
+				//Scroll = Math.Min(Scroll, Elements.Count - amount);
 				if(Elements.Count < amount)
 				{
+					Scroll = 0;
 					for(int i = 0; i < Elements.Count; i++)
 					{
 						var element = Elements[i];
@@ -557,7 +562,7 @@ namespace AsliipaJiliicofmog
 				}
 				else
 				{
-					Scroll = Math.Min(Scroll, Elements.Count - amount);
+					
 
 					for (int i = Scroll; i < amount + Scroll; i++)
 					{
@@ -573,9 +578,11 @@ namespace AsliipaJiliicofmog
 				
 
 				//Render vertical slider
-				var slider_bgy = amount * (int)ElementHeight;
-				var slider_height = slider_bgy / (Elements.Count - amount);
+				var slider_bgy = 150;
+				var slider_height = Math.Clamp((int)(slider_bgy / (Elements.Count / (float)amount)), 0, slider_bgy);
+				//draw slider background
 				sb.Draw(GUI.Flatcolor, Position.ToVector2(), new Rectangle(new(0), new(5, slider_bgy)), Color.Black);
+				//draw the slider itself
 				sb.Draw(GUI.Flatcolor, new Vector2(Position.X, Position.Y + slider_height * Scroll), new Rectangle(new(0), new(5, slider_height)), Color.Gray);
 
 
