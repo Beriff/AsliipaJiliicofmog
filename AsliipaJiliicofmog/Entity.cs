@@ -75,8 +75,10 @@ namespace AsliipaJiliicofmog
 			Collidable = coll;
 			GenerateInfobox();
 		}
-		protected Vector2 AnchorOffset()
+		public Vector2 AnchorOffset()
 		{
+			if (EntityTexture == null)
+				return Vector2.Zero;
 			return Anchor * new Vector2(EntityTexture.Width, EntityTexture.Height);
 		}
 		protected Hitbox ScreenCoordsHitbox(Vector2 offset)

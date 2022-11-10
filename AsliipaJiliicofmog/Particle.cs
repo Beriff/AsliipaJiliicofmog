@@ -57,7 +57,7 @@ namespace AsliipaJiliicofmog
 		}
 		public void Render(SpriteBatch sb, Vector2 offset)
 		{
-			sb.Draw(GUI.Flatcolor, Position + offset, new Rectangle(new(0), new(5)), ParticleColor * Transparency);
+			sb.Draw(GUI.Flatcolor, Position + offset, new Rectangle(new(0), new(3)), ParticleColor * Transparency);
 		}
 
 		public static Particle FireParticle = new Particle(Color.Red, new(0), new(0,0), new(0, -1), 100,

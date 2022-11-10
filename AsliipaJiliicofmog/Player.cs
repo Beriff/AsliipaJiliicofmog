@@ -115,6 +115,7 @@ namespace AsliipaJiliicofmog
 				() => { }));*/
 
 			InvUIWindow.AddToRender(gc);
+			InvUIWindow.Enabled = false;
 		}
 
 		public void UpdateList()

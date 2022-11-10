@@ -95,7 +95,7 @@ namespace AsliipaJiliicofmog
 				return FocusedScene.GetAt((int)Math.Ceiling(cursorpos.X / Tile.TextureSize), (int)Math.Ceiling(cursorpos.Y / Tile.TextureSize));
 			}
 		}
-		protected Window GetSidebar() => VElements[0] as Window;
+		protected Window GetSidebar() => VElements[2] as Window;
 		public void CreateGUI()
 		{
 			//Setup main menu & settings GUI
@@ -195,11 +195,11 @@ namespace AsliipaJiliicofmog
 		}
 		public void UpdateSidebar(Texture2D texture, string header, string desc)
 		{
-			var column = GetSidebar()[2] as VisualElements.ColumnList;
-			var newImage = new VisualElements.Image(column.Position, texture);
+			var column = GetSidebar()[2] as ColumnList;
+			var newImage = new Image(column.Position, texture);
 			column[0] = newImage;
-			(column[1] as VisualElements.Label).Text = Util.WordWrap(header, GetSidebar().Dimension.X / 2);
-			(column[2] as VisualElements.Label).Text = Util.WordWrap(desc, GetSidebar().Dimension.X / 2);
+			(column[1] as Label).Text = Util.WordWrap(header, GetSidebar().Dimension.X / 2);
+			(column[2] as Label).Text = Util.WordWrap(desc, GetSidebar().Dimension.X / 2);
 		}
 
 		public void ToggleSidebar()
@@ -233,8 +233,8 @@ namespace AsliipaJiliicofmog
 			//for(int i = 0; i < 20; i++)
 				//player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], "yea", "yea"));
 
-			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.5f), new ToolType[] { ToolType.Cutting });
-			tree.Drops.Add(new Item(Registry.TextureRegistry["tree"], "tree", "chopped tree"), 1);
+			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.7f), new ToolType[] { ToolType.Cutting });
+			tree.Drops.Add(new Item(Registry.TextureRegistry["log"], "log", "chopped log of a tree"), 1);
 			tree.Move(this, new(64*4));
 			tree.AddToRender(this);
 		}

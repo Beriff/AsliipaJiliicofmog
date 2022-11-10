@@ -71,7 +71,8 @@ namespace AsliipaJiliicofmog
 
 			ParticleEmitter.Circle(new(25), 300, 10).AddToRender(Client);
 			new Creature(Registry.TextureRegistry["crate"], "crate", pos: new(150)).AddToRender(Client);
-			//Animator.Add(new(500, 0, (a, b) => { (scene.Entities[0] as ParticleEmitter).Radius -= 1; }));
+			
+			
 			
 		}
 
