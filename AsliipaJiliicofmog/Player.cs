@@ -96,7 +96,7 @@ namespace AsliipaJiliicofmog
 
 			InvSpace = new();
 			Name = name;
-			InvUIWindow = Window.LabeledWindow(invui_offset, invui_offset.Mult(2), Asliipa.MainGUIColor, Name).SetPopup() as Window;
+			InvUIWindow = Window.LabeledWindow(invui_offset, invui_offset.Mult(2), Asliipa.MainGUIColor, Name).WithGUI(gc.ClientGUI).SetPopup() as Window;
 			InvUIWindow.AddElement(new ScrollList(new(0), invui_offset));
 			InvUIWindow.AddElement(new ColumnList(new(invui_offset.X, 15), new(invui_offset.X, 15)));
 			InvUIWindow.AddOnUpdate((ve, gt) => { if (UpdateRequired) { UpdateRequired = false; UpdateList(); }  if (InputHandler.GetKeyState(gc.GameControls.Inv) == KeyStates.JPressed) { ve.Enabled = !ve.Enabled; } });
@@ -177,12 +177,15 @@ namespace AsliipaJiliicofmog
 		}
 		public override void AddToRender(GameClient gc)
 		{
+			//define random direction
+			var dir = new Vector2((float)Asliipa.Random.NextDouble(), (float)Asliipa.Random.NextDouble());
+			dir = dir * 2 - Vector2.One;
 			Animator.Add(new Animation(60, (int)Position.Y, (t, coeff) => 
 			{
-				Position.Y = coeff - Easing.Parabolic(Easing.OutBounce(t))*15;
+				Position.Y = coeff - Easing.Parabolic(Easing.OutBounce(t)) * dir.Y * 15;
 			}
 			));
-			Animator.Add(new Animation(60, (int)Position.X, (t, coeff) => { Position.X = coeff + 35 * t; }));
+			Animator.Add(new Animation(60, (int)Position.X, (t, coeff) => { Position.X = coeff + 35 * t * dir.X; }));
 			base.AddToRender(gc);
 		}
 		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)

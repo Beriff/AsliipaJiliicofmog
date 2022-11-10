@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AsliipaJiliicofmog.VisualElements;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -43,6 +44,9 @@ namespace AsliipaJiliicofmog
 		public Controls GameControls = new();
 		public OrderedEntityProcessor EntityProcessor = new();
 
+		public bool ExitRequested = false;
+		public GUI ClientGUI = new();
+
 		public Player Player;
 
 		public void AddUpdateEvent(Action<SpriteBatch, GameTime> _event)
@@ -61,7 +65,7 @@ namespace AsliipaJiliicofmog
 			FocusedScene.Update(this);
 			Animator.Update();
 			FocusedScene.Render(sb, Camera, gt, this);
-			foreach (VisualElements.VisualElement ve in VElements)
+			foreach (VisualElement ve in VElements)
 			{
 				ve.Update(ve, gt);
 				if(ve.Enabled)
@@ -91,30 +95,103 @@ namespace AsliipaJiliicofmog
 				return FocusedScene.GetAt((int)Math.Ceiling(cursorpos.X / Tile.TextureSize), (int)Math.Ceiling(cursorpos.Y / Tile.TextureSize));
 			}
 		}
-		protected VisualElements.Window GetSidebar() => VElements[0] as VisualElements.Window;
+		protected Window GetSidebar() => VElements[0] as Window;
 		public void CreateGUI()
 		{
-			//Create sidebar with selected tile/entity info
-			var sidebarsize = GetViewport();
-			sidebarsize.X /= 5;
-			//init the sidebar right behind the window
-			var sidebar = VisualElements.Window.LabeledWindow(new(-sidebarsize.X, 0), sidebarsize, Asliipa.MainGUIColor, "");
-			//set sidebar button to move it outside the window instead
-			(sidebar[0] as VisualElements.Button).OnClick = () => { ToggleSidebar(); };
-			//column to hold other elements
-			var column = new VisualElements.ColumnList(new(-sidebarsize.X - sidebar.Position.X, 0), new(sidebar.Position.X / 2, 0));
-			sidebar.AddElement(column);
-			//image to hold targeted tile/entity texture
-			var texture = new VisualElements.Image(new(sidebar.Position.X / 2, 0), new Texture2D(Sb.GraphicsDevice, Tile.TextureSize, Tile.TextureSize), Tile.TextureSize);
-			column.AddElement(texture);
-			var header = new VisualElements.Label("header");
-			header.Position = new(column.Position.X, 0);
-			var desc = new VisualElements.Label("description");
-			desc.Position = new(column.Position.X, 0);
-			column.AddElement(header);
-			column.AddElement(desc);
-			sidebar.AddToRender(this);
-			sidebar.AddOnUpdate((ve, gt) => { if (InputHandler.GetKeyState(Keys.F) == KeyStates.JPressed) { ToggleSidebar(); } });
+			//Setup main menu & settings GUI
+			{
+				var viewport = Sb.GraphicsDevice.Viewport;
+				var width = viewport.Width;
+				var height = viewport.Height;
+				Point size = new(width / 2, height / 2);
+
+				var settings = Window.LabeledWindow(new(width / 4, height / 4), size, Asliipa.MainGUIColor, "Settings").WithGUI(ClientGUI).SetPopup() as Window;
+				settings.AddOnUpdate((ve, gt) =>
+				{
+					if (InputHandler.GetKeyState(Keys.Escape) == KeyStates.JPressed)
+					{
+						settings.Enabled = false;
+					}
+				});
+
+
+				var settingsColumn = new ColumnList(new(width / 4, height / 10), new(0));
+				var srow1 = new RowList(new(settingsColumn.Position.X, 0), new(width / 2, 0));
+				var srow2 = new RowList(new(settingsColumn.Position.X, 0), new(width / 2, 0));
+				settings.AddElement(settingsColumn);
+				settingsColumn.AddElement(srow1);
+				settingsColumn.AddElement(srow2);
+
+				var masterVolumeSlider = new Slider(Asliipa.MainGUIColor, new(0, 10), new(0), (self) => { }).SetAppear() as Slider;
+				srow1.AddElement(masterVolumeSlider);
+				var masterVolumeText = new Label($"Master Volume: {masterVolumeSlider.Percent}").SetAppear() as Label;
+				masterVolumeSlider.OnChange = (self) =>
+				{
+					GameAudio.Volume = self.Percent;
+					GameAudio.Play("click");
+					masterVolumeText.Text = $"Master Volume: {Math.Round(masterVolumeSlider.Percent * 100)}/100";
+				};
+				srow1.AddElement(masterVolumeText);
+				var resolutionChoice = new Dropdown(Asliipa.MainGUIColor, "Choose...", new(0), new(0, 10), "1920x1080", "1600x900");
+				var resolutionText = new Label("Window Resolution");
+				srow2.AddElement(resolutionChoice);
+				srow2.AddElement(resolutionText);
+
+
+
+				var mainMenu = Window.LabeledWindow(new(width / 4, height / 4), size, Asliipa.MainGUIColor, "Main Menu").WithGUI(ClientGUI).SetPopup() as Window;
+				mainMenu.AddOnUpdate((ve, gt) =>
+				{
+					if (InputHandler.GetKeyState(Keys.Escape) == KeyStates.JPressed)
+					{
+						mainMenu.Enabled = !mainMenu.Enabled;
+					}
+				});
+
+
+
+				var mainmenuButtons = new ColumnList(new(width / 2 - width / 4, height / 10), new(0));
+				mainMenu.AddElement(mainmenuButtons);
+
+				var SettingsButton = new Button(new(width / 2, 0), new(1, 20), Asliipa.MainGUIColor, "Settings", () => { mainMenu.Enabled = false; settings.Enabled = true; }).SetAppear() as Button;
+				SettingsButton.Position = new(SettingsButton.Position.X - (int)(SettingsButton.StringDim.X / 2), SettingsButton.Position.Y);
+				mainmenuButtons.AddElement(SettingsButton);
+
+				var ExitGameButton = new Button(new(width / 2, 0), new(1, 20), Asliipa.MainGUIColor, "Exit Game", () => { ExitRequested = true; }).SetAppear() as Button;
+				ExitGameButton.Position = new(ExitGameButton.Position.X - (int)(ExitGameButton.StringDim.X / 2), ExitGameButton.Position.Y);
+				mainmenuButtons.AddElement(ExitGameButton);
+
+
+				mainMenu.Enabled = false;
+				mainMenu.AddToRender(this);
+				settings.Enabled = false;
+				settings.AddToRender(this);
+			}
+
+			//Setup sidebar gui
+			{
+				//Create sidebar with selected tile/entity info
+				var sidebarsize = GetViewport();
+				sidebarsize.X /= 5;
+				//init the sidebar right behind the window
+				var sidebar = Window.LabeledWindow(new(-sidebarsize.X, 0), sidebarsize, Asliipa.MainGUIColor, "");
+				//set sidebar button to move it outside the window instead
+				(sidebar[0] as Button).OnClick = () => { ToggleSidebar(); };
+				//column to hold other elements
+				var column = new ColumnList(new(-sidebarsize.X - sidebar.Position.X, 0), new(sidebar.Position.X / 2, 0));
+				sidebar.AddElement(column);
+				//image to hold targeted tile/entity texture
+				var texture = new Image(new(sidebar.Position.X / 2, 0), new Texture2D(Sb.GraphicsDevice, Tile.TextureSize, Tile.TextureSize), Tile.TextureSize);
+				column.AddElement(texture);
+				var header = new Label("header");
+				header.Position = new(column.Position.X, 0);
+				var desc = new Label("description");
+				desc.Position = new(column.Position.X, 0);
+				column.AddElement(header);
+				column.AddElement(desc);
+				sidebar.AddToRender(this);
+				sidebar.AddOnUpdate((ve, gt) => { if (InputHandler.GetKeyState(Keys.F) == KeyStates.JPressed) { ToggleSidebar(); } });
+			}
 		}
 		public void UpdateSidebar(Texture2D texture, string header, string desc)
 		{

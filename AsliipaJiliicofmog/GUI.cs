@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using AsliipaJiliicofmog.VisualElements;
 
 namespace AsliipaJiliicofmog
 {
@@ -35,10 +35,10 @@ namespace AsliipaJiliicofmog
 			{
 				OnEnable += (self) =>
 				{
-					Animator.Add(new Animation(15, Dimension.X, (t, coeff) => { Dimension = new((int)(Easing.OutBack(t) * coeff), Dimension.Y); }));
-					Animator.Add(new Animation(15, Dimension.Y, (t, coeff) => { Dimension = new(Dimension.X, (int)(Easing.OutBack(t) * coeff)); }));
-					Animator.Add(new Animation(15, Position.X, (t, coeff) => { Position = new((int)(coeff * 2 - Easing.OutBack(t) * coeff), Position.Y); }));
-					Animator.Add(new Animation(15, Position.Y, (t, coeff) => { Position = new(Position.X, (int)(coeff * 2 - Easing.OutBack(t) * coeff)); }));
+					Animator.Add(new Animation(15, Dimension.X, (t, coeff) => { Dimension = new((int)(Easing.OutBack(t) * coeff), Dimension.Y); }, $"{GetHashCode()}dx"));
+					Animator.Add(new Animation(15, Dimension.Y, (t, coeff) => { Dimension = new(Dimension.X, (int)(Easing.OutBack(t) * coeff)); }, $"{GetHashCode()}dy"));
+					Animator.Add(new Animation(15, Position.X, (t, coeff) => { Position = new((int)(coeff * 2 - Easing.OutBack(t) * coeff), Position.Y); }, $"{GetHashCode()}px"));
+					Animator.Add(new Animation(15, Position.Y, (t, coeff) => { Position = new(Position.X, (int)(coeff * 2 - Easing.OutBack(t) * coeff)); }, $"{GetHashCode()}py"));
 					Animator.Add(new Animation(15, 1, (t, coeff) => { Transparency = Easing.Linear(t); }));
 				};
 				return this;
@@ -48,11 +48,11 @@ namespace AsliipaJiliicofmog
 			{
 				OnEnable += (self) =>
 				{
-					Animator.Add(new Animation(5, 1, (t, coeff) => { self.Transparency = t; }));
+					Animator.Add(new Animation(5, 1, (t, coeff) => { self.Transparency = t; }, $"{GetHashCode()}tx"));
 				};
 				OnDisable += (self) =>
 				{
-					Animator.Add(new Animation(5, 1, (t, coeff) => { self.Transparency = 1-t; }));
+					Animator.Add(new Animation(5, 1, (t, coeff) => { self.Transparency = 1-t; }, $"{GetHashCode()}tx"));
 				};
 				return this;
 			}
@@ -352,7 +352,9 @@ namespace AsliipaJiliicofmog
 		public abstract class UIContainer : VisualElement
 		{
 			public List<VisualElement> Elements;
-			public override void AddOnEnable(Action<VisualElement> val) { OnEnable = (element) => { foreach (var e in Elements) { e.Enabled = true; } val(element); }; }
+			protected GUI? Gui;
+			protected string? UiGroup;
+			public override void AddOnEnable(Action<VisualElement> val) { OnEnable = (element) => { foreach (var e in Elements) { e.Enabled = true; } Gui?.ActivateUI(this, UiGroup); val(element); }; }
 			public override void AddOnDisable(Action<VisualElement> val) { OnDisable = (element) => { foreach (var e in Elements) { e.Enabled = false; } val(element); }; }
 			public override Point Position { get => base.Position; set { var shift = value - _Position; foreach (var e in Elements) { e.Position += shift; } _Position = value; } }
 			public UIContainer(Point pos, Point size) : base(pos, size, true)
@@ -374,6 +376,13 @@ namespace AsliipaJiliicofmog
 						element.Update(ve, gt);
 					act(ve, gt);
 				};
+			}
+
+			public UIContainer WithGUI(GUI gui, string uigroup = "default")
+			{
+				Gui = gui;
+				UiGroup = uigroup;
+				return this;
 			}
 
 		}
@@ -545,7 +554,7 @@ namespace AsliipaJiliicofmog
 				}
 
 				//max amount of elements that can be rendered
-				int amount = Dimension.Y / (int)(ElementHeight + Padding);
+				int amount = Dimension.Y / (int)(ElementHeight ?? 0 + Padding);
 
 				//if there are less elements than the amount that can be rendered,
 				//render all elements
@@ -591,7 +600,7 @@ namespace AsliipaJiliicofmog
 			{
 				Update = (ve, gt) =>
 				{
-					int amount = Dimension.Y / (int)ElementHeight;
+					int amount = Dimension.Y / (int)(ElementHeight ?? Dimension.Y);
 					if (GetUIBounds().Test(InputHandler.GetMousePos()))
 					{
 						if (InputHandler.Scroll > 0)
@@ -744,10 +753,9 @@ namespace AsliipaJiliicofmog
 		}
 	}
 
-	class GUI : ICloneable
+	public class GUI
 	{
-		public Action<GUI, SpriteBatch, GameTime> Render;
-		public List<GUI> GUIList;
+		public Dictionary<string, UIContainer> UIGroups;
 		public static bool GUIDEBUG = false;
 
 		public static Texture2D Flatcolor;
@@ -761,18 +769,21 @@ namespace AsliipaJiliicofmog
 			Flatcolor.SetData(data);
 		}
 
-		public GUI(Action<GUI, SpriteBatch, GameTime> render, params GUI[]? guilist)
+		public GUI()
 		{
-			Render = render;
-			GUIList = new(guilist ?? new GUI[0]);
+			UIGroups = new();
 		}
 
-		public object Clone()
+		public void ActivateUI(UIContainer element, string group = "default")
 		{
-			List<GUI> newguilist = new();
-			foreach(var gui in GUIList) { newguilist.Add(gui.Clone() as GUI); }
-			GUI newgui = new(Render, newguilist.ToArray());
-			return newgui;
+			if(UIGroups.ContainsKey(group) && UIGroups[group] != element)
+			{
+				UIGroups[group].Enabled = false;
+				UIGroups[group] = element;
+			} else
+			{
+				UIGroups[group] = element;
+			}
 		}
 
 	}
