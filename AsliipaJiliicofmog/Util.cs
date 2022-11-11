@@ -9,6 +9,7 @@ namespace AsliipaJiliicofmog
 {
 	static class Util
 	{
+        public delegate Texture2D Shader(Texture2D input);
 		static public void EachXY(int mx, int my, Action<int, int> act, int sx = 0, int sy = 0)
 		{
 			for (int y = sy; y < my; y++)
@@ -166,6 +167,84 @@ namespace AsliipaJiliicofmog
             return new((float)x, (float)y);
             
 		}
+
+        //Reduce 2D coordinates to 1D coordinates
+        static public int Flatten(int x, int y, int w)
+		{
+            return y * w + x;
+		}
+
+        public static Texture2D ChangeTexture(Texture2D input, Shader shader)
+        {
+            return shader(input);
+        }
+        public static int Round(float x)
+		{
+            return (int)Math.Round(x);
+		}
+
+        public static Shader ShearMapX(float k, GraphicsDevice gd)
+		{
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                var new_w = (int)Math.Ceiling(h * k + w);
+                Color[] newtexture = new Color[h * new_w];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                EachXY(w, h, (x,y) => 
+                {
+                    newtexture[Flatten(x + (int)(k * y), y, new_w)] = oldtexture[Flatten(x, y, w)];
+                });
+                Texture2D texture = new(gd, new_w, h);
+                texture.SetData(newtexture);
+                return texture;
+            };
+		}
+        public static Shader ShrinkMapY(float k, GraphicsDevice gd)
+		{
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                var new_h = (int)Math.Ceiling(h / k);
+                Color[] newtexture = new Color[w * new_h];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                EachXY(w, h, (x, y) =>
+                {
+                    var ypos = Round(y / k);
+                    newtexture[Flatten(x, ypos, w)] = oldtexture[Flatten(x, y, w)];
+                });
+                Texture2D texture = new(gd, w, new_h);
+                texture.SetData(newtexture);
+                return texture;
+
+            };
+		}
+        public static Shader ColorOpaque(Color color, GraphicsDevice gd)
+		{
+            return (input) => 
+            {
+                var w = input.Width;
+                var h = input.Height;
+                Color[] newtexture = new Color[w*h];
+                Color[] oldtexture = new Color[w*h];
+                input.GetData(oldtexture);
+                EachXY(w, h, (x, y) =>
+                {
+                    Color currentcolor = oldtexture[Flatten(x, y, w)];
+                    if (!(currentcolor.A == 0))
+                        currentcolor = color;
+                    newtexture[Flatten(x, y, w)] = currentcolor;
+                });
+                Texture2D texture = new(gd, w, h);
+                texture.SetData(newtexture);
+                return texture;
+            };
+            
+        }
     }
 
 	public class WeightedList<T>
@@ -203,5 +282,6 @@ namespace AsliipaJiliicofmog
 			}
             return newlist;
 		}
+
 	}
 }

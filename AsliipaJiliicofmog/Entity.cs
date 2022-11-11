@@ -48,7 +48,6 @@ namespace AsliipaJiliicofmog
 
 			}
 		}
-
 		public virtual void SetHitbox()
 		{
 			EntityHitbox = Hitbox.FromSize(new Vector2(Position.X, Position.Y + EntityTexture.Height - 9), new Vector2(EntityTexture.Width, 9));
@@ -73,8 +72,10 @@ namespace AsliipaJiliicofmog
 				SetHitbox();
 			OnUpdate = (scene) => { };
 			Collidable = coll;
+
 			GenerateInfobox();
 		}
+		public virtual void DrawShadow(SpriteBatch sb, Vector2 offset) { }
 		public Vector2 AnchorOffset()
 		{
 			if (EntityTexture == null)

@@ -30,6 +30,7 @@ namespace AsliipaJiliicofmog
 		public void Process(SpriteBatch sb, Vector2 offset, GameClient gc, GameTime gt)
 		{
 			var orderedEntities = Entities.OrderBy(e => e.Position.Y).ToList();
+			foreach(var entity in orderedEntities) { entity.DrawShadow(sb, offset); }
 			foreach(var entity in orderedEntities) { entity.OnUpdate(gc); if (entity.RenderEnabled) { entity.Render(sb, offset, gt, gc); } }
 		}
 	}
@@ -231,7 +232,7 @@ namespace AsliipaJiliicofmog
 			player.Inventory.AddItem(new Tool(Registry.TextureRegistry["axe"], "stone axe", "tree cutting tool and a sharp weapon").WithTypes(ToolType.Cutting));
 			//Registry.GetCreature("zip jr").AddToRender(this);
 			//for(int i = 0; i < 20; i++)
-				//player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], "yea", "yea"));
+			//player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], "yea", "yea"));
 
 			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.7f), new ToolType[] { ToolType.Cutting });
 			tree.Drops.Add(new Item(Registry.TextureRegistry["log"], "log", "chopped log of a tree"), 1);

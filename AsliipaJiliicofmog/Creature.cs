@@ -15,24 +15,27 @@ namespace AsliipaJiliicofmog
 		public bool CastShadow = true;
 
 		public float Speed = 1;
+		public Texture2D Shadow;
+		public Vector2 ShadowOffset()
+		{
+			//return Vector2.Zero;
+			return new Vector2(-1f, .5f) * (new Vector2(EntityTexture.Width, EntityTexture.Height) + AnchorOffset() * new Vector2(1, 1.5f));
+		}
 
 		public Creature(Texture2D texture, string name, Vector2? anchor = null, string? desc = null, Vector2? pos = null) : base(pos ?? new(0), texture, name, anchor: anchor, desc: desc)
 		{
 			Collidable = true;
 			OnClick = () => { };
+			GenerateShadow(texture.GraphicsDevice);
+		}
+		public override void DrawShadow(SpriteBatch sb, Vector2 offset)
+		{
+			//Draw entity shadow
+			if (CastShadow)
+				sb.Draw(Shadow, Position + offset + ShadowOffset(), Color.Black);
 		}
 		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
-			//Draw entity shadow
-			if(CastShadow)
-			{
-				Rectangle shadow_bounds = new((int)(Position.X + offset.X), (int)(Position.Y + EntityTexture.Height - 9 + offset.Y), EntityTexture.Width, 9);
-				shadow_bounds.Offset(AnchorOffset());
-				sb.Draw(GUI.Flatcolor, shadow_bounds, new Color(Color.Black, 137));
-			}
-			
-
-			
 
 			Hitbox schitbox = ScreenCoordsHitbox(offset);
 			if (GUI.GUIDEBUG)
@@ -58,6 +61,12 @@ namespace AsliipaJiliicofmog
 			creature.Node = Node;
 			creature.EntityHitbox = EntityHitbox.Clone();
 			return creature;
+		}
+		public virtual void GenerateShadow(GraphicsDevice gd)
+		{
+			Shadow = Util.ChangeTexture(EntityTexture, Util.ShearMapX(1.03f, gd));
+			Shadow = Util.ChangeTexture(Shadow, Util.ShrinkMapY(3, gd));
+			Shadow = Util.ChangeTexture(Shadow, Util.ColorOpaque(Color.Black, gd));
 		}
 	}
 

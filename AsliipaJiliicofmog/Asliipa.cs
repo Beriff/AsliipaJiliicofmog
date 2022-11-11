@@ -72,7 +72,9 @@ namespace AsliipaJiliicofmog
 			ParticleEmitter.Circle(new(25), 300, 10).AddToRender(Client);
 			new Creature(Registry.TextureRegistry["crate"], "crate", pos: new(150)).AddToRender(Client);
 			
-			
+			//TODO
+			//1D projection shadow
+			//runtime shader class??
 			
 		}
 
