@@ -129,7 +129,7 @@ namespace AsliipaJiliicofmog
 				{
 					Health = MaxHealth;
 					Placeable default_drop = (Placeable)drop;
-					default_drop.PlaceableEntity = Clone() as Creature;
+					default_drop.PlaceableEntity = this;
 					new DroppedItem(default_drop, Position).AddToRender(Gc);
 					Gc.RemoveEntity(this);
 				} else 

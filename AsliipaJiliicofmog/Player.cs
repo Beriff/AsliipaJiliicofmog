@@ -122,8 +122,8 @@ namespace AsliipaJiliicofmog
 					{
 						var equipped = gc.Player.Equipped;
 						var entity = (equipped as Placeable).PlaceableEntity;
-						entity.Position = worldpos;
 						entity.AddToRender(gc);
+						entity.Move(gc, worldpos - entity.Position);
 						equipped.OnUnequip(gc);
 						gc.Player.Equipped = null;
 						gc.Player.Inventory.RemoveItem(equipped);

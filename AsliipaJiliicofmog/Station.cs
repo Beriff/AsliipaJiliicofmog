@@ -49,17 +49,20 @@ namespace AsliipaJiliicofmog
 			return self;
 		}
 	}
-	public abstract class Station : Creature
+	public abstract class Station : Prop
 	{
 		public List<Recipe> Recipes;
 
 		//Station UI
 		public Window UIWindow;
 
-		public Station(GameClient gc, Texture2D texture, string name, string desc) : base(texture, name, desc: desc)
+		public Station(GameClient gc, Texture2D texture, string name, string desc) : 
+			base(gc, texture, name, desc, 1, 5, null, new ToolType[] { ToolType.Cutting })
 		{
 			Recipes = new();
 
+			CustomDrop = false;
+			Drops.Add(GetItem(), 1);
 			//Set up UI
 			var viewport = gc.Sb.GraphicsDevice.Viewport;
 			UIWindow = Window.LabeledWindow(new(viewport.Width / 4, viewport.Height / 2), new(viewport.Width / 2, viewport.Height / 2), Asliipa.MainGUIColor, name)

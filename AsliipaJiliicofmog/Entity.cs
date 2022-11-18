@@ -121,7 +121,7 @@ namespace AsliipaJiliicofmog
 		}
 		public virtual void AddToRender(GameClient gc)
 		{
-
+			OnPlace(gc);
 			gc.AddEntity(this);
 		}
 		/// <summary>

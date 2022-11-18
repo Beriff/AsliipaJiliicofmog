@@ -95,7 +95,7 @@ namespace AsliipaJiliicofmog
 		public void AddEntity(Entity e)
 		{
 			EntityProcessor.Entities.Add(e);
-			e.OnPlace(this);
+			//e.OnPlace(this);
 		}
 
 		public Vector2 ScreenCoords2World(Vector2 cursorpos, GraphicsDevice gd)

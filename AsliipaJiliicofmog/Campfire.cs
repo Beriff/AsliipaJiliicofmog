@@ -10,9 +10,9 @@ namespace AsliipaJiliicofmog
 		public ParticleEmitter Fire;
 		public Campfire(GameClient gc) : base(gc, Registry.TextureRegistry["campfire_base"], "campfire", "A place to rest and cook")
 		{
-			Fire = new ParticleEmitter(Vector2.Zero, Particle.FireParticle, .3f);
+			Fire = new ParticleEmitter(Vector2.Zero, Particle.FireParticle, .6f);
 
-			OnPlace = (gc) => Fire.AddToRender(gc);
+			OnPlace = (gc) => { Fire.AddToRender(gc); };
 			OnRemove = (gc) => gc.RemoveEntity(Fire);
 		}
 		public override bool Move(GameClient gc, Vector2 offset)
