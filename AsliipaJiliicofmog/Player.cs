@@ -41,10 +41,17 @@ namespace AsliipaJiliicofmog
 		{
 			return Name;
 		}
+		public bool IsCloneOf(Item other)
+		{
+			return Name == other.Name && Description == other.Description && ItemTexture == other.ItemTexture;
+		}
 	}
 	public class Equippable : Item
 	{
 		public Vector2 Anchor;
+		public Action<GameClient> OnEquip = (gc) => { };
+		public Action<GameClient> OnUnequip = (gc) => { };
+		public Action<GameClient> EquippedUpdate = (gc) => { };
 		public Equippable(Texture2D texture, string name, string desc, Vector2? anchor = null) : base(texture, name, desc)
 		{
 			Anchor = anchor ?? new(0, 0);
@@ -64,10 +71,65 @@ namespace AsliipaJiliicofmog
 				new("Equip", () =>
 				{
 					if (inv.Client.Player.Equipped == this)
+					{
 						inv.Client.Player.Equipped = null;
+						OnUnequip(inv.Client);
+					}
 					else
+					{
 						inv.Client.Player.Equipped = this;
+						OnEquip(inv.Client);
+					}
+						
 				})
+			};
+		}
+	}
+	public class Placeable : Equippable
+	{
+		public Texture2D AvailableTexture;
+		public Texture2D BlockedTexture;
+		public Entity PlaceableEntity;
+		public Placeable(Entity entity) : base(entity.EntityTexture.Default, entity.Name, entity.Description, entity.Anchor)
+		{
+			PlaceableEntity = entity;
+			AvailableTexture =
+				Util.ChangeTexture(entity.EntityTexture.Default,
+				Util.ColorOpaque(new Color(Color.Green, .5f), entity.EntityTexture.Default.GraphicsDevice));
+			BlockedTexture =
+				Util.ChangeTexture(entity.EntityTexture.Default,
+				Util.ColorOpaque(new Color(Color.Red, .5f), entity.EntityTexture.Default.GraphicsDevice));
+
+			EquippedUpdate = (gc) =>
+			{
+				Vector2 shift = ItemTexture.Size() / 2;
+
+
+				var worldpos = gc.ScreenCoords2World(InputHandler.GetMousePos(), ItemTexture.GraphicsDevice);
+
+				//snap to grid if CTRL is held
+				//if(InputHandler.GetKeyState(Keys.LeftControl) == KeyStates.Hold)
+					//worldpos = new((int)Math.Ceiling(worldpos.X / Tile.TextureSize), (int)Math.Ceiling(worldpos.Y / Tile.TextureSize));
+
+				//Draw texture according to whether the position os obstructed
+				if (gc.EntityProcessor.Obstructed(Hitbox.FromSize(worldpos, ItemTexture.Size())))
+					gc.Sb.Draw(BlockedTexture, InputHandler.GetMousePos(), Color.White);
+				else
+				{
+					gc.Sb.Draw(AvailableTexture, InputHandler.GetMousePos(), Color.White);
+					var state = InputHandler.LMBState();
+					if (state == KeyStates.Hold)
+					{
+						var equipped = gc.Player.Equipped;
+						var entity = (equipped as Placeable).PlaceableEntity;
+						entity.Position = worldpos;
+						entity.AddToRender(gc);
+						equipped.OnUnequip(gc);
+						gc.Player.Equipped = null;
+						gc.Player.Inventory.RemoveItem(equipped);
+						
+					}
+				}
 			};
 		}
 	}
@@ -80,6 +142,21 @@ namespace AsliipaJiliicofmog
 
 		public Item? FocusedItem;
 		bool UpdateRequired = false;
+
+		public bool Contains(Item target)
+		{
+			foreach (var item in InvSpace)
+				if (!item.IsCloneOf(target))
+					return false;
+			return true;
+		}
+		public Item GetItemByClone(Item clone)
+		{
+			foreach(var item in InvSpace)
+				if(clone.IsCloneOf(item))
+					return item;
+			return null;
+		}
 		
 		public Item this[int i]
 		{
@@ -160,6 +237,11 @@ namespace AsliipaJiliicofmog
 			foreach(var item in items) { InvSpace.Add(item); }
 			UpdateList();
 		}
+		/// <summary>
+		/// Removes the given item. Use with GetItemByClone() if you don't have direct
+		/// item reference
+		/// </summary>
+		/// <param name="item">Item reference</param>
 		public void RemoveItem(Item item)
 		{
 			InvSpace.Remove(item);
@@ -191,7 +273,7 @@ namespace AsliipaJiliicofmog
 		}
 		public override void Render(SpriteBatch sb, Vector2 offset, GameTime gt, GameClient gc)
 		{
-			sb.Draw(EntityTexture, Position + offset + AnchorOffset(), Color.Lerp(Color.White, Tint, .3f));
+			EntityTexture.Render(sb, Position + offset + AnchorOffset(), gt, Color.Lerp(Color.White, Tint, .3f));
 			if(ScreenCoordsHitbox(offset).Test(InputHandler.GetMousePos()))
 			{
 				Tint = Color.Black * Easing.Signaling((float)gt.TotalGameTime.TotalSeconds);

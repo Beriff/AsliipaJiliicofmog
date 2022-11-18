@@ -58,14 +58,15 @@ namespace AsliipaJiliicofmog
 					(int)decoded.toughness, (int)decoded.health, anchor, tooltypes.ToArray());
 				var prop = PropRegistry[name];
 				prop.CastShadow = (bool)decoded.cast_shadow;
-				//If no custom drops intended, add a default item drop
-				if(!(bool)decoded.customdrop)
-				{
-					prop.Drops.Add(new Item(prop.EntityTexture, prop.Name, prop.Description), 1);
-				}
+				prop.CustomDrop = (bool)decoded.customdrop;
 			}
 		}
-		public static Prop GetProp(string name) => (Prop)PropRegistry[name].Clone();
+		public static Prop GetProp(string name)
+		{
+			var prop = (Prop)PropRegistry[name].Clone();
+			return prop;
+		}
+
 		public static Creature GetCreature(string name)
 		{
 			var creature = CreatureRegistry[name].creature.Clone() as Creature;

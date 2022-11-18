@@ -33,6 +33,23 @@ namespace AsliipaJiliicofmog
 			foreach(var entity in orderedEntities) { entity.DrawShadow(sb, offset); }
 			foreach(var entity in orderedEntities) { entity.OnUpdate(gc); if (entity.RenderEnabled) { entity.Render(sb, offset, gt, gc); } }
 		}
+
+		public bool Obstructed(Hitbox hitbox)
+		{
+			foreach (var entity in Entities)
+			{
+				if (entity.EntityHitbox.Test(hitbox))
+				{
+					if (entity.Collidable)
+						return true;
+				}
+				else if (hitbox.Start.X < 0 || hitbox.End.X > Scene.SceneSizePixels || hitbox.Start.Y < 0 || hitbox.End.Y > Scene.SceneSizePixels)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 	public class GameClient
 	{
@@ -73,13 +90,15 @@ namespace AsliipaJiliicofmog
 					ve.Render(sb);
 			}
 			InputHandler.Update(this, Keyboard.GetState(), Mouse.GetState());
+			Player.Equipped?.EquippedUpdate(this);
 		}
 		public void AddEntity(Entity e)
 		{
 			EntityProcessor.Entities.Add(e);
+			e.OnPlace(this);
 		}
 
-		public Tile? ScreenCoords2Tile(Vector2 cursorpos, GraphicsDevice gd)
+		public Vector2 ScreenCoords2World(Vector2 cursorpos, GraphicsDevice gd)
 		{
 			//convert topleft coordinate system to centered
 			Viewport vp = gd.Viewport;
@@ -87,6 +106,11 @@ namespace AsliipaJiliicofmog
 
 			//account for camera shift
 			cursorpos += Camera;
+			return cursorpos;
+		}
+		public Tile? ScreenCoords2Tile(Vector2 cursorpos, GraphicsDevice gd)
+		{
+			cursorpos = ScreenCoords2World(cursorpos, gd);
 
 			if(cursorpos.X < 0 || cursorpos.Y < 0 || cursorpos.X > Scene.SceneSizePixels - Tile.TextureSize || cursorpos.Y > Scene.SceneSizePixels - Tile.TextureSize)
 			{
@@ -214,6 +238,7 @@ namespace AsliipaJiliicofmog
 		}
 		public void RemoveEntity(Entity e)
 		{
+			e.OnRemove(this);
 			EntityProcessor.Entities.Remove(e);
 		}
 

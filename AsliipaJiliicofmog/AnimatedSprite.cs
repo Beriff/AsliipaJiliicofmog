@@ -7,7 +7,32 @@ using System.Text;
 
 namespace AsliipaJiliicofmog
 {
-	class AnimatedSprite
+	public interface ISprite
+	{
+		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime, Color color);
+		public int Width { get; }
+		public int Height { get; }
+		public Texture2D Default { get; }
+		public Texture2D FullTexture { get; }
+	}
+	class Sprite : ISprite
+	{
+		public Texture2D Texture;
+		public Sprite(Texture2D texture)
+		{
+			Texture = texture;
+		}
+		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime, Color color)
+		{
+			sb.Draw(Texture, offset, color);
+		}
+		public int Width { get => Texture.Width; }
+		public int Height { get => Texture.Height; }
+		public Texture2D Default { get => Texture; }
+		public Texture2D FullTexture { get => Default; }
+
+	}
+	class AnimatedSprite : ISprite
 	{
 		public readonly Texture2D TextureAtlasStrip;
 		public int CellSize;
@@ -26,13 +51,13 @@ namespace AsliipaJiliicofmog
 			CurrentCell = 0;
 		}
 
-		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime)
+		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime, Color color)
 		{
 			if (gametime.TotalGameTime.TotalSeconds % Framerate == 0)
 				CurrentCell = (CurrentCell + 1) % TotalFrames;
 
 			sb.Draw(TextureAtlasStrip, offset,
-				new Rectangle(new Point(CurrentCell * CellSize, 0), new Point(CellSize, CellSize)), Color.White);
+				new Rectangle(new Point(CurrentCell * CellSize, 0), new Point(CellSize, CellSize)), color);
 		}
 
 		public static AnimatedSprite LoadFromFile(string path, GraphicsDevice gd, int framerate = 20, int cellsize = 32)
@@ -40,6 +65,34 @@ namespace AsliipaJiliicofmog
 			var texture = Texture2D.FromStream(gd, new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None));
 			return new(texture, framerate, cellsize);
 		}
+
+		public int Width { get => CellSize; }
+		public int Height { get => TextureAtlasStrip.Height; }
+		public Texture2D Default { get => TextureAtlasStrip.Subtexture(Width, Height); }
+		public Texture2D FullTexture { get => TextureAtlasStrip; }
+	}
+
+	class CombinedSprite : ISprite
+	{
+		public ISprite[] Textures;
+		public Vector2[] TextureOffsets;
+
+		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime, Color color)
+		{
+			for (int i = 0; i < Textures.Length; i++)
+				Textures[i].Render(sb, offset + TextureOffsets[i], gametime, color);
+		}
+
+		public int Width { get => Textures[0].Width; }
+		public int Height { get => Textures[0].Height; }
+		public Texture2D Default { get => Textures[0].Default; }
+		public Texture2D FullTexture { get => Textures[0].FullTexture; }
+
+		public CombinedSprite(params ISprite[] sprites)
+		{
+			Textures = sprites;
+		}
+
 	}
 
 	class StateMachine

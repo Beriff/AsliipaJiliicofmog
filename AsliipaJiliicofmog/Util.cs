@@ -174,6 +174,21 @@ namespace AsliipaJiliicofmog
             return y * w + x;
 		}
 
+        static public Texture2D Subtexture(this Texture2D self, int width, int height)
+		{
+            var newtexture = new Texture2D(self.GraphicsDevice, width, height);
+            Color[] olddata = new Color[self.Width * self.Height];
+            self.GetData(olddata);
+            Color[] newdata = new Color[width * height];
+            EachXY(width, height, (x, y) => { newdata[Flatten(x, y, width)] = olddata[Flatten(x, y, self.Width)]; });
+            newtexture.SetData(newdata);
+            return newtexture;
+		}
+        public static Vector2 Size(this Texture2D self)
+		{
+            return new(self.Width, self.Height);
+		}
+
         public static Texture2D ChangeTexture(Texture2D input, Shader shader)
         {
             return shader(input);

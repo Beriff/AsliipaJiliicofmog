@@ -54,19 +54,13 @@ namespace AsliipaJiliicofmog
 			}
 			var roffset = new Vector2(f(offset.X), f(offset.Y));
 
+
 			//DRAW PARTICLES
 			foreach(var particle in Particles)
 			{
 				particle.Render(sb, -roffset + centeroffset);
 			}
 			gc.EntityProcessor.Process(sb, -roffset + centeroffset, gc, gt);
-			//DRAW ENTITIES -- moved to GameClient.EntityProcessor
-			/*foreach(var entity in Entities)
-			{
-				if (!entity.RenderEnabled)
-					continue;
-				entity.Render(sb, -roffset + centeroffset, gt, gc);
-			}*/
 		}
 
 		public Scene(Tile tile)

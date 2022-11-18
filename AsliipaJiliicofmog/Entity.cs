@@ -9,7 +9,7 @@ namespace AsliipaJiliicofmog
 		public Vector2 Position;
 		public Hitbox EntityHitbox;
 
-		public Texture2D EntityTexture;
+		public ISprite EntityTexture;
 		public Vector2 Anchor;
 
 		public Color Color;
@@ -20,6 +20,9 @@ namespace AsliipaJiliicofmog
 
 		public bool RenderEnabled = true;
 		public bool Collidable;
+
+		public Action<GameClient> OnRemove = (gc) => { };
+		public Action<GameClient> OnPlace = (gc) => { };
 
 		public VisualElements.Infobox EntityInfobox;
 
@@ -53,6 +56,7 @@ namespace AsliipaJiliicofmog
 			EntityHitbox = Hitbox.FromSize(new Vector2(Position.X, Position.Y + EntityTexture.Height - 9), new Vector2(EntityTexture.Width, 9));
 			EntityHitbox = EntityHitbox + AnchorOffset();
 		}
+		public Placeable GetItem() => new Placeable(this);
 
 		public Entity
 			(Vector2 pos, Texture2D texture, string name,
@@ -60,7 +64,7 @@ namespace AsliipaJiliicofmog
 			Vector2? anchor = null, Hitbox? hitbox = null, bool coll = false)
 		{
 			Position = pos;
-			EntityTexture = texture;
+			EntityTexture = new Sprite(texture);
 			Name = name;
 			Color = col ?? Color.White;
 			Tint = tint ?? Color;
@@ -91,7 +95,7 @@ namespace AsliipaJiliicofmog
 			//if debug is enabled, draw hitboxes
 			if (GUI.GUIDEBUG)
 				sb.Draw(GUI.Flatcolor, offset + Position + AnchorOffset(), EntityHitbox.ToRect(), Color.Lerp(Color.Red, Color.Black, .3f));
-			sb.Draw(EntityTexture, Position + offset + AnchorOffset(), Color.Lerp(Color.White, Tint, .3f));
+			EntityTexture.Render(sb, Position + offset + AnchorOffset(), gt, Color.Lerp(Color.White, Tint, .3f));
 			//draw infobox
 			Hitbox schitbox = ScreenCoordsHitbox(offset);
 			var mousepos = InputHandler.GetMousePos();
@@ -105,7 +109,7 @@ namespace AsliipaJiliicofmog
 				//if clicked on entity, toggle sidebar
 				if (InputHandler.RMBState() == KeyStates.JPressed)
 				{
-					gc.UpdateSidebar(EntityTexture, Name, Description);
+					gc.UpdateSidebar(EntityTexture.Default, Name, Description);
 					gc.ToggleSidebar();
 				}
 			}
