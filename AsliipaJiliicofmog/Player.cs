@@ -33,7 +33,7 @@ namespace AsliipaJiliicofmog
 			) };
 		}
 
-		public object Clone()
+		public virtual object Clone()
 		{
 			return new Item(ItemTexture, Name, Description);
 		}
@@ -131,6 +131,42 @@ namespace AsliipaJiliicofmog
 					}
 				}
 			};
+		}
+	}
+	public class Usable : Item
+	{
+		public Action<GameClient> OnUse;
+		public Usable(Texture2D texture, string name, string desc, Action<GameClient> onuse) : base(texture, name, desc)
+		{
+			OnUse = onuse;
+		}
+		public override List<(string name, Action action)> GetActions(Inventory inv)
+		{
+			return new()
+			{
+				new("Drop", () =>
+				{
+					inv.RemoveItem(inv.FocusedItem);
+					new DroppedItem(inv.FocusedItem, inv.Client.Player.Position).AddToRender(inv.Client);
+				}),
+				new("Use", () =>
+				{
+					OnUse(inv.Client);
+				})
+			};
+		}
+		public static Usable NewFood(Texture2D texture, string name, string desc, float satiate)
+		{
+			return new(texture, name, desc, (gc) =>
+			{
+				var inv = gc.Player.Inventory;
+				gc.Player.Hunger += satiate;
+				inv.RemoveItem(inv.FocusedItem);
+			});
+		}
+		public override object Clone()
+		{
+			return new Usable(ItemTexture, Name, Description, OnUse);
 		}
 	}
 	public class Inventory
@@ -249,7 +285,6 @@ namespace AsliipaJiliicofmog
 			//SetFocusedItem(InvSpace[0]);
 		}
 	}
-
 	public class DroppedItem : Entity
 	{
 		public Item Item;
@@ -290,11 +325,27 @@ namespace AsliipaJiliicofmog
 	{
 		public Inventory Inventory;
 		public Equippable Equipped;
+
+		//Player stats
+		public float Hunger = 100; // out of 100
+		public int Level = 1;
+		public int Exp = 0;
+
+		private int _hashed_exp_req = 11;
+
+		public float GetExpRequired()
+		{
+			if (_hashed_exp_req != 0)
+				return (float)Math.Pow(Level, Math.Pow(Level, 0.4f));
+			return _hashed_exp_req;
+		}
+
 		public override Action<GameClient> OnUpdate
 		{
 			get => base.OnUpdate; set
 			{
 				_OnUpdate = Behavior.PlayerController(this) + value;
+				_OnUpdate += (gc) => { Hunger -= 0.1f; };
 			}
 		}
 		public Player(Texture2D texture, string name, GameClient gc) : base(texture, name, pos: new(70))

@@ -729,7 +729,6 @@ namespace AsliipaJiliicofmog
 				//System.Diagnostics.Debug.WriteLine(Dimension);
 			}
 		}
-
 		class Image : VisualElement
 		{
 			public Texture2D ImageTexture;
@@ -749,6 +748,26 @@ namespace AsliipaJiliicofmog
 			public override void Render(SpriteBatch sb, Point? position = null)
 			{
 				sb.Draw(ImageTexture, (position ?? Position).ToVector2(), Color.White);
+			}
+		}
+		class Frame : UIContainer
+		{
+			Color FrameColor;
+			public Frame(Color color, Point position, Point size) : base(position, size)
+			{
+				FrameColor = color;
+				AddOnUpdate((ve, gt) => { });
+			}
+			public override void AddElement(VisualElement element)
+			{
+				Elements.Add(element);
+			}
+			public override void Render(SpriteBatch sb, Point? position = null)
+			{
+				var offset = position ?? Point.Zero;
+				sb.Draw(GUI.Flatcolor, new Rectangle(Position + offset, Dimension), FrameColor);
+				foreach (var element in Elements)
+					element.Render(sb, position);
 			}
 		}
 	}

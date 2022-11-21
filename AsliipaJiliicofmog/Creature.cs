@@ -30,12 +30,13 @@ namespace AsliipaJiliicofmog
 		{
 			if (Dead)
 			{
-				gc.RemoveEntity(this);
 				if (Drops.Count != 0)
 				{
 					var drop = Drops.Get().Clone() as Item;
+
 					new DroppedItem(drop, Position).AddToRender(gc);
 				}
+				gc.RemoveEntity(this);
 			};
 			value(gc);
 		}; }
@@ -83,11 +84,12 @@ namespace AsliipaJiliicofmog
 		{
 			var creature = new Creature(EntityTexture.Default, Name, Anchor, Description, Position);
 			creature.OnUpdate = (gc) => { };
-			creature.OnClick = (gc) => { };
+			//creature.OnClick = (gc) => { };
 			creature.Node = Node;
 			creature.EntityHitbox = EntityHitbox.Clone();
 			creature.Health = MaxHealth;
 			creature.MaxHealth = MaxHealth;
+			creature.Drops = WeightedList<Item>.CopyFrom(Drops);
 			return creature;
 		}
 		public virtual void GenerateShadow(GraphicsDevice gd)

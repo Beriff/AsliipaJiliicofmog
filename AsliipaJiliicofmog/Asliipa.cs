@@ -56,6 +56,7 @@ namespace AsliipaJiliicofmog
 			GUI.Init(GraphicsDevice);
 			GameFont = Content.Load<SpriteFont>("GameFont");
 			Registry.LoadTextureDirectory(ASSETSPATH + "textures", GraphicsDevice);
+			Registry.LoadFoodDirectory(ASSETSPATH + @"gamedata\food");
 			Registry.LoadCreatureDirectory(ASSETSPATH + @"gamedata\creatures");
 			
 

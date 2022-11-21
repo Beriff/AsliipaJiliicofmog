@@ -120,6 +120,7 @@ namespace AsliipaJiliicofmog
 				return FocusedScene.GetAt((int)Math.Ceiling(cursorpos.X / Tile.TextureSize), (int)Math.Ceiling(cursorpos.Y / Tile.TextureSize));
 			}
 		}
+		//probably not the best way
 		protected Window GetSidebar() => VElements[2] as Window;
 		public void CreateGUI()
 		{
@@ -197,6 +198,7 @@ namespace AsliipaJiliicofmog
 			{
 				//Create sidebar with selected tile/entity info
 				var sidebarsize = GetViewport();
+				var viewport = sidebarsize;
 				sidebarsize.X /= 5;
 				//init the sidebar right behind the window
 				var sidebar = Window.LabeledWindow(new(-sidebarsize.X, 0), sidebarsize, Asliipa.MainGUIColor, "");
@@ -216,6 +218,26 @@ namespace AsliipaJiliicofmog
 				column.AddElement(desc);
 				sidebar.AddToRender(this);
 				sidebar.AddOnUpdate((ve, gt) => { if (InputHandler.GetKeyState(Keys.F) == KeyStates.JPressed) { ToggleSidebar(); } });
+
+
+				//Create overlay
+				//Topbar for health, level, exp, etc.
+				Frame topbar = new (Asliipa.MainGUIColor, Point.Zero, new Point(viewport.X, viewport.Y / 10));
+				ProgressBar health = new(1, new Color(210, 4, 45), "Health", new(topbar.Dimension.X / 10, topbar.Dimension.Y / 4), new(5, topbar.Dimension.Y / 4));
+				health.AddOnUpdate((ve, gt) => { health.Progress = Player.Health / Player.MaxHealth; });
+				topbar.AddElement(health);
+
+				ProgressBar hunger = new(1, new Color(202, 111, 30), "Hunger", new(topbar.Dimension.X / 10, topbar.Dimension.Y / 4), new(health.Dimension.X + 25, topbar.Dimension.Y / 4));
+				hunger.AddOnUpdate((ve, gt) => { hunger.Progress = Player.Hunger / 100; });
+				topbar.AddElement(hunger);
+
+				Label playerInfo = new(Player.Name);
+				playerInfo.AddOnUpdate((ve, gt) => { playerInfo.Text = $"{Player.Name} Lvl.{Player.Level} [{Player.Exp}/{Player.GetExpRequired()}]"; });
+				playerInfo.Position = hunger.Position + hunger.Dimension + new Point(25, -10);
+				topbar.AddElement(playerInfo);
+
+				topbar.AddToRender(this);
+				topbar.Enabled = true;
 			}
 		}
 		public void UpdateSidebar(Texture2D texture, string header, string desc)
@@ -250,11 +272,11 @@ namespace AsliipaJiliicofmog
 			OnLClickEvents = new();
 			OnUpdateEvents = new();
 			Sb = sb;
-			CreateGUI();
 			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
 			player.AddToRender(this);
 			Player = player;
 			player.Inventory.AddItem(new Tool(Registry.TextureRegistry["axe"], "stone axe", "tree cutting tool and a sharp weapon").WithTypes(ToolType.Cutting));
+			CreateGUI();
 			//Registry.GetCreature("zip jr").AddToRender(this);
 			//for(int i = 0; i < 20; i++)
 			//player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], "yea", "yea"));
