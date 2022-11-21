@@ -267,6 +267,8 @@ namespace AsliipaJiliicofmog
         private Dictionary<T, int> _list = new();
         private int totalWeight = 0;
 
+        public int Count { get => _list.Count; }
+
         public void Add(T element, int weight)
 		{
             _list[element] = weight;

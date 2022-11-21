@@ -26,7 +26,10 @@ namespace AsliipaJiliicofmog
 
 		public static float Signaling(float x) => (float)((Math.Sin((x * Math.PI % Math.PI) + Math.PI / 2f) * 2 + 1) / 2f);
 		public static float Parabolic(float x) => (1 - (2 * x - 1) * (2 * x - 1));
-
+		public static Func<float,float> FadeOscillate(int fade, int scale)
+		{
+			return x => (float)(-Math.Pow(scale, fade) * Math.Sin(x) / Math.Pow(x, fade));
+		}
 		public static float OutBounce(float x)
 		{
 			float n1 = 7.5625f;

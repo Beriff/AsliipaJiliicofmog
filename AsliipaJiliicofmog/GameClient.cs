@@ -259,10 +259,16 @@ namespace AsliipaJiliicofmog
 			//for(int i = 0; i < 20; i++)
 			//player.Inventory.AddItem(new Item(Registry.TextureRegistry["zip"], "yea", "yea"));
 
-			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.7f), new ToolType[] { ToolType.Cutting });
-			tree.Drops.Add(new Item(Registry.TextureRegistry["log"], "log", "chopped log of a tree"), 1);
+			var tree = new Prop(this, Registry.TextureRegistry["tree"], "tree", "ordinary tree", 1, 5, new(.5f, -.7f), new ToolType[] { ToolType.Cutting })
+				.WithDrop(new Item(Registry.TextureRegistry["log"], "log", "chopped log of a tree"), 1);
 			tree.Move(this, new(64*4));
 			tree.AddToRender(this);
+
+			var pig = Registry.GetCreature("pig");
+			pig.AddToRender(this);
+			var pig2 = Registry.GetCreature("pig");
+			pig2.AddToRender(this);
+			pig.Move(this, new(170));
 		}
 	}
 }

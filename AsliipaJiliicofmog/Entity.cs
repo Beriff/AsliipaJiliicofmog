@@ -26,14 +26,14 @@ namespace AsliipaJiliicofmog
 
 		public VisualElements.Infobox EntityInfobox;
 
-		protected Action _OnClick;
-		public virtual Action OnClick
+		protected Action<GameClient> _OnClick;
+		public virtual Action<GameClient> OnClick
 		{
 			get => _OnClick; set
 			{
-				_OnClick = () =>
+				_OnClick = (gc) =>
 				{
-					value();
+					value(gc);
 				};
 			}
 		}

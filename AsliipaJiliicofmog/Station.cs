@@ -68,7 +68,7 @@ namespace AsliipaJiliicofmog
 			UIWindow = Window.LabeledWindow(new(viewport.Width / 4, viewport.Height / 2), new(viewport.Width / 2, viewport.Height / 2), Asliipa.MainGUIColor, name)
 				.WithGUI(gc.ClientGUI).SetPopup() as Window;
 
-			_OnClick += () =>
+			_OnClick += (gc) =>
 			{
 				UIWindow.Enabled = !UIWindow.Enabled;
 			};
