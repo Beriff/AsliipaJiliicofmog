@@ -94,9 +94,9 @@ namespace AsliipaJiliicofmog
 		}
 		public virtual void GenerateShadow(GraphicsDevice gd)
 		{
-			Shadow = Util.ChangeTexture(EntityTexture.Default, Util.ShearMapX(1.03f, gd));
-			Shadow = Util.ChangeTexture(Shadow, Util.ShrinkMapY(3, gd));
-			Shadow = Util.ChangeTexture(Shadow, Util.ColorOpaque(new Color(0,0,0,.5f), gd));
+			Shadow = Shaders.ChangeTexture(EntityTexture.Default, Shaders.ShearMapX(1.03f, gd));
+			Shadow = Shaders.ChangeTexture(Shadow, Shaders.ShrinkMapY(3, gd));
+			Shadow = Shaders.ChangeTexture(Shadow, Shaders.ColorOpaque(new Color(0,0,0,.5f), gd));
 		}
 
 		public void Damage(Entity source, GameClient gc, int amount)

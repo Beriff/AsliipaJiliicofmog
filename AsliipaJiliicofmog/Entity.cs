@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace AsliipaJiliicofmog
@@ -33,6 +34,22 @@ namespace AsliipaJiliicofmog
 			{
 				_OnClick = (gc) =>
 				{
+					value(gc);
+				};
+			}
+		}
+		protected Action<GameClient> _OnRClick;
+		public virtual Action<GameClient> OnRClick
+		{
+			get => _OnRClick; set
+			{
+				_OnRClick = (gc) =>
+				{
+					if(InputHandler.GetKeyState(Keys.LeftShift) == KeyStates.Hold)
+					{
+						gc.UpdateSidebar(EntityTexture.Default, Name, Description);
+						gc.ToggleSidebar();
+					}
 					value(gc);
 				};
 			}
@@ -76,6 +93,7 @@ namespace AsliipaJiliicofmog
 				SetHitbox();
 			OnUpdate = (scene) => { };
 			Collidable = coll;
+			OnRClick = (gc) => { };
 
 			GenerateInfobox();
 		}
@@ -109,8 +127,7 @@ namespace AsliipaJiliicofmog
 				//if clicked on entity, toggle sidebar
 				if (InputHandler.RMBState() == KeyStates.JPressed)
 				{
-					gc.UpdateSidebar(EntityTexture.Default, Name, Description);
-					gc.ToggleSidebar();
+					OnRClick(gc);
 				}
 			}
 			else

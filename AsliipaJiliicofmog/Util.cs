@@ -3,13 +3,173 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+
 
 namespace AsliipaJiliicofmog
 {
+    public static class Shaders
+    {
+        public delegate Texture2D Shader(Texture2D input);
+        public static Texture2D ChangeTexture(Texture2D input, Shader shader)
+        {
+            return shader(input);
+        }
+        ///<summary>Shear the image horizontally</summary>
+        public static Shader ShearMapX(float k, GraphicsDevice gd)
+        {
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                var new_w = (int)Math.Ceiling(h * k + w);
+                Color[] newtexture = new Color[h * new_w];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                Util.EachXY(w, h, (x, y) =>
+                {
+                    newtexture[Util.Flatten(x + (int)(k * y), y, new_w)] = oldtexture[Util.Flatten(x, y, w)];
+                });
+                Texture2D texture = new(gd, new_w, h);
+                texture.SetData(newtexture);
+                return texture;
+            };
+        }
+        ///<summary>Shrink the image, using the average values</summary>
+        public static Shader Shrink(int factor, GraphicsDevice gd)
+        {
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                int nw = w / factor;
+                int nh = h / factor;
+                Color[] newtexture = new Color[nw * nh];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                Util.EachXY(nw, nh, (x, y) =>
+                {
+                    var oldx = x * factor;
+                    var oldy = y * factor;
+                    List<int> rs = new();
+                    List<int> gs = new();
+                    List<int> bs = new();
+                    List<int> _as = new();
+                    Util.EachXY(factor, factor, (stepx, stepy) =>
+                    {
+                        var col = oldtexture[Util.Flatten(oldx + stepx, oldy + stepy, w)];
+
+                        rs.Add(col.R);
+                        gs.Add(col.G);
+                        bs.Add(col.B);
+                        _as.Add(col.A);
+                    });
+                    int irs = (int)rs.Average();
+                    int igs = (int)gs.Average();
+                    int ibs = (int)bs.Average();
+                    int a = (int)(_as.Average());
+
+                    Color targetcolor = new Color(irs, igs, ibs, a);
+                    newtexture[Util.Flatten(x, y, nw)] = targetcolor;
+                });
+                Texture2D texture = new(gd, nw, nh);
+                texture.SetData(newtexture);
+                return texture;
+            };
+        }
+        /// <summary>Tint the image</summary>
+        public static Shader Blend(float k, Color col, GraphicsDevice gd)
+        {
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                Color[] newtexture = new Color[h * w];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                Util.EachXY(w, h, (x, y) =>
+                 {
+                     var currcol = oldtexture[Util.Flatten(x, y, w)];
+                     var tempcol = Color.Lerp(oldtexture[Util.Flatten(x, y, w)], col, k);
+                     newtexture[Util.Flatten(x, y, w)] = new Color(tempcol, currcol.A);
+                 });
+                Texture2D texture = new(gd, w, h);
+                texture.SetData(newtexture);
+                return texture;
+            };
+
+        }
+        ///<summary>Compress the image vertically</summary>
+        public static Shader ShrinkMapY(float k, GraphicsDevice gd)
+        {
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                var new_h = (int)Math.Ceiling(h / k);
+                Color[] newtexture = new Color[w * new_h];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                Util.EachXY(w, h, (x, y) =>
+                {
+                    var ypos = Util.Round(y / k);
+                    newtexture[Util.Flatten(x, ypos, w)] = oldtexture[Util.Flatten(x, y, w)];
+                });
+                Texture2D texture = new(gd, w, new_h);
+                texture.SetData(newtexture);
+                return texture;
+
+            };
+        }
+        ///<summary>Substitute every opaque color with given one</summary>
+        public static Shader ColorOpaque(Color color, GraphicsDevice gd)
+        {
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                Color[] newtexture = new Color[w * h];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                Util.EachXY(w, h, (x, y) =>
+                {
+                    Color currentcolor = oldtexture[Util.Flatten(x, y, w)];
+                    if (!(currentcolor.A == 0))
+                        currentcolor = color;
+                    newtexture[Util.Flatten(x, y, w)] = currentcolor;
+                });
+                Texture2D texture = new(gd, w, h);
+                texture.SetData(newtexture);
+                return texture;
+            };
+
+        }
+        ///<summary>Set pixels with transparency lower than threshold to 0</summary>
+        public static Shader ClampOpacity(GraphicsDevice gd, float threshold = 0.5f)
+        {
+            threshold *= 255;
+            return (input) =>
+            {
+                var w = input.Width;
+                var h = input.Height;
+                Color[] newtexture = new Color[w * h];
+                Color[] oldtexture = new Color[w * h];
+                input.GetData(oldtexture);
+                Util.EachXY(w, h, (x, y) =>
+                {
+                    Color target = oldtexture[Util.Flatten(x, y, w)];
+                    newtexture[Util.Flatten(x, y, w)] = target.A < threshold ? Color.Transparent : target;
+                });
+                Texture2D texture = new(gd, w, h);
+                texture.SetData(newtexture);
+                return texture;
+            };
+        }
+    }
 	static class Util
 	{
-        public delegate Texture2D Shader(Texture2D input);
+        
 		static public void EachXY(int mx, int my, Action<int, int> act, int sx = 0, int sy = 0)
 		{
 			for (int y = sy; y < my; y++)
@@ -19,6 +179,77 @@ namespace AsliipaJiliicofmog
 					act(x, y);
 				}
 			}
+		}
+ 
+
+        public struct HslColor
+		{
+            public short Hue;
+            public float Saturation;
+            public float Lightness;
+            public short H { get => Hue; set => Hue = value; }
+            public float S { get => Saturation; set => Saturation = value; }
+            public float L { get => Lightness; set => Lightness = value; }
+            public HslColor(int h, float s, float l)
+			{
+                Hue = (short)h;
+                Saturation = s;
+                Lightness = l;
+			}
+
+            public Color RGB()
+			{
+                float hue2rgb(float p, float q, float t)
+                {
+                    if (t < 0) { t += 1; }
+                    if(t > 1) { t -= 1; }
+                    if(t < 1/6) { return p + (q - p) * 6 * t; }
+                    if(t < 1/2) { return q; }
+                    if(t < 2/3) { return p + (q - p) * (2 / 3 - t) * 6; }
+                    return p;
+				}
+                if (S == 0)
+                    return Color.Black;
+                var q = L < 0.5f ? L * (1 + S) : L + S - L * S;
+                var p = 2 * L - q;
+                var r = (int)hue2rgb(p, q, H + 1 / 3);
+                var g = (int)hue2rgb(p, q, H);
+                var b = (int)hue2rgb(p, q, H - 1 / 3);
+                return new Color(r * 255, g * 255, b * 255);
+			}
+		}
+        public static HslColor HSL(this Color col)
+		{
+            var r = col.R / 255;
+            var g = col.G / 255;
+            var b = col.B / 255;
+            var max = new float[]{ r, g, b }.Max();
+            var min = new float[] { r, g, b }.Min();
+            float h, s, l;
+            h = s = l = (max + min) / 2;
+
+            if(max == min) { h = s = 0; }
+            else
+			{
+                var d = max - min;
+                s = l > 0.5f ? d / (2 - max - min) : d / (max + min);
+                
+                if (max == r) { h = (g - b) / d + (g < b ? 6 : 0); }
+                else if (max == g) { h = (b - r) / d + 2; }
+                else { h = (r - g) / d + 4; }
+                h /= 6;
+			}
+            return new HslColor((int)h, s, l);
+        }
+
+        static public bool ItemIn(List<Item> itemlist, Item target)
+		{
+            foreach(var item in itemlist)
+			{
+                if (item.IsCloneOf(target))
+                    return true;
+			}
+            return false;
 		}
 		static public T[] Enum2List<T>() where T : Enum
 		{
@@ -188,78 +419,12 @@ namespace AsliipaJiliicofmog
 		{
             return new(self.Width, self.Height);
 		}
-
-        public static Texture2D ChangeTexture(Texture2D input, Shader shader)
-        {
-            return shader(input);
-        }
         public static int Round(float x)
 		{
             return (int)Math.Round(x);
 		}
 
-        public static Shader ShearMapX(float k, GraphicsDevice gd)
-		{
-            return (input) =>
-            {
-                var w = input.Width;
-                var h = input.Height;
-                var new_w = (int)Math.Ceiling(h * k + w);
-                Color[] newtexture = new Color[h * new_w];
-                Color[] oldtexture = new Color[w * h];
-                input.GetData(oldtexture);
-                EachXY(w, h, (x,y) => 
-                {
-                    newtexture[Flatten(x + (int)(k * y), y, new_w)] = oldtexture[Flatten(x, y, w)];
-                });
-                Texture2D texture = new(gd, new_w, h);
-                texture.SetData(newtexture);
-                return texture;
-            };
-		}
-        public static Shader ShrinkMapY(float k, GraphicsDevice gd)
-		{
-            return (input) =>
-            {
-                var w = input.Width;
-                var h = input.Height;
-                var new_h = (int)Math.Ceiling(h / k);
-                Color[] newtexture = new Color[w * new_h];
-                Color[] oldtexture = new Color[w * h];
-                input.GetData(oldtexture);
-                EachXY(w, h, (x, y) =>
-                {
-                    var ypos = Round(y / k);
-                    newtexture[Flatten(x, ypos, w)] = oldtexture[Flatten(x, y, w)];
-                });
-                Texture2D texture = new(gd, w, new_h);
-                texture.SetData(newtexture);
-                return texture;
 
-            };
-		}
-        public static Shader ColorOpaque(Color color, GraphicsDevice gd)
-		{
-            return (input) => 
-            {
-                var w = input.Width;
-                var h = input.Height;
-                Color[] newtexture = new Color[w*h];
-                Color[] oldtexture = new Color[w*h];
-                input.GetData(oldtexture);
-                EachXY(w, h, (x, y) =>
-                {
-                    Color currentcolor = oldtexture[Flatten(x, y, w)];
-                    if (!(currentcolor.A == 0))
-                        currentcolor = color;
-                    newtexture[Flatten(x, y, w)] = currentcolor;
-                });
-                Texture2D texture = new(gd, w, h);
-                texture.SetData(newtexture);
-                return texture;
-            };
-            
-        }
     }
 
 	public class WeightedList<T>

@@ -94,11 +94,11 @@ namespace AsliipaJiliicofmog
 		{
 			PlaceableEntity = entity;
 			AvailableTexture =
-				Util.ChangeTexture(entity.EntityTexture.Default,
-				Util.ColorOpaque(new Color(Color.Green, .5f), entity.EntityTexture.Default.GraphicsDevice));
+				Shaders.ChangeTexture(entity.EntityTexture.Default,
+				Shaders.ColorOpaque(new Color(Color.Green, .5f), entity.EntityTexture.Default.GraphicsDevice));
 			BlockedTexture =
-				Util.ChangeTexture(entity.EntityTexture.Default,
-				Util.ColorOpaque(new Color(Color.Red, .5f), entity.EntityTexture.Default.GraphicsDevice));
+				Shaders.ChangeTexture(entity.EntityTexture.Default,
+				Shaders.ColorOpaque(new Color(Color.Red, .5f), entity.EntityTexture.Default.GraphicsDevice));
 
 			EquippedUpdate = (gc) =>
 			{
@@ -133,7 +133,7 @@ namespace AsliipaJiliicofmog
 			};
 		}
 	}
-	public class Usable : Item
+	public class Usable : Equippable
 	{
 		public Action<GameClient> OnUse;
 		public Usable(Texture2D texture, string name, string desc, Action<GameClient> onuse) : base(texture, name, desc)
@@ -152,6 +152,20 @@ namespace AsliipaJiliicofmog
 				new("Use", () =>
 				{
 					OnUse(inv.Client);
+				}),
+				new("Equip", () =>
+				{
+					if (inv.Client.Player.Equipped == this)
+					{
+						inv.Client.Player.Equipped = null;
+						OnUnequip(inv.Client);
+					}
+					else
+					{
+						inv.Client.Player.Equipped = this;
+						OnEquip(inv.Client);
+					}
+
 				})
 			};
 		}

@@ -3,65 +3,75 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 
 namespace AsliipaJiliicofmog
 {
+	/// <summary>
+	/// Recipe is an abstract class, representing how different items can transform into
+	/// other ones, bundled with additional meta-info
+	/// </summary>
 	public class Recipe
 	{
-		public List<Item> RequiredItems;
-		public bool Unlocked = true;
-		public List<Item> Results;
-		public Action<Inventory> OnCreate;
+		public List<Item> Required;
+		public List<Item> Yields;
+		public ListDictionary Metadata;
 
-		public static Action<Inventory> RemoveIngredients(Recipe recipe) { return (inv) =>
+		public Recipe()
 		{
-			foreach (var item in recipe.RequiredItems)
+			Metadata = new();
+		}
+		public Recipe WithReq(params Item[] required)
+		{
+			Required = new(required);
+			return this;
+		}
+		public Recipe WithYield(params Item[] yields)
+		{
+			Yields = new(yields);
+			return this;
+		}
+		public Recipe WithMetadata(params (string, string)[] meta)
+		{
+			foreach(var entry in meta)
 			{
-				inv.RemoveItem(inv.GetItemByClone(item));
+				Metadata.Add(entry.Item1, entry.Item2);
 			}
-		}; }
+			return this;
+		}
 
-		public bool CanCreate(Inventory inv)
+		public bool Satisfies(List<Item> required)
 		{
-			foreach (var item in RequiredItems)
-				if (!inv.Contains(item))
+			foreach(var req in Required)
+			{
+				if (!Util.ItemIn(required, req))
 					return false;
+			}
 			return true;
 		}
 
-		public void Create(Inventory inv)
+		public void Craft(Inventory inv)
 		{
-			if (!Unlocked)
-				return;
-			OnCreate(inv);
-			foreach (var item in Results)
-				inv.AddItem(item.Clone() as Item);
-		}
-		public Recipe(List<Item> ingredients, List<Item> results)
-		{
-			RequiredItems = ingredients;
-			Results = results;
-		}
-		public static Recipe operator + (Recipe self, Action<Inventory> oncreate)
-		{
-			self.OnCreate += oncreate;
-			return self;
+			foreach(var item in Required)
+				inv.RemoveItem(inv.GetItemByClone(item));
+			foreach (var item in Yields)
+				inv.AddItem(item);
 		}
 	}
 	public abstract class Station : Prop
 	{
-		public List<Recipe> Recipes;
 
 		//Station UI
 		public Window UIWindow;
+		public List<Recipe> Recipes;
 
 		public Station(GameClient gc, Texture2D texture, string name, string desc) : 
 			base(gc, texture, name, desc, 1, 5, null, new ToolType[] { ToolType.Cutting })
 		{
-			Recipes = new();
 
 			CustomDrop = false;
+			Recipes = new();
 			Drops.Add(GetItem(), 1);
 			//Set up UI
 			var viewport = gc.Sb.GraphicsDevice.Viewport;
@@ -77,11 +87,13 @@ namespace AsliipaJiliicofmog
 	}
 	public abstract class StationContainer : Station
 	{
-		public Item[] Slot;
+		public List<Item> Slot;
 		public Item this[int i] { get => Slot[i]; set => Slot[i] = value; }
 
 		public StationContainer(GameClient gc, Texture2D texture, string name, string desc) : base(gc, texture, name, desc)
 		{
+			Slot = new();
+			Slot.Add(null);
 		}
 	}
 }

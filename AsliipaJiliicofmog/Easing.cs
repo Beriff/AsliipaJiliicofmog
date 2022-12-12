@@ -63,6 +63,7 @@ namespace AsliipaJiliicofmog
 		public bool Finished;
 		public float Coefficient;
 		public string? Signature;
+		public Action OnFinish;
 
 		public Animation(int span, float coeff, Action<float, float> progress, string? signature = null)
 		{
@@ -72,6 +73,7 @@ namespace AsliipaJiliicofmog
 			Coefficient = coeff;
 			Finished = false;
 			Signature = signature;
+			OnFinish = () => { };
 		}
 		public void AddProgress()
 		{
@@ -85,6 +87,17 @@ namespace AsliipaJiliicofmog
 		public void Update()
 		{
 			OnProgress(FrameProgress / (float)FramesSpan, Coefficient);
+		}
+		public static Animation Schedule(int span, Action action, string? signature)
+		{
+			var anim = new Animation(span, 0, (x, y) => { }, signature);
+			anim.OnFinish = action;
+			return anim;
+		}
+		public Animation Finish(Action action)
+		{
+			OnFinish = action;
+			return this;
 		}
 	}
 	static class Animator
@@ -108,7 +121,7 @@ namespace AsliipaJiliicofmog
 				anim.Update();
 				if(anim.Finished) { ToRemove.Add(anim); }
 			}
-			foreach(var anim in ToRemove) { AnimationQueue.Remove(anim); }
+			foreach(var anim in ToRemove) { AnimationQueue.Remove(anim); anim.OnFinish(); }
 		}
 	}
 }

@@ -21,10 +21,12 @@ namespace AsliipaJiliicofmog
 		public GameClient Client;
 
 		public GUI ClientGUI = new();
+		public TextPiece fps;
 
 		public static Color MainGUIColor = new(32, 32, 32, 137);
 
 		public static SpriteFont GameFont;
+		public static Font MainFont;
 
 		//when UI is focused, dont move camera with mouse drag, apply drag to sliders and other UI elements instead
 		public static bool UIFocused = false;
@@ -54,11 +56,14 @@ namespace AsliipaJiliicofmog
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 			GUI.Init(GraphicsDevice);
+
 			GameFont = Content.Load<SpriteFont>("GameFont");
+
 			Registry.LoadTextureDirectory(ASSETSPATH + "textures", GraphicsDevice);
 			Registry.LoadFoodDirectory(ASSETSPATH + @"gamedata\food");
 			Registry.LoadCreatureDirectory(ASSETSPATH + @"gamedata\creatures");
-			
+			MainFont = new Font(new SpriteAtlas(Registry.TextureRegistry["font2"]));
+			fps = new TextPiece(MainFont, "60 fps");
 
 			GameAudio.SFX["click"] = Content.Load<SoundEffect>("click");
 
@@ -76,13 +81,16 @@ namespace AsliipaJiliicofmog
 			var campfire = new Campfire(Client);
 			campfire.AddToRender(Client);
 			campfire.Move(Client, new(50));
-			
 		}
 
 		protected override void Update(GameTime gameTime)
 		{
 			if (InputHandler.GetKeyState(Keys.Z) == KeyStates.JPressed)
+			{
 				GUI.GUIDEBUG = !GUI.GUIDEBUG;
+				Client.GameChat.Announce("toggled GUI debug mode");
+			}
+				
 			if (Client.ExitRequested)
 				Exit();
 
@@ -93,11 +101,10 @@ namespace AsliipaJiliicofmog
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
-
-			
 			_spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 			Client.Update(_spriteBatch, gameTime);
-			_spriteBatch.DrawString(GameFont, Math.Ceiling(1d / gameTime.ElapsedGameTime.TotalSeconds).ToString() + " fps", Vector2.Zero, Color.White);
+			fps.Text = Math.Ceiling(1d / gameTime.ElapsedGameTime.TotalSeconds).ToString() + " fps";
+			fps.Render(_spriteBatch, Vector2.One);
 			_spriteBatch.End();
 
 			base.Draw(gameTime);

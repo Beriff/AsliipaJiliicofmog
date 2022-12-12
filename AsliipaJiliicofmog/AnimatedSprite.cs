@@ -12,6 +12,7 @@ namespace AsliipaJiliicofmog
 		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime, Color color);
 		public int Width { get; }
 		public int Height { get; }
+		public Vector2 TextureDims { get => new(Width, Height); }
 		public Texture2D Default { get; }
 		public Texture2D FullTexture { get; }
 	}
@@ -71,7 +72,6 @@ namespace AsliipaJiliicofmog
 		public Texture2D Default { get => TextureAtlasStrip.Subtexture(Width, Height); }
 		public Texture2D FullTexture { get => TextureAtlasStrip; }
 	}
-
 	class CombinedSprite : ISprite
 	{
 		public ISprite[] Textures;
@@ -93,6 +93,30 @@ namespace AsliipaJiliicofmog
 			Textures = sprites;
 		}
 
+	}
+	public class SpriteAtlas : ISprite
+	{
+		public Texture2D Atlas;
+		public int CellSize;
+		public int RowSize;
+		public void Render(SpriteBatch sb, Vector2 offset, GameTime gametime, Color color)
+		{
+			sb.Draw(Atlas, offset, color);
+		}
+		public int Width { get => Atlas.Width; }
+		public int Height { get => Atlas.Height; }
+		public Texture2D Default { get => Atlas; }
+		public Texture2D FullTexture { get => Atlas; }
+		public void RenderCell(SpriteBatch sb, Vector2 offset, Color color, Point coords)
+		{
+			sb.Draw(Atlas, offset, new Rectangle(coords.Mult(CellSize), new Point(CellSize)), color);
+		}
+		public SpriteAtlas(Texture2D atlas, int cellsize = 8, int rowsize = 10)
+		{
+			Atlas = atlas;
+			CellSize = cellsize;
+			RowSize = rowsize;
+		}
 	}
 
 	class StateMachine

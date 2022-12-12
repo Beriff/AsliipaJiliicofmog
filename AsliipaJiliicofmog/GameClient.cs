@@ -61,6 +61,7 @@ namespace AsliipaJiliicofmog
 		public SpriteBatch Sb;
 		public Controls GameControls = new();
 		public OrderedEntityProcessor EntityProcessor = new();
+		public Chat GameChat;
 
 		public bool ExitRequested = false;
 		public GUI ClientGUI = new();
@@ -91,6 +92,7 @@ namespace AsliipaJiliicofmog
 			}
 			InputHandler.Update(this, Keyboard.GetState(), Mouse.GetState());
 			Player.Equipped?.EquippedUpdate(this);
+			GameChat.Render(sb);
 		}
 		public void AddEntity(Entity e)
 		{
@@ -121,7 +123,7 @@ namespace AsliipaJiliicofmog
 			}
 		}
 		//probably not the best way
-		protected Window GetSidebar() => VElements[2] as Window;
+		protected Window GetSidebar() => VElements[3] as Window;
 		public void CreateGUI()
 		{
 			//Setup main menu & settings GUI
@@ -271,6 +273,7 @@ namespace AsliipaJiliicofmog
 			VElements = new();
 			OnLClickEvents = new();
 			OnUpdateEvents = new();
+			GameChat = new Chat();
 			Sb = sb;
 			var player = new Player(Registry.TextureRegistry["dummy"], "Ben Dover", this);
 			player.AddToRender(this);
@@ -293,4 +296,5 @@ namespace AsliipaJiliicofmog
 			pig.Move(this, new(170));
 		}
 	}
+
 }
