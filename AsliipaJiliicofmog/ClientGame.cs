@@ -18,7 +18,7 @@ namespace Asliipa
 		{
 			Graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-			IsMouseVisible = false;
+			IsMouseVisible = true;
 		}
 		protected override void Initialize()
 		{
@@ -37,11 +37,13 @@ namespace Asliipa
 				"test"
 				));
 			f.AddElement(new ProgressBar(new RelativePosition(f, (1, .5f), (0, .25f)), Control, 100) { Progress = 50 });
+			var b = new Button(new(200, 50), new(150, 150), Control, "rice cook", () => { Console.WriteLine("rice cooka"); });
 
 		}
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+			Control.Update(gameTime);
 			f.Position = 50*new Vector2((float)Math.Cos(gameTime.TotalGameTime.TotalSeconds), (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds));
 		}
 		protected override void Draw(GameTime gameTime)

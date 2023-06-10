@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +66,7 @@ namespace AsliipaJiliicofmog
 		public List<UIElement> UIElements;
 		public Texture2D Blank;
 		private SpriteBatch Sb;
+		public InputHandler Input;
 		public UIControl(UIColorPalette palette, SpriteBatch sb, SpriteFont font)
 		{
 			Palette = palette;
@@ -73,6 +75,7 @@ namespace AsliipaJiliicofmog
 			Blank.SetData<Color>(new Color[] { Color.White });
 			UIElements = new();
 			Font = font;
+			Input = new();
 		}
 		public void Render(SpriteBatch sb, GameTime gt)
 		{
@@ -83,6 +86,7 @@ namespace AsliipaJiliicofmog
 		}
 		public void Update(GameTime gt)
 		{
+			Input.Update();
 			foreach (UIElement e in UIElements)
 			{
 				if (e.Active) { e.Update(gt); }
@@ -143,6 +147,11 @@ namespace AsliipaJiliicofmog
 			Controller.AddElement(this);
 		}
 
+		public Rectangle GetBounds()
+		{
+			return new(Position.ToPoint(), Scale.ToPoint());
+		}
+
 	}
 	abstract class UIContainer : UIElement
 	{
@@ -150,7 +159,6 @@ namespace AsliipaJiliicofmog
 		public UIContainer(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller) { Contents = new();  }
 
 		public List<UIElement> Contents;
-
 		public override void Render(SpriteBatch sb, GameTime gt)
 		{
 			foreach(var e in Contents) { if (e.Visible) { e.RenderAt(e.Position - Position, sb, gt); } }
@@ -275,5 +283,67 @@ namespace AsliipaJiliicofmog
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale * new Vector2(Progress / (float)MaxProgress, 1)), Controller.Palette.Highlight);
 		}
 
+	}
+	interface IClickable
+	{
+		public Action OnClick { get; set; }
+	}
+	class Button : UIElement, IClickable
+	{
+		public string Text;
+		public Action OnClick { get; set; }
+		public Button(RelativePosition relpos, UIControl controller, string text, Action onclick) : base(relpos, controller)
+		{
+			Text = text;
+			OnClick = onclick;
+		}
+		public Button(Vector2 scale, Vector2 position, UIControl controller, string text, Action onclick) : base(scale, position, controller)
+		{
+			Text = text;
+			OnClick = onclick;
+		}
+
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			//change button color on hover
+			Color rectcolor = GetBounds().Contains(Mouse.GetState().Position) ? 
+				Controller.Palette.Highlight : Controller.Palette.HighlightDark;
+
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), rectcolor);
+
+			sb.DrawString(Controller.Font, Text, 
+				GetBounds().Center.ToVector2() - Controller.Font.MeasureString(Text) / 2,
+				Controller.Palette.Contrast);
+		}
+
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			var bounds = new Rectangle(position.ToPoint(), Scale.ToPoint());
+			Color rectcolor = bounds.Contains(Mouse.GetState().Position) ?
+				Controller.Palette.Highlight : Controller.Palette.HighlightDark;
+
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), rectcolor);
+
+			sb.DrawString(Controller.Font, Text,
+				bounds.Center.ToVector2() - Controller.Font.MeasureString(Text) / 2,
+				Controller.Palette.Contrast);
+		}
+
+		/*
+		 * Since OnClick check is handled separately from rendering the button,
+		 * if the button were to be rendered with RenderAt() method,
+		 * the click bounds would not be calculated correctly.
+		 * RenderAt() can be called from container classes,
+		 * so putting clickable objects inside UI containers should generally be
+		 * avoided (except the containers that do not move).
+		 */
+		public override void Update(GameTime gt)
+		{
+			if (Controller.Input.M1State() == PressState.JustReleased)
+			{
+				if (GetBounds().Contains(Mouse.GetState().Position))
+					OnClick();
+			}
+		}
 	}
 }
