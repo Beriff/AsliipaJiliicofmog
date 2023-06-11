@@ -369,6 +369,15 @@ namespace AsliipaJiliicofmog
 			}
 
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.MainDark);
+			if(Steps != null)
+			{
+				for(int i = 0; i <= Steps; i++)
+				{
+					sb.Draw(Controller.Blank, 
+						NumExtend.Vec2Rect(new Vector2( i/(float)Steps*Scale.X - Scale.Y/8, 3*Scale.Y/8) + Position, new(Scale.Y/4) ),
+						Controller.Palette.Main);
+				}
+			}
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(AbsSliderPos(), Position.Y), new(Scale.Y)), slidercolor);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
@@ -401,6 +410,13 @@ namespace AsliipaJiliicofmog
 			else if(CursorLockOn && Controller.Input.M1State() == PressState.JustReleased)
 			{
 				CursorLockOn = false;
+				if(Steps != null)
+				{
+					var posx = Math.Clamp(Mouse.GetState().Position.X, Position.X, Position.X + Scale.X);
+					float step = ((float)(Scale.X / Steps));
+					posx = MathF.Round( (posx - Position.X) / step) * step;
+					SliderProgress = posx / (Scale.X);
+				}
 			}
 			else if(CursorLockOn)
 			{
