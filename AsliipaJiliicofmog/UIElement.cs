@@ -346,4 +346,69 @@ namespace AsliipaJiliicofmog
 			}
 		}
 	}
+	class Slider : UIElement
+	{
+		public float SliderProgress;
+		public int? Steps; //if not null, slider position can only be a/n of horizontal size (a [1;n])
+
+		protected bool CursorLockOn;
+		//returns absolute slider position (its x coord)
+		protected int AbsSliderPos()
+		{
+			return (int)(Position.X + SliderProgress * Scale.X - Scale.Y/2);
+		}
+
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			var bounds = new Rectangle(new(AbsSliderPos(), (int)Position.Y), new((int)Scale.Y));
+			var slidercolor = Controller.Palette.Highlight;
+
+			if (bounds.Contains(Mouse.GetState().Position))
+			{
+				slidercolor = Controller.Palette.HighlightDark;
+			}
+
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.MainDark);
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(AbsSliderPos(), Position.Y), new(Scale.Y)), slidercolor);
+		}
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			var abssliderpos = (int)(position.X + SliderProgress * Scale.X - Scale.Y / 2);
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(abssliderpos, Position.Y), new(Scale.Y)), Controller.Palette.Highlight);
+		}
+
+		public Slider(RelativePosition relpos, UIControl controller, int? steps = null) : base(relpos, controller)
+		{
+			Steps = steps;
+			CursorLockOn = false;
+			SliderProgress = 0f;
+		}
+		public Slider(Vector2 scale, Vector2 position, UIControl controller, int? steps = null) : base(scale, position, controller) 
+		{
+			Steps = steps;
+			CursorLockOn = false;
+			SliderProgress = 0f;
+		}
+		public override void Update(GameTime gt)
+		{
+			var bounds = new Rectangle(new(AbsSliderPos(), (int)Position.Y), new((int)Scale.Y));
+
+			if (Controller.Input.M1State() == PressState.JustPressed && bounds.Contains(Mouse.GetState().Position))
+			{
+				CursorLockOn = true;
+			}
+			else if(CursorLockOn && Controller.Input.M1State() == PressState.JustReleased)
+			{
+				CursorLockOn = false;
+			}
+			else if(CursorLockOn)
+			{
+				var posx = Math.Clamp(Mouse.GetState().Position.X, Position.X, Position.X + Scale.X);
+				var progress = (posx - Position.X) / (Scale.X);
+				SliderProgress = progress;
+			}
+		}
+
+	}
 }

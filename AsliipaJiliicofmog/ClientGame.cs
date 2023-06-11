@@ -37,7 +37,7 @@ namespace Asliipa
 				"test"
 				));
 			f.AddElement(new ProgressBar(new RelativePosition(f, (1, .5f), (0, .25f)), Control, 100) { Progress = 50 });
-			var b = new Button(new(200, 50), new(150, 150), Control, "rice cook", () => { Console.WriteLine("rice cooka"); });
+			var b = new Slider(new(200, 30), new(150, 150), Control);
 
 		}
 		protected override void Update(GameTime gameTime)
