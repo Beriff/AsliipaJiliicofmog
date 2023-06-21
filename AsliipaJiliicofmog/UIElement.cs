@@ -115,6 +115,7 @@ namespace AsliipaJiliicofmog
 			get => RelPosition?.GetScale() ?? _Scale;
 			set { if (RelPosition == null) { _Scale = value; } }
 		}
+		public bool MouseHover() => GetBounds().Contains(Mouse.GetState().Position);
 		public virtual RelativePosition? RelPosition { get; set; }
 
 		//Anchor is the reference point of the whole element
@@ -159,6 +160,10 @@ namespace AsliipaJiliicofmog
 		public UIContainer(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller) { Contents = new();  }
 
 		public List<UIElement> Contents;
+		public Vector2 ChildLocalPosition(UIElement child)
+		{
+			return child.Position - Position;
+		}
 		public override void Render(SpriteBatch sb, GameTime gt)
 		{
 			foreach(var e in Contents) { if (e.Visible) { e.RenderAt(e.Position - Position, sb, gt); } }
@@ -173,6 +178,15 @@ namespace AsliipaJiliicofmog
 		}
 		
 		public void AddElement(UIElement e) { Contents.Add(e); e.Controller.RemoveElement(e); }
+	}
+	interface IClickable
+	{
+		public Action OnClick { get; set; }
+	}
+	interface IFocusable
+	{
+		public bool Focused { get; set; }
+		public void OnInput(Keys k);
 	}
 
 	/// <summary>
@@ -212,7 +226,6 @@ namespace AsliipaJiliicofmog
 			frame.Dispose();
 		}
 	}
-
 	/// <summary>
 	/// Renders text with provided font. Wraps text to fit horizontal size if this.Wrap == true
 	/// </summary>
@@ -258,7 +271,6 @@ namespace AsliipaJiliicofmog
 		}
 		public override void Update(GameTime gt) { }
 	}
-
 	class ProgressBar : UIElement
 	{
 		public int Progress;
@@ -284,10 +296,6 @@ namespace AsliipaJiliicofmog
 		}
 
 	}
-	interface IClickable
-	{
-		public Action OnClick { get; set; }
-	}
 	class Button : UIElement, IClickable
 	{
 		public string Text;
@@ -306,7 +314,7 @@ namespace AsliipaJiliicofmog
 		public override void Render(SpriteBatch sb, GameTime gt)
 		{
 			//change button color on hover
-			Color rectcolor = GetBounds().Contains(Mouse.GetState().Position) ? 
+			Color rectcolor = MouseHover() ? 
 				Controller.Palette.Highlight : Controller.Palette.HighlightDark;
 
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), rectcolor);
@@ -426,5 +434,155 @@ namespace AsliipaJiliicofmog
 			}
 		}
 
+	}
+	class VerticalSlider : UIElement
+	{
+		public float SliderProgress;
+		public int? Steps;
+
+		protected bool CursorLockOn;
+		protected int AbsSliderPos()
+		{
+			return (int)(Position.Y + SliderProgress * Scale.Y - Scale.X / 2);
+		}
+
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			var bounds = new Rectangle(new(AbsSliderPos(), (int)Position.Y), new((int)Scale.X));
+			var slidercolor = Controller.Palette.Highlight;
+
+			if (bounds.Contains(Mouse.GetState().Position))
+			{
+				slidercolor = Controller.Palette.HighlightDark;
+			}
+
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.MainDark);
+			if (Steps != null)
+			{
+				for (int i = 0; i <= Steps; i++)
+				{
+					sb.Draw(Controller.Blank,
+						NumExtend.Vec2Rect(new Vector2(3 * Scale.X / 8, i / (float)Steps * Scale.Y - Scale.X / 8) + Position, new(Scale.X / 4)),
+						Controller.Palette.Main);
+				}
+			}
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(Position.X, AbsSliderPos()), new(Scale.X)), slidercolor);
+		}
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			var abssliderpos = (int)(position.Y + SliderProgress * Scale.Y - Scale.X / 2);
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(Position.X, abssliderpos), new(Scale.X)), Controller.Palette.Highlight);
+		}
+
+		public VerticalSlider(RelativePosition relpos, UIControl controller, int? steps = null) : base(relpos, controller)
+		{
+			Steps = steps;
+			CursorLockOn = false;
+			SliderProgress = 0f;
+		}
+		public VerticalSlider(Vector2 scale, Vector2 position, UIControl controller, int? steps = null) : base(scale, position, controller)
+		{
+			Steps = steps;
+			CursorLockOn = false;
+			SliderProgress = 0f;
+		}
+		public override void Update(GameTime gt)
+		{
+			var bounds = new Rectangle(new((int)Position.X, AbsSliderPos()), new((int)Scale.X));
+
+			if (Controller.Input.M1State() == PressState.JustPressed && bounds.Contains(Mouse.GetState().Position))
+			{
+				CursorLockOn = true;
+			}
+			else if (CursorLockOn && Controller.Input.M1State() == PressState.JustReleased)
+			{
+				CursorLockOn = false;
+				if (Steps != null)
+				{
+					var posx = Math.Clamp(Mouse.GetState().Position.Y, Position.Y, Position.Y + Scale.Y);
+					float step = ((float)(Scale.Y / Steps));
+					posx = MathF.Round((posx - Position.Y) / step) * step;
+					SliderProgress = posx / (Scale.Y);
+				}
+			}
+			else if (CursorLockOn)
+			{
+				var posx = Math.Clamp(Mouse.GetState().Position.Y, Position.Y, Position.Y + Scale.Y);
+				var progress = (posx - Position.Y) / (Scale.Y);
+				SliderProgress = progress;
+			}
+		}
+	}
+	class Scrollbox : UIContainer
+	{
+		public int Padding = 10;
+		public int Scroll = 0;
+		public Scrollbox(RelativePosition relpos, UIControl controller) : base(relpos, controller) { }
+		public Scrollbox(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller) { }
+		protected int Height()
+		{
+			int h = Padding * Contents.Count;
+			foreach(var e in Contents) { h += (int)e.Scale.Y; }
+			return h;
+		}
+		protected int GetHighestElement()
+		{
+			int h = (Contents.Count == 0) ? 0 : (int)(ChildLocalPosition(Contents[0]).Y);
+			foreach(var e in Contents)
+			{
+				h = (int)Math.Min(h, (int)(ChildLocalPosition(e).Y));
+			}
+			return h;
+		}
+		protected int GetLowestElement()
+		{
+			int h = (Contents.Count == 0) ? 0 : (int)(ChildLocalPosition(Contents[0]).Y + Contents[0].Scale.Y);
+			foreach (var e in Contents)
+			{
+				h = (int)Math.Max(h, ChildLocalPosition(e).Y + e.Scale.Y);
+			}
+			return h;
+		}
+
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			sb.End();
+			RenderTarget2D frame = new(sb.GraphicsDevice, (int)Scale.X, (int)Scale.Y);
+			sb.GraphicsDevice.SetRenderTarget(frame);
+			sb.Begin();
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Vector2.Zero, Scale), Controller.Palette.Main);
+
+			for(int i = 0; i < Contents.Count; i++)
+			{
+				var position = new Vector2(Contents[i].Position.X - Position.X, Contents[i].Position.Y - Position.Y + Scroll);
+				Contents[i].RenderAt(position, sb, gt);
+			}
+			//draw scrollbar
+			var scrollbarsize = Scale.Y / (GetLowestElement() - GetHighestElement()) * Scale.Y;
+			var scrollbarshift = (Scroll - GetHighestElement()) / (GetLowestElement() - GetHighestElement()); 
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(0, scrollbarshift), new(Scale.X * .1f, scrollbarsize)), Controller.Palette.MainDark);
+
+			sb.End();
+			sb.GraphicsDevice.SetRenderTarget(null);
+			sb.Begin();
+			sb.Draw(frame, Position, Color.White);
+			sb.End();
+			frame.Dispose();
+			sb.Begin();
+		}
+
+		public override void Update(GameTime gt)
+		{
+			if(MouseHover())
+			{
+				var scroll = 3 * Controller.Input.GetScroll();
+				var coordscroll = -(Scroll + scroll);
+				Console.WriteLine($"{GetLowestElement()} {coordscroll + Scale.Y}");
+				if (coordscroll > GetHighestElement() && coordscroll + Scale.Y < GetLowestElement())
+					Scroll += scroll;
+			}
+			base.Update(gt);
+		}
 	}
 }

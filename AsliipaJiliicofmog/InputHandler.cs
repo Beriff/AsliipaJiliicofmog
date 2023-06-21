@@ -88,5 +88,9 @@ namespace AsliipaJiliicofmog
 		{
 			return MState.Position - PrevMState.Position;
 		}
+		public int GetScroll()
+		{
+			return (MState.ScrollWheelValue - PrevMState.ScrollWheelValue)/120;
+		}
 	}
 }
