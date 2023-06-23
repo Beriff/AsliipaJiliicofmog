@@ -559,8 +559,10 @@ namespace AsliipaJiliicofmog
 				Contents[i].RenderAt(position, sb, gt);
 			}
 			//draw scrollbar
-			var scrollbarsize = Scale.Y / (GetLowestElement() - GetHighestElement()) * Scale.Y;
-			var scrollbarshift = (Scroll - GetHighestElement()) / (GetLowestElement() - GetHighestElement()); 
+			var range = GetLowestElement() - Scale.Y - GetHighestElement();
+			var scrollbarsize = Scale.Y / range * Scale.Y * .25f;
+			var scrollbarshift = (-Scroll - GetHighestElement()) / (range) * (Scale.Y - scrollbarsize);
+			Console.WriteLine($"S{-Scroll} SBS{scrollbarsize} [{scrollbarshift}]");
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(0, scrollbarshift), new(Scale.X * .1f, scrollbarsize)), Controller.Palette.MainDark);
 
 			sb.End();
@@ -578,7 +580,6 @@ namespace AsliipaJiliicofmog
 			{
 				var scroll = 3 * Controller.Input.GetScroll();
 				var coordscroll = -(Scroll + scroll);
-				Console.WriteLine($"{GetLowestElement()} {coordscroll + Scale.Y}");
 				if (coordscroll > GetHighestElement() && coordscroll + Scale.Y < GetLowestElement())
 					Scroll += scroll;
 			}
