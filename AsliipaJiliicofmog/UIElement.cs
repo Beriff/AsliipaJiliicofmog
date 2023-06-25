@@ -341,7 +341,7 @@ namespace AsliipaJiliicofmog
 		 * Since OnClick check is handled separately from rendering the button,
 		 * if the button were to be rendered with RenderAt() method,
 		 * the click bounds would not be calculated correctly.
-		 * RenderAt() can be called from container classes,
+		 * RenderAt() is called from container classes,
 		 * so putting clickable objects inside UI containers should generally be
 		 * avoided (except the containers that do not move).
 		 */
@@ -562,7 +562,6 @@ namespace AsliipaJiliicofmog
 			var range = GetLowestElement() - Scale.Y - GetHighestElement();
 			var scrollbarsize = Scale.Y / range * Scale.Y * .25f;
 			var scrollbarshift = (-Scroll - GetHighestElement()) / (range) * (Scale.Y - scrollbarsize);
-			Console.WriteLine($"S{-Scroll} SBS{scrollbarsize} [{scrollbarshift}]");
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(0, scrollbarshift), new(Scale.X * .1f, scrollbarsize)), Controller.Palette.MainDark);
 
 			sb.End();
@@ -585,5 +584,125 @@ namespace AsliipaJiliicofmog
 			}
 			base.Update(gt);
 		}
+	}
+	class Checkbox : UIElement, IClickable
+	{
+		public bool Checked = false;
+		public Action OnClick { get; set; }
+		public Checkbox(RelativePosition relpos, UIControl controller) : base(relpos, controller)
+		{
+		}
+		public Checkbox(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller)
+		{
+		}
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.Main);
+			if (Checked)
+				sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position + .25f * Scale, Scale * .5f), Controller.Palette.Highlight);
+		}
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.Main);
+			if (Checked)
+				sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position + .25f * Scale, Scale * .5f), Controller.Palette.Highlight);
+		}
+		public override void Update(GameTime gt)
+		{
+			if(MouseHover() && (Controller.Input.M1State() == PressState.JustReleased) )
+			{
+				Checked = !Checked;
+				OnClick();
+			}
+		}
+	}
+	class Combobox : UIElement, IClickable
+	{
+		public string CurrentOption;
+		public List<string> Options;
+		protected bool Expanded = false;
+		public Action OnClick { get; set; }
+		public Combobox(RelativePosition relpos, UIControl controller, List<string> options) : base(relpos, controller)
+		{
+			Options = options;
+			CurrentOption = options[0];
+			Options.RemoveAt(0);
+		}
+		public Combobox(Vector2 scale, Vector2 position, UIControl controller, List<string> options) : base(scale, position, controller)
+		{
+			Options = options;
+			CurrentOption = options[0];
+			Options.RemoveAt(0);
+		}
+		public Combobox(RelativePosition relpos, UIControl controller, params string[] options) : this(relpos, controller, new List<string>(options))
+		{
+		}
+		public Combobox(Vector2 scale, Vector2 position, UIControl controller, params string[] options) : this(scale, position, controller, new List<string>(options))
+		{
+		}
+
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.MainDark);
+
+			sb.DrawString(Controller.Font, CurrentOption,
+				GetBounds().Center.ToVector2() - Controller.Font.MeasureString(CurrentOption) / 2,
+				Controller.Palette.Contrast);
+			if(Expanded)
+			{
+				for(int i = 0; i < Options.Count; i++)
+				{
+					var bounds = NumExtend.Vec2Rect(Position + new Vector2(0, (i+1) * Scale.Y), Scale);
+					sb.Draw(Controller.Blank, bounds, Controller.Palette.MainDark);
+
+					sb.DrawString(Controller.Font, Options[i],
+						bounds.Center.ToVector2() - Controller.Font.MeasureString(Options[i]) / 2,
+						Controller.Palette.Contrast);
+				}
+			}
+		}
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
+
+			sb.DrawString(Controller.Font, CurrentOption,
+				NumExtend.Vec2Rect(position, Scale).Center.ToVector2() - Controller.Font.MeasureString(CurrentOption) / 2,
+				Controller.Palette.Contrast);
+			if (Expanded)
+			{
+				for (int i = 1; i != Options.Count; i++)
+				{
+					var bounds = NumExtend.Vec2Rect(position + new Vector2(0, i * Scale.Y), Scale);
+					sb.Draw(Controller.Blank, bounds, Controller.Palette.MainDark);
+
+					sb.DrawString(Controller.Font, Options[i - 1],
+						bounds.Center.ToVector2() - Controller.Font.MeasureString(Options[i - 1]) / 2,
+						Controller.Palette.Contrast);
+				}
+			}
+		}
+		public override void Update(GameTime gt)
+		{
+			if (MouseHover() && (Controller.Input.M1State() == PressState.JustReleased))
+			{
+				Expanded = !Expanded;
+			}
+			else if ((Controller.Input.M1State() == PressState.JustReleased) && Expanded)
+			{
+				for (int i = 0; i < Options.Count; i++)
+				{
+					var bounds = NumExtend.Vec2Rect(Position + new Vector2(0, (i+1) * Scale.Y), Scale);
+					if (bounds.Contains(Mouse.GetState().Position))
+					{
+						Options.Add(CurrentOption);
+						CurrentOption = Options[i];
+						Options.Remove(Options[i]);
+						Expanded = false;
+						break;
+					}
+				}
+			}
+		}
+
 	}
 }
