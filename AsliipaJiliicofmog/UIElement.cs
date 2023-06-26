@@ -67,7 +67,8 @@ namespace AsliipaJiliicofmog
 		public Texture2D Blank;
 		private SpriteBatch Sb;
 		public InputHandler Input;
-		public UIControl(UIColorPalette palette, SpriteBatch sb, SpriteFont font)
+		public GameWindow GWindow;
+		public UIControl(UIColorPalette palette, SpriteBatch sb, SpriteFont font, GameWindow gw)
 		{
 			Palette = palette;
 			Sb = sb;
@@ -76,6 +77,7 @@ namespace AsliipaJiliicofmog
 			UIElements = new();
 			Font = font;
 			Input = new();
+			GWindow = gw;
 		}
 		public void Render(SpriteBatch sb, GameTime gt)
 		{
@@ -186,7 +188,6 @@ namespace AsliipaJiliicofmog
 	interface IFocusable
 	{
 		public bool Focused { get; set; }
-		public void OnInput(Keys k);
 	}
 
 	/// <summary>
@@ -704,5 +705,114 @@ namespace AsliipaJiliicofmog
 			}
 		}
 
+	}
+	class Inputbox : UIElement, IFocusable
+	{
+		public string Text;
+		public int Cursor = 0;
+		public bool Focused { get; set; }
+		public void OnTextInput(object source, TextInputEventArgs args)
+		{
+			//the edge cases here go hard
+			if(Focused && args.Character != '\n')
+			{
+				
+				if(args.Character != '\b')
+				{
+					if(Text != "")
+					{
+						
+						Text = Text.Insert(Cursor, args.Character.ToString());
+						Cursor = Math.Clamp(Cursor + 1, 0, Text.Length);
+
+					} else
+					{
+						Text = args.Character.ToString();
+						Cursor = 1;
+					}
+					
+				} else
+				{
+					if(Cursor != 0)
+					{
+						var t = Text.ToList();
+						t.RemoveAt(Cursor - 1);
+						Text = new string(t.ToArray());
+						Cursor = Math.Clamp(Cursor - 1, 0, Text.Length);
+					}	
+				}
+			}
+		}
+		public Inputbox(RelativePosition relpos, UIControl controller) : base(relpos, controller)
+		{
+			Controller.GWindow.TextInput += OnTextInput;
+		}
+		public Inputbox(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller)
+		{
+			Controller.GWindow.TextInput += OnTextInput;
+		}
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			
+			//determine amount of characters that can be drawn
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Focused ? Controller.Palette.Main : Controller.Palette.MainDark);
+
+			if (Text != "")
+				sb.DrawString(Controller.Font, Text, Position, Controller.Palette.Contrast);
+
+			//draw cursor
+			if(Focused)
+			{
+				string substr = Text.Substring(0, Cursor);
+				var pos = Position + new Vector2(1, 0) * Controller.Font.MeasureString(substr);
+
+				if (gt.TotalGameTime.TotalMilliseconds % 100 != 0) // add flicker
+				{
+					sb.Draw(Controller.Blank, NumExtend.Vec2Rect(pos, new Vector2(3, Scale.Y)), Controller.Palette.Contrast);
+				}
+			}
+			
+			
+		}
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
+
+			sb.DrawString(Controller.Font, Text, position,
+				Controller.Palette.Contrast);
+
+			//draw cursor
+			string substr = Text.Substring(0, Cursor);
+			var pos = position + new Vector2(1, 0) * Controller.Font.MeasureString(substr);
+
+			if (gt.TotalGameTime.TotalMilliseconds % 5 != 0) // add flicker
+			{
+				sb.Draw(Controller.Blank, NumExtend.Vec2Rect(pos, new Vector2(3, Scale.Y)), Controller.Palette.Contrast);
+			}
+		}
+		public override void Update(GameTime gt)
+		{
+			
+			if(Controller.Input.M1State() == PressState.JustReleased)
+			{
+				if (MouseHover())
+					Focused = true;
+				else
+					Focused = false;
+			}
+
+			if(Focused)
+			{
+				if (Controller.Input.GetState(Keys.Right) == PressState.JustPressed)
+				{
+					Cursor = Math.Clamp(Cursor + 1, 0, Text.Length);
+				}
+				else if (Controller.Input.GetState(Keys.Left) == PressState.JustPressed)
+				{
+					Cursor = Math.Clamp(Cursor - 1, 0, Text.Length);
+				}
+			}
+			
+		}
 	}
 }
