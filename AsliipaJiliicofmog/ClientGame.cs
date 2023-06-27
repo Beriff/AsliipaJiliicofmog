@@ -32,11 +32,9 @@ namespace Asliipa
 			
 			Control = new(UIColorPalette.Default(), SB, Content.Load<SpriteFont>("mplus"), Window);
 
-			/*f = new Scrollbox(new(150, 150), new(30, 30), Control);
+			f = new Scrollbox(new(150, 150), new(30, 30), Control);
 			f.AddElement(new ProgressBar(new RelativePosition(f, (1, .3f), (0, -.5f)), Control, 100));
-			f.AddElement(new ProgressBar(new RelativePosition(f, (1, .3f), (0, .5f)), Control, 100));
-			f.AddElement(new ProgressBar(new RelativePosition(f, (1, .3f), (0, 1)), Control, 100));*/
-			new Inputbox(new(100, 30), new(50, 50), Control) { Text = "bruhe" };
+			f.AddElement(new Button(new RelativePosition(f, (1, .3f), (0, 1)), Control, "test", () => { Console.WriteLine("test"); }));
 		}
 		protected override void Update(GameTime gameTime)
 		{

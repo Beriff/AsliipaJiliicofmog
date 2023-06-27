@@ -65,9 +65,10 @@ namespace AsliipaJiliicofmog
 
 		public List<UIElement> UIElements;
 		public Texture2D Blank;
-		private SpriteBatch Sb;
+		public SpriteBatch Sb;
 		public InputHandler Input;
 		public GameWindow GWindow;
+		public bool Debug = true;
 		public UIControl(UIColorPalette palette, SpriteBatch sb, SpriteFont font, GameWindow gw)
 		{
 			Palette = palette;
@@ -101,6 +102,13 @@ namespace AsliipaJiliicofmog
 	{
 		protected Vector2 _Position;
 		protected Vector2 _Scale;
+
+		/* Absolute values are used by container UI to set their actual position,
+		 * and not the position relative to the container. Used by Update() method for accurate object bounds.
+		 */
+		protected Vector2? _AbsPosition;
+		protected Vector2? _AbsScale;
+
 		protected RelativePosition? _RelPosition;
 
 		public UIControl Controller;
@@ -117,6 +125,16 @@ namespace AsliipaJiliicofmog
 			get => RelPosition?.GetScale() ?? _Scale;
 			set { if (RelPosition == null) { _Scale = value; } }
 		}
+		public virtual Vector2 AbsolutePosition
+		{
+			get => _AbsPosition ?? Position;
+			set => _AbsPosition = value;
+		}
+		public virtual Vector2 AbsoluteScale
+		{
+			get => _AbsScale ?? Scale;
+			set => _AbsScale = value;
+		}
 		public bool MouseHover() => GetBounds().Contains(Mouse.GetState().Position);
 		public virtual RelativePosition? RelPosition { get; set; }
 
@@ -127,8 +145,20 @@ namespace AsliipaJiliicofmog
 		{
 			return Position + Scale * Anchor;
 		}
-		public abstract void Render(SpriteBatch sb, GameTime gt);
-		public abstract void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt);
+		public virtual void Render(SpriteBatch sb, GameTime gt) 
+		{
+			if (Controller.Debug)
+			{
+				Controller.Sb.Draw(Controller.Blank, GetBounds(), new Color(Color.Red, .5f));
+			}
+		}
+		public virtual void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			if (Controller.Debug)
+			{
+				Controller.Sb.Draw(Controller.Blank, GetBounds(), new Color(Color.Red, .5f));
+			}
+		}
 		public abstract void Update(GameTime gt);
 
 		public UIElement(RelativePosition relpos, UIControl controller)
@@ -152,7 +182,7 @@ namespace AsliipaJiliicofmog
 
 		public Rectangle GetBounds()
 		{
-			return new(Position.ToPoint(), Scale.ToPoint());
+			return new(AbsolutePosition.ToPoint(), Scale.ToPoint());
 		}
 
 	}
@@ -168,11 +198,29 @@ namespace AsliipaJiliicofmog
 		}
 		public override void Render(SpriteBatch sb, GameTime gt)
 		{
-			foreach(var e in Contents) { if (e.Visible) { e.RenderAt(e.Position - Position, sb, gt); } }
+			foreach(var e in Contents) 
+			{ 
+				if (e.Visible) 
+				{
+					var pos = e.Position - Position;
+					e.RenderAt(pos, sb, gt);
+					e.AbsolutePosition = pos;
+				} 
+			}
+			base.Render(sb,gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
-			foreach (var e in Contents) { if (e.Visible) { e.RenderAt(position, sb, gt); } }
+			foreach (var e in Contents)
+			{
+				if (e.Visible)
+				{
+					var pos = e.Position - position;
+					e.RenderAt(pos, sb, gt);
+					e.AbsolutePosition = pos;
+				}
+			}
+			base.RenderAt(position, sb, gt);
 		}
 		public override void Update(GameTime gt)
 		{
@@ -225,6 +273,7 @@ namespace AsliipaJiliicofmog
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Draw(frame, Position, Color.White);
 			frame.Dispose();
+			base.RenderAt(position, sb, gt);
 		}
 	}
 	/// <summary>
@@ -265,10 +314,12 @@ namespace AsliipaJiliicofmog
 		public override void Render(SpriteBatch sb, GameTime gt)
 		{
 			sb.DrawString(Controller.Font, Text, Position, Controller.Palette.Contrast);
+			base.Render(sb, gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
 			sb.DrawString(Controller.Font, Text, position, Controller.Palette.Contrast);
+			base.RenderAt(position, sb, gt);
 		}
 		public override void Update(GameTime gt) { }
 	}
@@ -289,11 +340,13 @@ namespace AsliipaJiliicofmog
 		{
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.MainDark);
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale * new Vector2(Progress/(float)MaxProgress, 1)), Controller.Palette.Highlight);
+			base.Render(sb, gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale * new Vector2(Progress / (float)MaxProgress, 1)), Controller.Palette.Highlight);
+			base.RenderAt(position, sb, gt);
 		}
 
 	}
@@ -323,6 +376,7 @@ namespace AsliipaJiliicofmog
 			sb.DrawString(Controller.Font, Text, 
 				GetBounds().Center.ToVector2() - Controller.Font.MeasureString(Text) / 2,
 				Controller.Palette.Contrast);
+			base.Render(sb, gt);
 		}
 
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
@@ -336,6 +390,7 @@ namespace AsliipaJiliicofmog
 			sb.DrawString(Controller.Font, Text,
 				bounds.Center.ToVector2() - Controller.Font.MeasureString(Text) / 2,
 				Controller.Palette.Contrast);
+			base.RenderAt(position, sb, gt);
 		}
 
 		/*
@@ -350,7 +405,7 @@ namespace AsliipaJiliicofmog
 		{
 			if (Controller.Input.M1State() == PressState.JustReleased)
 			{
-				if (GetBounds().Contains(Mouse.GetState().Position))
+				if (MouseHover())
 					OnClick();
 			}
 		}
@@ -388,12 +443,14 @@ namespace AsliipaJiliicofmog
 				}
 			}
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(AbsSliderPos(), Position.Y), new(Scale.Y)), slidercolor);
+			base.Render(sb, gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
 			var abssliderpos = (int)(position.X + SliderProgress * Scale.X - Scale.Y / 2);
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(abssliderpos, Position.Y), new(Scale.Y)), Controller.Palette.Highlight);
+			base.RenderAt(position, sb, gt);
 		}
 
 		public Slider(RelativePosition relpos, UIControl controller, int? steps = null) : base(relpos, controller)
@@ -468,12 +525,14 @@ namespace AsliipaJiliicofmog
 				}
 			}
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(Position.X, AbsSliderPos()), new(Scale.X)), slidercolor);
+			base.Render(sb, gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
 			var abssliderpos = (int)(position.Y + SliderProgress * Scale.Y - Scale.X / 2);
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.MainDark);
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(new(Position.X, abssliderpos), new(Scale.X)), Controller.Palette.Highlight);
+			base.RenderAt(position, sb, gt);
 		}
 
 		public VerticalSlider(RelativePosition relpos, UIControl controller, int? steps = null) : base(relpos, controller)
@@ -558,6 +617,8 @@ namespace AsliipaJiliicofmog
 			{
 				var position = new Vector2(Contents[i].Position.X - Position.X, Contents[i].Position.Y - Position.Y + Scroll);
 				Contents[i].RenderAt(position, sb, gt);
+				Contents[i].AbsolutePosition = position + Position;
+
 			}
 			//draw scrollbar
 			var range = GetLowestElement() - Scale.Y - GetHighestElement();
@@ -572,17 +633,23 @@ namespace AsliipaJiliicofmog
 			sb.End();
 			frame.Dispose();
 			sb.Begin();
+			
 		}
 
 		public override void Update(GameTime gt)
 		{
 			if(MouseHover())
 			{
+				//make interactable UI elements active only when the mouse is inside the scrollbox,
+				//therefore you can only click on UI elements, only if they are visible in the scrollbox
+				foreach(var e in Contents) { e.Active = true; }
+
 				var scroll = 3 * Controller.Input.GetScroll();
 				var coordscroll = -(Scroll + scroll);
 				if (coordscroll > GetHighestElement() && coordscroll + Scale.Y < GetLowestElement())
 					Scroll += scroll;
 			}
+			else { foreach (var e in Contents) { e.Active = false; } }
 			base.Update(gt);
 		}
 	}
@@ -601,12 +668,14 @@ namespace AsliipaJiliicofmog
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position, Scale), Controller.Palette.Main);
 			if (Checked)
 				sb.Draw(Controller.Blank, NumExtend.Vec2Rect(Position + .25f * Scale, Scale * .5f), Controller.Palette.Highlight);
+			base.Render(sb, gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
 			sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position, Scale), Controller.Palette.Main);
 			if (Checked)
 				sb.Draw(Controller.Blank, NumExtend.Vec2Rect(position + .25f * Scale, Scale * .5f), Controller.Palette.Highlight);
+			base.RenderAt(position, sb, gt);
 		}
 		public override void Update(GameTime gt)
 		{
@@ -661,6 +730,7 @@ namespace AsliipaJiliicofmog
 						Controller.Palette.Contrast);
 				}
 			}
+			base.Render(sb, gt);
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
@@ -681,6 +751,7 @@ namespace AsliipaJiliicofmog
 						Controller.Palette.Contrast);
 				}
 			}
+			base.RenderAt(position, sb, gt);
 		}
 		public override void Update(GameTime gt)
 		{
@@ -771,8 +842,8 @@ namespace AsliipaJiliicofmog
 					sb.Draw(Controller.Blank, NumExtend.Vec2Rect(pos, new Vector2(3, Scale.Y)), Controller.Palette.Contrast);
 				}
 			}
-			
-			
+			base.Render(sb, gt);
+
 		}
 		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
 		{
@@ -789,6 +860,7 @@ namespace AsliipaJiliicofmog
 			{
 				sb.Draw(Controller.Blank, NumExtend.Vec2Rect(pos, new Vector2(3, Scale.Y)), Controller.Palette.Contrast);
 			}
+			base.RenderAt(position, sb, gt);
 		}
 		public override void Update(GameTime gt)
 		{
