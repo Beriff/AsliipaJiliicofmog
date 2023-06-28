@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
@@ -29,5 +29,10 @@
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
     <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoBundle">
+      <HintPath>..\..\MonoUI\MonoUI\bin\Release\netcoreapp3.1\MonoBundle.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -13,16 +13,10 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../../../../../Desktop/assets/sfx/click.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:../../../../../Desktop/assets/sfx/click.ogg;click.ogg
-
-#begin GameFont.spritefont
+#begin File.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=DxtCompressed
-/build:GameFont.spritefont
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont;mplus.spritefont
 
