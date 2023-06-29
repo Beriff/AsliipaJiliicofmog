@@ -13,7 +13,8 @@ namespace Asliipa
 		public GraphicsDeviceManager Graphics;
 		public SpriteBatch SB;
 		public UIControl Control;
-		public Scrollbox f;
+		public Button b1;
+		public Button b2;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -31,10 +32,6 @@ namespace Asliipa
 
 			
 			Control = new(UIColorPalette.Default(), SB, Content.Load<SpriteFont>("mplus"), Window);
-
-			f = new Scrollbox(new(150, 150), new(30, 30), Control);
-			f.AddElement(new ProgressBar(new RelativePosition(f, (1, .3f), (0, -.5f)), Control, 100));
-			f.AddElement(new Button(new RelativePosition(f, (1, .3f), (0, 1)), Control, "test", () => { Console.WriteLine("test"); }));
 		}
 		protected override void Update(GameTime gameTime)
 		{

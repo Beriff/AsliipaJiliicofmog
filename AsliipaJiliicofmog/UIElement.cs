@@ -58,6 +58,17 @@ namespace AsliipaJiliicofmog
 				);
 		}
 	}
+	struct UIMask
+	{
+		public string Name;
+		public bool Override;
+		public UIMask(string name, bool overr = false)
+		{
+			Name = name;
+			Override = overr;
+		}
+		public static UIMask Def() => new("");
+	}
 	class UIControl
 	{
 		public UIColorPalette Palette;
@@ -68,7 +79,8 @@ namespace AsliipaJiliicofmog
 		public SpriteBatch Sb;
 		public InputHandler Input;
 		public GameWindow GWindow;
-		public bool Debug = true;
+		public Dictionary<string, List<UIElement>> MaskElements;
+		public bool Debug = false;
 		public UIControl(UIColorPalette palette, SpriteBatch sb, SpriteFont font, GameWindow gw)
 		{
 			Palette = palette;
@@ -79,6 +91,7 @@ namespace AsliipaJiliicofmog
 			Font = font;
 			Input = new();
 			GWindow = gw;
+			MaskElements = new();
 		}
 		public void Render(SpriteBatch sb, GameTime gt)
 		{
@@ -86,6 +99,20 @@ namespace AsliipaJiliicofmog
 			{
 				if(e.Visible) { e.Render(sb, gt); }
 			}
+		}
+		public void AddMaskedElement(UIElement e)
+		{
+			if(!MaskElements.ContainsKey(e.Mask.Name))
+			{
+				MaskElements[e.Mask.Name] = new List<UIElement>();
+			}
+			
+			if(e.Mask.Override)
+			{
+				foreach (var element in MaskElements[e.Mask.Name])
+					element.Disable();
+				MaskElements[e.Mask.Name].Add(e);
+			} else { MaskElements[e.Mask.Name].Add(e); }
 		}
 		public void Update(GameTime gt)
 		{
@@ -95,8 +122,18 @@ namespace AsliipaJiliicofmog
 				if (e.Active) { e.Update(gt); }
 			}
 		}
-		public void AddElement(UIElement e) { UIElements.Add(e); }
-		public void RemoveElement(UIElement e) { UIElements.Remove(e); }
+		public void AddElement(UIElement e) 
+		{ 
+			UIElements.Add(e);
+			if(e.HasUIMask())
+				AddMaskedElement(e);
+		}
+		public void RemoveElement(UIElement e) 
+		{ 
+			UIElements.Remove(e);
+			if (e.HasUIMask())
+				MaskElements[e.Mask.Name].Remove(e);
+		}
 	}
 	abstract class UIElement
 	{
@@ -108,12 +145,29 @@ namespace AsliipaJiliicofmog
 		 */
 		protected Vector2? _AbsPosition;
 		protected Vector2? _AbsScale;
-
 		protected RelativePosition? _RelPosition;
+
+		public UIMask Mask;
 
 		public UIControl Controller;
 		public bool Visible { get; set; }
 		public bool Active { get; set; }
+		public bool HasUIMask() => !(Mask.Name == "");
+		public void Enable()
+		{
+			if(HasUIMask() && Mask.Override)
+			{
+				foreach (var e in Controller.MaskElements[Mask.Name])
+					e.Disable();
+			}
+			Visible = true;
+			Active = true;
+		}
+		public void Disable()
+		{
+			Visible = false;
+			Active = false;
+		}
 
 		public virtual Vector2 Position 
 		{ 
@@ -161,15 +215,16 @@ namespace AsliipaJiliicofmog
 		}
 		public abstract void Update(GameTime gt);
 
-		public UIElement(RelativePosition relpos, UIControl controller)
+		public UIElement(RelativePosition relpos, UIControl controller, UIMask mask)
 		{
 			Visible = true;
 			Active = true;
 			RelPosition = relpos;
 			Controller = controller;
+			Mask = mask;
 			Controller.AddElement(this);
 		}
-		public UIElement(Vector2 scale, Vector2 position, UIControl controller)
+		public UIElement(Vector2 scale, Vector2 position, UIControl controller, UIMask mask)
 		{
 			Visible = true;
 			Active = true;
@@ -177,7 +232,9 @@ namespace AsliipaJiliicofmog
 			Controller = controller;
 			Scale = scale;
 			Position = position;
+			Mask = mask;
 			Controller.AddElement(this);
+			
 		}
 
 		public Rectangle GetBounds()
@@ -188,8 +245,8 @@ namespace AsliipaJiliicofmog
 	}
 	abstract class UIContainer : UIElement
 	{
-		public UIContainer(RelativePosition relpos, UIControl controller) : base(relpos, controller) { Contents = new(); }
-		public UIContainer(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller) { Contents = new();  }
+		public UIContainer(RelativePosition relpos, UIControl controller, UIMask mask) : base(relpos, controller, mask) { Contents = new(); }
+		public UIContainer(Vector2 scale, Vector2 position, UIControl controller, UIMask mask) : base(scale, position, controller, mask) { Contents = new();  }
 
 		public List<UIElement> Contents;
 		public Vector2 ChildLocalPosition(UIElement child)
@@ -243,8 +300,8 @@ namespace AsliipaJiliicofmog
 	/// </summary>
 	class Frame : UIContainer
 	{
-		public Frame(RelativePosition relpos, UIControl controller) : base(relpos, controller) { }
-		public Frame(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller) { }
+		public Frame(RelativePosition relpos, UIControl controller, UIMask mask) : base(relpos, controller, mask) { }
+		public Frame(Vector2 scale, Vector2 position, UIControl controller, UIMask mask) : base(scale, position, controller, mask) { }
 		public Color? MainColor;
 		public override void Render(SpriteBatch sb, GameTime gt)
 		{
@@ -281,8 +338,8 @@ namespace AsliipaJiliicofmog
 	/// </summary>
 	class Textbox : UIElement
 	{
-		public Textbox(RelativePosition relpos, UIControl controller, string text) : base(relpos, controller) { Text = text; }
-		public Textbox(Vector2 scale, Vector2 position, UIControl controller, string text) : base(scale, position, controller) { Text = text; }
+		public Textbox(RelativePosition relpos, UIControl controller, string text, UIMask mask) : base(relpos, controller, mask) { Text = text; }
+		public Textbox(Vector2 scale, Vector2 position, UIControl controller, string text, UIMask mask) : base(scale, position, controller, mask) { Text = text; }
 
 		protected string _Text;
 		public bool Wrap = true;
@@ -327,11 +384,11 @@ namespace AsliipaJiliicofmog
 	{
 		public int Progress;
 		public int MaxProgress;
-		public ProgressBar(RelativePosition relpos, UIControl controller, int maxprogress) : base(relpos, controller) 
+		public ProgressBar(RelativePosition relpos, UIControl controller, int maxprogress, UIMask mask) : base(relpos, controller, mask) 
 		{
 			MaxProgress = Progress = maxprogress;
 		}
-		public ProgressBar(Vector2 scale, Vector2 position, UIControl controller, int maxprogress) : base(scale, position, controller) 
+		public ProgressBar(Vector2 scale, Vector2 position, UIControl controller, int maxprogress, UIMask mask) : base(scale, position, controller, mask) 
 		{
 			MaxProgress = Progress = maxprogress;
 		}
@@ -354,12 +411,12 @@ namespace AsliipaJiliicofmog
 	{
 		public string Text;
 		public Action OnClick { get; set; }
-		public Button(RelativePosition relpos, UIControl controller, string text, Action onclick) : base(relpos, controller)
+		public Button(RelativePosition relpos, UIControl controller, string text, Action onclick, UIMask mask) : base(relpos, controller, mask)
 		{
 			Text = text;
 			OnClick = onclick;
 		}
-		public Button(Vector2 scale, Vector2 position, UIControl controller, string text, Action onclick) : base(scale, position, controller)
+		public Button(Vector2 scale, Vector2 position, UIControl controller, string text, Action onclick, UIMask mask) : base(scale, position, controller, mask)
 		{
 			Text = text;
 			OnClick = onclick;
@@ -453,13 +510,13 @@ namespace AsliipaJiliicofmog
 			base.RenderAt(position, sb, gt);
 		}
 
-		public Slider(RelativePosition relpos, UIControl controller, int? steps = null) : base(relpos, controller)
+		public Slider(RelativePosition relpos, UIControl controller, UIMask mask, int? steps = null) : base(relpos, controller, mask)
 		{
 			Steps = steps;
 			CursorLockOn = false;
 			SliderProgress = 0f;
 		}
-		public Slider(Vector2 scale, Vector2 position, UIControl controller, int? steps = null) : base(scale, position, controller) 
+		public Slider(Vector2 scale, Vector2 position, UIControl controller, UIMask mask, int? steps = null) : base(scale, position, controller, mask) 
 		{
 			Steps = steps;
 			CursorLockOn = false;
@@ -535,13 +592,13 @@ namespace AsliipaJiliicofmog
 			base.RenderAt(position, sb, gt);
 		}
 
-		public VerticalSlider(RelativePosition relpos, UIControl controller, int? steps = null) : base(relpos, controller)
+		public VerticalSlider(RelativePosition relpos, UIControl controller, UIMask mask, int? steps = null) : base(relpos, controller, mask)
 		{
 			Steps = steps;
 			CursorLockOn = false;
 			SliderProgress = 0f;
 		}
-		public VerticalSlider(Vector2 scale, Vector2 position, UIControl controller, int? steps = null) : base(scale, position, controller)
+		public VerticalSlider(Vector2 scale, Vector2 position, UIControl controller, UIMask mask, int? steps = null) : base(scale, position, controller, mask)
 		{
 			Steps = steps;
 			CursorLockOn = false;
@@ -578,8 +635,8 @@ namespace AsliipaJiliicofmog
 	{
 		public int Padding = 10;
 		public int Scroll = 0;
-		public Scrollbox(RelativePosition relpos, UIControl controller) : base(relpos, controller) { }
-		public Scrollbox(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller) { }
+		public Scrollbox(RelativePosition relpos, UIControl controller, UIMask mask) : base(relpos, controller, mask) { }
+		public Scrollbox(Vector2 scale, Vector2 position, UIControl controller, UIMask mask) : base(scale, position, controller, mask) { }
 		protected int Height()
 		{
 			int h = Padding * Contents.Count;
@@ -657,10 +714,10 @@ namespace AsliipaJiliicofmog
 	{
 		public bool Checked = false;
 		public Action OnClick { get; set; }
-		public Checkbox(RelativePosition relpos, UIControl controller) : base(relpos, controller)
+		public Checkbox(RelativePosition relpos, UIControl controller, UIMask mask) : base(relpos, controller, mask)
 		{
 		}
-		public Checkbox(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller)
+		public Checkbox(Vector2 scale, Vector2 position, UIControl controller, UIMask mask) : base(scale, position, controller, mask)
 		{
 		}
 		public override void Render(SpriteBatch sb, GameTime gt)
@@ -692,22 +749,22 @@ namespace AsliipaJiliicofmog
 		public List<string> Options;
 		protected bool Expanded = false;
 		public Action OnClick { get; set; }
-		public Combobox(RelativePosition relpos, UIControl controller, List<string> options) : base(relpos, controller)
+		public Combobox(RelativePosition relpos, UIControl controller, UIMask mask, List<string> options) : base(relpos, controller, mask)
 		{
 			Options = options;
 			CurrentOption = options[0];
 			Options.RemoveAt(0);
 		}
-		public Combobox(Vector2 scale, Vector2 position, UIControl controller, List<string> options) : base(scale, position, controller)
+		public Combobox(Vector2 scale, Vector2 position, UIControl controller, UIMask mask, List<string> options) : base(scale, position, controller, mask)
 		{
 			Options = options;
 			CurrentOption = options[0];
 			Options.RemoveAt(0);
 		}
-		public Combobox(RelativePosition relpos, UIControl controller, params string[] options) : this(relpos, controller, new List<string>(options))
+		public Combobox(RelativePosition relpos, UIControl controller, UIMask mask, params string[] options) : this(relpos, controller, mask, new List<string>(options))
 		{
 		}
-		public Combobox(Vector2 scale, Vector2 position, UIControl controller, params string[] options) : this(scale, position, controller, new List<string>(options))
+		public Combobox(Vector2 scale, Vector2 position, UIControl controller, UIMask mask, params string[] options) : this(scale, position, controller, mask, new List<string>(options))
 		{
 		}
 
@@ -814,11 +871,11 @@ namespace AsliipaJiliicofmog
 				}
 			}
 		}
-		public Inputbox(RelativePosition relpos, UIControl controller) : base(relpos, controller)
+		public Inputbox(RelativePosition relpos, UIControl controller, UIMask mask) : base(relpos, controller, mask)
 		{
 			Controller.GWindow.TextInput += OnTextInput;
 		}
-		public Inputbox(Vector2 scale, Vector2 position, UIControl controller) : base(scale, position, controller)
+		public Inputbox(Vector2 scale, Vector2 position, UIControl controller, UIMask mask) : base(scale, position, controller, mask)
 		{
 			Controller.GWindow.TextInput += OnTextInput;
 		}
