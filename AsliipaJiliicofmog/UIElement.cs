@@ -150,6 +150,7 @@ namespace AsliipaJiliicofmog
 		public UIMask Mask;
 
 		public UIControl Controller;
+		public string Name = "ui_element";
 		public bool Visible { get; set; }
 		public bool Active { get; set; }
 		public bool HasUIMask() => !(Mask.Name == "");
@@ -294,7 +295,33 @@ namespace AsliipaJiliicofmog
 	{
 		public bool Focused { get; set; }
 	}
-
+	class MenuLink
+	{
+		public Stack<UIElement> Elements;
+		public MenuLink()
+		{
+			Elements = new();
+		}
+		public void AddMenu(UIElement menu)
+		{
+			menu.Enable();
+			if (Elements.Count != 0)
+				Elements.Peek().Disable();
+			Elements.Push(menu);
+		}
+		public string GetBreadcrumbs()
+		{
+			string b = "";
+			foreach(var e in Elements)
+				b += $"{e.Name}/";
+			return b;
+		}
+		public void PreviousMenu()
+		{
+			Elements.Pop().Disable();
+			Elements.Peek().Enable();
+		}
+	}
 	/// <summary>
 	/// Renders elements inside itself, does not render anything outside itself
 	/// </summary>
@@ -943,5 +970,33 @@ namespace AsliipaJiliicofmog
 			}
 			
 		}
+	}
+	class Image : UIElement
+	{
+		public Texture2D Picture;
+		public Image(Texture2D pic, Vector2 position, UIControl controller, UIMask mask)
+			: base(pic.Bounds.Size.ToVector2(), position, controller, mask)
+		{
+			Picture = pic;
+		} 
+		public Image(Texture2D pic, RelativePosition relpos, UIControl controller, UIMask mask)
+			: base(relpos, controller, mask)
+		{
+			Picture = pic;
+			RelativePosition rp = (RelativePosition)RelPosition;
+			Vector2 scale = new(pic.Bounds.Size.X / rp.Source.Scale.X, pic.Bounds.Size.Y / rp.Source.Scale.Y);
+			RelPosition = new RelativePosition(rp.Source, scale, rp.RelPosition);
+		}
+		public override void Render(SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Picture, Position, Color.White);
+			base.Render(sb, gt);
+		}
+		public override void RenderAt(Vector2 position, SpriteBatch sb, GameTime gt)
+		{
+			sb.Draw(Picture, position, Color.White);
+			base.RenderAt(position, sb, gt);
+		}
+		public override void Update(GameTime gt) { }
 	}
 }

@@ -15,6 +15,7 @@ namespace Asliipa
 		public UIControl Control;
 		public Button b1;
 		public Button b2;
+		public MenuLink nl;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -29,9 +30,8 @@ namespace Asliipa
 		protected override void LoadContent()
 		{
 			SB = new SpriteBatch(GraphicsDevice);
-
-			
 			Control = new(UIColorPalette.Default(), SB, Content.Load<SpriteFont>("mplus"), Window);
+			
 		}
 		protected override void Update(GameTime gameTime)
 		{
