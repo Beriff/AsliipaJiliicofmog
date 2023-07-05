@@ -287,6 +287,8 @@ namespace AsliipaJiliicofmog
 		
 		public void AddElement(UIElement e) { Contents.Add(e); e.Controller.RemoveElement(e); }
 	}
+
+	//please have your UI elements enable Controller.Input.UIEnabled when active
 	interface IClickable
 	{
 		public Action OnClick { get; set; }
@@ -295,6 +297,7 @@ namespace AsliipaJiliicofmog
 	{
 		public bool Focused { get; set; }
 	}
+
 	class MenuLink
 	{
 		public Stack<UIElement> Elements;
@@ -487,7 +490,7 @@ namespace AsliipaJiliicofmog
 		 */
 		public override void Update(GameTime gt)
 		{
-			if (Controller.Input.M1State() == PressState.JustReleased)
+			if (Controller.Input.M1State(true) == PressState.JustReleased)
 			{
 				if (MouseHover())
 					OnClick();
@@ -553,11 +556,11 @@ namespace AsliipaJiliicofmog
 		{
 			var bounds = new Rectangle(new(AbsSliderPos(), (int)Position.Y), new((int)Scale.Y));
 
-			if (Controller.Input.M1State() == PressState.JustPressed && bounds.Contains(Mouse.GetState().Position))
+			if (Controller.Input.M1State(true) == PressState.JustPressed && bounds.Contains(Mouse.GetState().Position))
 			{
 				CursorLockOn = true;
 			}
-			else if(CursorLockOn && Controller.Input.M1State() == PressState.JustReleased)
+			else if(CursorLockOn && Controller.Input.M1State(true) == PressState.JustReleased)
 			{
 				CursorLockOn = false;
 				if(Steps != null)
@@ -635,11 +638,11 @@ namespace AsliipaJiliicofmog
 		{
 			var bounds = new Rectangle(new((int)Position.X, AbsSliderPos()), new((int)Scale.X));
 
-			if (Controller.Input.M1State() == PressState.JustPressed && bounds.Contains(Mouse.GetState().Position))
+			if (Controller.Input.M1State(true) == PressState.JustPressed && bounds.Contains(Mouse.GetState().Position))
 			{
 				CursorLockOn = true;
 			}
-			else if (CursorLockOn && Controller.Input.M1State() == PressState.JustReleased)
+			else if (CursorLockOn && Controller.Input.M1State(true) == PressState.JustReleased)
 			{
 				CursorLockOn = false;
 				if (Steps != null)
@@ -763,7 +766,7 @@ namespace AsliipaJiliicofmog
 		}
 		public override void Update(GameTime gt)
 		{
-			if(MouseHover() && (Controller.Input.M1State() == PressState.JustReleased) )
+			if(MouseHover() && (Controller.Input.M1State(true) == PressState.JustReleased) )
 			{
 				Checked = !Checked;
 				OnClick();
@@ -839,11 +842,11 @@ namespace AsliipaJiliicofmog
 		}
 		public override void Update(GameTime gt)
 		{
-			if (MouseHover() && (Controller.Input.M1State() == PressState.JustReleased))
+			if (MouseHover() && (Controller.Input.M1State(true) == PressState.JustReleased))
 			{
 				Expanded = !Expanded;
 			}
-			else if ((Controller.Input.M1State() == PressState.JustReleased) && Expanded)
+			else if ((Controller.Input.M1State(true) == PressState.JustReleased) && Expanded)
 			{
 				for (int i = 0; i < Options.Count; i++)
 				{
@@ -949,7 +952,7 @@ namespace AsliipaJiliicofmog
 		public override void Update(GameTime gt)
 		{
 			
-			if(Controller.Input.M1State() == PressState.JustReleased)
+			if(Controller.Input.M1State(true) == PressState.JustReleased)
 			{
 				if (MouseHover())
 					Focused = true;
@@ -959,11 +962,11 @@ namespace AsliipaJiliicofmog
 
 			if(Focused)
 			{
-				if (Controller.Input.GetState(Keys.Right) == PressState.JustPressed)
+				if (Controller.Input.GetState(Keys.Right, true) == PressState.JustPressed)
 				{
 					Cursor = Math.Clamp(Cursor + 1, 0, Text.Length);
 				}
-				else if (Controller.Input.GetState(Keys.Left) == PressState.JustPressed)
+				else if (Controller.Input.GetState(Keys.Left, true) == PressState.JustPressed)
 				{
 					Cursor = Math.Clamp(Cursor - 1, 0, Text.Length);
 				}

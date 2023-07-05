@@ -13,12 +13,20 @@ namespace AsliipaJiliicofmog
 		JustPressed,
 		JustReleased
 	}
+	enum InputRelayType
+	{
+		Relay, //read the input and propogate it
+		Gate,  // read the input and do no propogate it
+		Strait // do not read the input, do not propogate it
+	}
 	class InputHandler
 	{
 		KeyboardState KState;
 		KeyboardState PrevKState;
 		MouseState MState;
 		MouseState PrevMState;
+
+		public bool UIEnabled = true;
 
 		public InputHandler()
 		{
@@ -34,8 +42,9 @@ namespace AsliipaJiliicofmog
 			MState = Mouse.GetState();
 		}
 
-		public PressState GetState(Keys k)
+		public PressState GetState(Keys k, bool uirequest = false)
 		{
+			if(!uirequest && UIEnabled) { return PressState.Released; }
 			if (KState.IsKeyDown(k))
 			{
 				if (PrevKState.IsKeyDown(k))
@@ -50,8 +59,9 @@ namespace AsliipaJiliicofmog
 					return PressState.Released;
 			}
 		}
-		public PressState M2State()
+		public PressState M2State(bool uirequest = false)
 		{
+			if (!uirequest && UIEnabled) { return PressState.Released; }
 			if (MState.RightButton == ButtonState.Pressed)
 			{
 				if (PrevMState.RightButton == ButtonState.Pressed)
@@ -67,8 +77,9 @@ namespace AsliipaJiliicofmog
 					return PressState.Released;
 			}
 		}
-		public PressState M1State()
+		public PressState M1State(bool uirequest = false)
 		{
+			if (!uirequest && UIEnabled) { return PressState.Released; }
 			if (MState.LeftButton == ButtonState.Pressed)
 			{
 				if (PrevMState.LeftButton == ButtonState.Pressed)
@@ -88,9 +99,11 @@ namespace AsliipaJiliicofmog
 		{
 			return MState.Position - PrevMState.Position;
 		}
-		public int GetScroll()
+		public int GetScroll(bool uirequest = false)
 		{
+			if (!uirequest && UIEnabled) { return 0; }
 			return (MState.ScrollWheelValue - PrevMState.ScrollWheelValue)/120;
 		}
 	}
+	
 }
