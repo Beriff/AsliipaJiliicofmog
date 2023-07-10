@@ -148,6 +148,7 @@ namespace AsliipaJiliicofmog
 		protected RelativePosition? _RelPosition;
 
 		public UIMask Mask;
+		public bool TogglesInput = true;
 
 		public UIControl Controller;
 		public string Name = "ui_element";
@@ -156,6 +157,10 @@ namespace AsliipaJiliicofmog
 		public bool HasUIMask() => !(Mask.Name == "");
 		public void Enable()
 		{
+			if(TogglesInput && (this is IClickable || this is IFocusable))
+			{
+				Controller.Input.UIEnabled = true;
+			}
 			if(HasUIMask() && Mask.Override)
 			{
 				foreach (var e in Controller.MaskElements[Mask.Name])
@@ -166,6 +171,10 @@ namespace AsliipaJiliicofmog
 		}
 		public void Disable()
 		{
+			if (TogglesInput && (this is IClickable || this is IFocusable))
+			{
+				Controller.Input.UIEnabled = false;
+			}
 			Visible = false;
 			Active = false;
 		}
