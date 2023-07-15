@@ -13,6 +13,15 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin AsliipaData/Data/Materials/dirt.json
+/copy:AsliipaData/Data/Materials/dirt.json
+
+#begin AsliipaData/Data/Tiles/dirt.json
+/copy:AsliipaData/Data/Tiles/dirt.json
+
+#begin AsliipaData/Textures/dirt.png
+/copy:AsliipaData/Textures/dirt.png
+
 #begin File.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

@@ -33,6 +33,7 @@ namespace Asliipa
 			SB = new SpriteBatch(GraphicsDevice);
 			Control = new(UIColorPalette.Default(), SB, Content.Load<SpriteFont>("mplus"), Window);
 			Animator = new();
+			Loader.Init(Content, SB);
 			var p = new ProgressBar(new(60, 30), new(40, 40), Control, 50, UIMask.Def());
 			Animator.Add(
 				new Animation(60, (t, d) => { p.Position = new(Easing.OutBack(t)*40, 40); }, data: 40, repeat: false));
