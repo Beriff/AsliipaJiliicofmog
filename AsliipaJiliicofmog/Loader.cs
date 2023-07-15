@@ -68,9 +68,15 @@ namespace AsliipaJiliicofmog
 			{
 				string jsontext = File.ReadAllText(filename);
 				dynamic data = JsonConvert.DeserializeObject(jsontext);
+				RenderMask mask = new RenderMask()
+				{
+					RandomRotation = bool.Parse(data.rendermask_rotation.ToString()),
+					RandomTint = bool.Parse(data.rendermask_tint.ToString())
+				};
 				Tile tile = new Tile(
 					Textures[data.texture.ToString()], data.name.ToString(), bool.Parse(data.solid.ToString()),
-					Materials[data.material.ToString()], float.Parse(data.material_amount.ToString())
+					Materials[data.material.ToString()], float.Parse(data.material_amount.ToString()),
+					mask
 					);
 				Tiles[tile.Name] = tile;
 			}

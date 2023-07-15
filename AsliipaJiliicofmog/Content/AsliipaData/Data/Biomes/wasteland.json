@@ -1,0 +1,6 @@
+{
+    "name": "wasteland",
+    "generation_height": [0, 100],
+    "generation_reqs": ["spawn_always"],
+    "generation_pattern": "wasteland"
+}

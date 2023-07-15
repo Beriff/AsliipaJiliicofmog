@@ -14,9 +14,8 @@ namespace Asliipa
 		public SpriteBatch SB;
 		public UIControl Control;
 		public Animator Animator;
-		public Button b1;
-		public Button b2;
-		public MenuLink nl;
+		public Chunk JEREMY;
+		public static Random GameRandom;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -31,12 +30,11 @@ namespace Asliipa
 		protected override void LoadContent()
 		{
 			SB = new SpriteBatch(GraphicsDevice);
+			GameRandom = new();
 			Control = new(UIColorPalette.Default(), SB, Content.Load<SpriteFont>("mplus"), Window);
 			Animator = new();
 			Loader.Init(Content, SB);
-			var p = new ProgressBar(new(60, 30), new(40, 40), Control, 50, UIMask.Def());
-			Animator.Add(
-				new Animation(60, (t, d) => { p.Position = new(Easing.OutBack(t)*40, 40); }, data: 40, repeat: false));
+			JEREMY = Chunk.FillChunk(Loader.Tiles["dirt"]);
 		}
 		protected override void Update(GameTime gameTime)
 		{
@@ -48,7 +46,7 @@ namespace Asliipa
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			SB.Begin();
-
+			JEREMY.Render(Vector2.Zero, SB);
 			Control.Render(SB, gameTime);
 			SB.End();
 			base.Draw(gameTime);

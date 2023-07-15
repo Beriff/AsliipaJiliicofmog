@@ -13,11 +13,17 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin AsliipaData/Data/Biomes/wasteland.json
+/copy:AsliipaData/Data/Biomes/wasteland.json
+
 #begin AsliipaData/Data/Materials/dirt.json
 /copy:AsliipaData/Data/Materials/dirt.json
 
 #begin AsliipaData/Data/Tiles/dirt.json
 /copy:AsliipaData/Data/Tiles/dirt.json
+
+#begin AsliipaData/Textures/bg1.png
+/copy:AsliipaData/Textures/bg1.png
 
 #begin AsliipaData/Textures/dirt.png
 /copy:AsliipaData/Textures/dirt.png
