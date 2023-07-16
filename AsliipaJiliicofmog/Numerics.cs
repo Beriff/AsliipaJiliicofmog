@@ -35,6 +35,16 @@ namespace AsliipaJiliicofmog
 		{
 			return v0 + t * (v1 - v0);
 		}
+		public static float Bilerp(float c00, float c10, float c01, float c11, float tx, float ty)
+		{
+			float r1 = Lerp(c00, c10, tx);
+			float r2 = Lerp(c01, c11, tx);
+			return Lerp(r1, r2, ty);
+		}
+		public static float Mod(float x, float m)
+		{
+			return (x % m + m) % m;
+		}
 		public static Vector2 Lerp(Vector2 v0, Vector2 v1, float t)
 		{
 			return new(Lerp(v0.X, v1.X, t), Lerp(v0.Y, v1.Y, t));

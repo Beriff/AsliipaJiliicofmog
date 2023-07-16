@@ -16,6 +16,7 @@ namespace Asliipa
 		public Animator Animator;
 		public Chunk JEREMY;
 		public static Random GameRandom;
+		public Texture2D noisetexture;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -35,6 +36,29 @@ namespace Asliipa
 			Animator = new();
 			Loader.Init(Content, SB);
 			JEREMY = Chunk.FillChunk(Loader.Tiles["dirt"]);
+
+			noisetexture = new Texture2D(GraphicsDevice, 500, 500);
+			var noise = OctaveValueNoise.WorldNoise(GameRandom);
+			var data = new Color[500 * 500];
+			NumExtend.XY(500, 500, (x, y) =>
+			{
+				float val = noise.Noise(new Vector2(x,y));
+				Color col = Color.White;
+				if (val < .375f)
+					col = Color.Blue;
+				else if (val < .4f)
+					col = Color.Cyan;
+				else if (val < .45f)
+					col = Color.Beige;
+				else if (val < .7f)
+					col = Color.Green;
+				else if (val < .75f)
+					col = Color.Chocolate;
+				else
+					col = Color.White;
+				data[NumExtend.Flatten(x, y, 500)] = col;
+			});
+			noisetexture.SetData(data);
 		}
 		protected override void Update(GameTime gameTime)
 		{
@@ -48,6 +72,7 @@ namespace Asliipa
 			SB.Begin();
 			JEREMY.Render(Vector2.Zero, SB);
 			Control.Render(SB, gameTime);
+			SB.Draw(noisetexture, Vector2.Zero, Color.White);
 			SB.End();
 			base.Draw(gameTime);
 		}
