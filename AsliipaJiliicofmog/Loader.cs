@@ -8,33 +8,40 @@ using Microsoft.Xna.Framework.Content;
 
 namespace AsliipaJiliicofmog
 {
+	static class Registry
+	{
+		public static Dictionary<string, Texture2D> Textures;
+		public static Dictionary<string, Material> Materials;
+		public static Dictionary<string, Tile> Tiles;
+		public static Dictionary<string, Biome> Biomes;
+	}
 	static class Loader
 	{
 		public static ContentManager Content;
 		public static SpriteBatch Sb;
 		public static string Path;
 
-		public static Dictionary<string, Texture2D> Textures;
-		public static Dictionary<string, Material> Materials;
-		public static Dictionary<string, Tile> Tiles;
+		
 		public static void Init(ContentManager content, SpriteBatch sb)
 		{
 			Content = content;
-			Textures = new();
-			Materials = new();
-			Tiles = new();
+			Registry.Textures = new();
+			Registry.Materials = new();
+			Registry.Tiles = new();
+			Registry.Biomes = new();
 			Sb = sb;
 			Path = content.RootDirectory + @"\AsliipaData";
 			LoadTextures();
 			LoadMaterials();
 			LoadTiles();
+			LoadBiomes();
 		}
 		public static void LoadTextures()
 		{
 			foreach(var filename in Directory.GetFiles(Path + @"\Textures\"))
 			{
 				var fi = new FileInfo(filename);
-				Textures[fi.Name.Replace(fi.Extension, "")] = Texture2D.FromStream(Sb.GraphicsDevice, new FileStream(filename, FileMode.Open));
+				Registry.Textures[fi.Name.Replace(fi.Extension, "")] = Texture2D.FromStream(Sb.GraphicsDevice, new FileStream(filename, FileMode.Open));
 			}
 		}
 		public static void LoadMaterials()
@@ -59,7 +66,7 @@ namespace AsliipaJiliicofmog
 					Density = int.Parse(data.density.ToString()), Flammable = bool.Parse(data.flammable.ToString()), 
 					Sandlike = bool.Parse(data.sandlike.ToString()), Type = type
 				};
-				Materials[material.Name] = material;
+				Registry.Materials[material.Name] = material;
 			}
 		}
 		public static void LoadTiles()
@@ -74,11 +81,27 @@ namespace AsliipaJiliicofmog
 					RandomTint = bool.Parse(data.rendermask_tint.ToString())
 				};
 				Tile tile = new Tile(
-					Textures[data.texture.ToString()], data.name.ToString(), bool.Parse(data.solid.ToString()),
-					Materials[data.material.ToString()], float.Parse(data.material_amount.ToString()),
+					Registry.Textures[data.texture.ToString()], data.name.ToString(), bool.Parse(data.solid.ToString()),
+					Registry.Materials[data.material.ToString()], float.Parse(data.material_amount.ToString()),
 					mask
 					);
-				Tiles[tile.Name] = tile;
+				Registry.Tiles[tile.Name] = tile;
+			}
+		}
+		public static void LoadBiomes()
+		{
+			foreach(var filename in Directory.GetFiles(Path + @"\Data\Biomes"))
+			{
+				string jsontext = File.ReadAllText(filename);
+				dynamic data = JsonConvert.DeserializeObject(jsontext);
+				List<string> reqs = new();
+				foreach (var req in data.generation_reqs)
+					reqs.Add(req.ToString());
+				string name = data.name.ToString();
+				string pattern = data.generation_pattern.ToString();
+				(float, float) range = (float.Parse(data.generation_height[0].ToString()), float.Parse(data.generation_height[1].ToString()));
+				Biome biome = new Biome(name, range, reqs, pattern);
+				Registry.Biomes.Add(biome.Name, biome);
 			}
 		}
 	}

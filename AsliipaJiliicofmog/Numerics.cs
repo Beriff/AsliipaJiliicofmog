@@ -21,6 +21,8 @@ namespace AsliipaJiliicofmog
 			b.Normalize();
 			return b;
 		}
+		public static Vector2 XY(this Vector3 a) => new Vector2(a.X, a.Y);
+		public static Vector3 Vec3(this Vector2 a) => new Vector3(a.X, a.Y, 0);
 		public static Rectangle Vec2Rect(Vector2 b, Vector2 c) => new Rectangle(b.ToPoint(), c.ToPoint());
 		public static Vector2 Rotated(this Vector2 a, double theta)
 		{
@@ -63,6 +65,22 @@ namespace AsliipaJiliicofmog
 			}
 		}
 		public static void XY(int endx, int endy, Action<int,int> act) => XY(endx, endy, 0, 0, act);
+
+		public static void XYZ(int endx, int endy, int endz, int startx, int starty, int startz, Action<int,int,int> act)
+		{
+			for(int x = startx; x < endx; x++)
+			{
+				for (int y = starty; y < endy; y++)
+				{
+					for (int z = startz; z < endz; z++)
+					{
+						act(x, y, z);
+					}
+
+				}
+			}
+		}
+		public static void XYZ(int endx, int endy, int endz, Action<int, int, int> act) => XYZ(endx, endy, endz, 0, 0, 0, act);
 	}
 	static class TextureExtend
 	{

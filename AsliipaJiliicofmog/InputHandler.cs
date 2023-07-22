@@ -26,7 +26,7 @@ namespace AsliipaJiliicofmog
 		MouseState MState;
 		MouseState PrevMState;
 
-		public bool UIEnabled = true;
+		public bool UIEnabled = false;
 
 		public InputHandler()
 		{

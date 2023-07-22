@@ -2,6 +2,7 @@
 using AsliipaJiliicofmog;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Asliipa
 		public SpriteBatch SB;
 		public UIControl Control;
 		public Animator Animator;
-		public Chunk JEREMY;
+		public World MainWorld;
 		public static Random GameRandom;
 		public Texture2D noisetexture;
 		public Client()
@@ -35,9 +36,11 @@ namespace Asliipa
 			Control = new(UIColorPalette.Default(), SB, Content.Load<SpriteFont>("mplus"), Window);
 			Animator = new();
 			Loader.Init(Content, SB);
-			JEREMY = Chunk.FillChunk(Loader.Tiles["dirt"]);
+			MainWorld = new World(new WorldGenSettings(10));
+			//JEREMY = Chunk.FillChunk(Registry.Tiles["dirt"]);
 
-			noisetexture = new Texture2D(GraphicsDevice, 500, 500);
+
+			/*noisetexture = new Texture2D(GraphicsDevice, 500, 500);
 			var noise = OctaveValueNoise.WorldNoise(GameRandom);
 			var data = new Color[500 * 500];
 			NumExtend.XY(500, 500, (x, y) =>
@@ -58,22 +61,32 @@ namespace Asliipa
 					col = Color.White;
 				data[NumExtend.Flatten(x, y, 500)] = col;
 			});
-			noisetexture.SetData(data);
+			noisetexture.SetData(data);*/
 		}
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
 			Control.Update(gameTime);
 			Animator.Update();
+			if(Control.Input.GetState(Keys.D) == PressState.Pressed)
+			{
+				MainWorld.Camera += new Vector2(1, 0);
+			}
+			if (Control.Input.GetState(Keys.S) == PressState.Pressed)
+			{
+				MainWorld.Camera += new Vector2(0, 1);
+			}
 		}
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			SB.Begin();
-			JEREMY.Render(Vector2.Zero, SB);
 			Control.Render(SB, gameTime);
-			SB.Draw(noisetexture, Vector2.Zero, Color.White);
+			MainWorld.Render(SB);
+			//SB.Draw(noisetexture, Vector2.Zero, Color.White);
+			SB.DrawString(Control.Font, $"Asliipa Build 0.0.46 \n{MathF.Round(1/(float)gameTime.ElapsedGameTime.TotalSeconds, 2)} fps", Vector2.Zero, Color.White);
 			SB.End();
+			
 			base.Draw(gameTime);
 		}
 	}

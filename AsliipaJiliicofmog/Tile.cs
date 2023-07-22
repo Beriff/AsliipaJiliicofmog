@@ -71,7 +71,6 @@ namespace AsliipaJiliicofmog
 			TileMaterial = tmaterial;
 			MaterialAmount = materialamount;
 			RenderMask = rm;
-			TileTexture = rm.GetTexture(Client.GameRandom, texture);
 		}
 		public Tile GetInstance() => new Tile(TileTexture, Name, Solid, TileMaterial, MaterialAmount, RenderMask);
 		public void Render(Vector2 screen_coords, SpriteBatch sb)
@@ -81,25 +80,35 @@ namespace AsliipaJiliicofmog
 	}
 	class Chunk
 	{
-		public const int CHUNKSIZE = 16;
+		public const int CHUNKSIZE = 10;
+		public const int CHUNKDEPTH = 10;
+		public const int CHUNKSIZEPX = CHUNKSIZE * Tile.TILESIZE;
 
-		public Tile[,] Grid;
+		public Tile[,,] Grid;
 		public static Chunk FillChunk(Tile t)
 		{
 			Chunk c = new();
-			c.Grid = new Tile[CHUNKSIZE, CHUNKSIZE];
-			NumExtend.XY(CHUNKSIZE, CHUNKSIZE, (x,y) =>
+			c.Grid = new Tile[CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH];
+			NumExtend.XYZ(CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH, (x,y,z) =>
 			{
-				c.Grid[x, y] = t.GetInstance();
+				c.Grid[x, y, z] = t.GetInstance();
 			});
 			return c;
 		}
-		public void Render(Vector2 screen_coords, SpriteBatch sb)
+		public void Render(Vector2 screen_coords, int z_level, SpriteBatch sb)
 		{
 			NumExtend.XY(CHUNKSIZE, CHUNKSIZE, (x, y) =>
 			{
-				Grid[x, y].Render(screen_coords + new Vector2(x * Tile.TILESIZE, y * Tile.TILESIZE), sb);
+				Grid[x, y, z_level].Render(screen_coords + new Vector2(x * Tile.TILESIZE, y * Tile.TILESIZE), sb);
 			});
+		}
+		public Chunk()
+		{
+			Grid = new Tile[CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH];
+		}
+		public Chunk(Tile[,,] grid)
+		{
+			Grid = grid;
 		}
 	}
 }

@@ -1,0 +1,10 @@
+﻿{
+  "name": "water",
+  "texture": "water",
+  "solid": false,
+  "item_drop": false,
+  "material": "dirt",
+  "material_amount": 100,
+  "rendermask_tint": false,
+  "rendermask_rotation": false
+}
