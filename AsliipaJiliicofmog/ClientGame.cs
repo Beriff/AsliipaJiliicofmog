@@ -17,7 +17,7 @@ namespace Asliipa
 		public Animator Animator;
 		public World MainWorld;
 		public static Random GameRandom;
-		public Texture2D noisetexture;
+		public static int Seed = 888;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -76,6 +76,14 @@ namespace Asliipa
 			{
 				MainWorld.Camera += new Vector2(0, 1);
 			}
+			if (Control.Input.GetState(Keys.A) == PressState.Pressed)
+			{
+				MainWorld.Camera += new Vector2(-1, 0);
+			}
+			if (Control.Input.GetState(Keys.W) == PressState.Pressed)
+			{
+				MainWorld.Camera += new Vector2(0, -1);
+			}
 		}
 		protected override void Draw(GameTime gameTime)
 		{
@@ -84,7 +92,10 @@ namespace Asliipa
 			Control.Render(SB, gameTime);
 			MainWorld.Render(SB);
 			//SB.Draw(noisetexture, Vector2.Zero, Color.White);
-			SB.DrawString(Control.Font, $"Asliipa Build 0.0.46 \n{MathF.Round(1/(float)gameTime.ElapsedGameTime.TotalSeconds, 2)} fps", Vector2.Zero, Color.White);
+			SB.DrawString(Control.Font, 
+				$"Asliipa Build 0.0.46 \n{MathF.Round(1/(float)gameTime.ElapsedGameTime.TotalSeconds, 2)} fps \nCP {MainWorld.Camera}"
+				+ $" (CHUNK {MainWorld.Camera - new Vector2(MainWorld.Camera.X % Chunk.CHUNKSIZEPX, MainWorld.Camera.Y % Chunk.CHUNKSIZEPX)})", 
+				Vector2.Zero, Color.White);
 			SB.End();
 			
 			base.Draw(gameTime);

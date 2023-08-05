@@ -57,13 +57,16 @@ namespace AsliipaJiliicofmog
 		public const int TILESIZE = 32;
 
 		public Texture2D TileTexture;
+
 		public string Name;
+		public ushort ID;
+
 		public bool Solid;
 		public Material TileMaterial;
 		public float MaterialAmount; //How much material is in tile, default is 100
 		public RenderMask RenderMask;
 
-		public Tile(Texture2D texture, string name, bool solid, Material tmaterial, float materialamount, RenderMask rm)
+		public Tile(Texture2D texture, string name, bool solid, Material tmaterial, float materialamount, RenderMask rm, ushort id)
 		{
 			TileTexture = texture;
 			Name = name;
@@ -71,8 +74,9 @@ namespace AsliipaJiliicofmog
 			TileMaterial = tmaterial;
 			MaterialAmount = materialamount;
 			RenderMask = rm;
+			ID = id;
 		}
-		public Tile GetInstance() => new Tile(TileTexture, Name, Solid, TileMaterial, MaterialAmount, RenderMask);
+		public Tile GetInstance() => new Tile(TileTexture, Name, Solid, TileMaterial, MaterialAmount, RenderMask, ID);
 		public void Render(Vector2 screen_coords, SpriteBatch sb)
 		{
 			sb.Draw(TileTexture, screen_coords, Color.White);
@@ -85,6 +89,7 @@ namespace AsliipaJiliicofmog
 		public const int CHUNKSIZEPX = CHUNKSIZE * Tile.TILESIZE;
 
 		public Tile[,,] Grid;
+		public Dictionary<Vector3, Tile> Changes;
 		public static Chunk FillChunk(Tile t)
 		{
 			Chunk c = new();
@@ -105,10 +110,12 @@ namespace AsliipaJiliicofmog
 		public Chunk()
 		{
 			Grid = new Tile[CHUNKSIZE, CHUNKSIZE, CHUNKDEPTH];
+			Changes = new();
 		}
 		public Chunk(Tile[,,] grid)
 		{
 			Grid = grid;
+			Changes = new();
 		}
 	}
 }

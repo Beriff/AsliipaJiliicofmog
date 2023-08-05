@@ -13,12 +13,6 @@ namespace AsliipaJiliicofmog
 		JustPressed,
 		JustReleased
 	}
-	enum InputRelayType
-	{
-		Relay, //read the input and propogate it
-		Gate,  // read the input and do no propogate it
-		Strait // do not read the input, do not propogate it
-	}
 	class InputHandler
 	{
 		KeyboardState KState;

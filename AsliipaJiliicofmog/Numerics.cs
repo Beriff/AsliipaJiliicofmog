@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AsliipaJiliicofmog
@@ -15,6 +16,7 @@ namespace AsliipaJiliicofmog
 	}
 	static class NumExtend
 	{
+		public const float Sqrt2 = 1.41421356237f;
 		public static Vector2 Normalized(this Vector2 a)
 		{
 			var b = a;
@@ -81,6 +83,7 @@ namespace AsliipaJiliicofmog
 			}
 		}
 		public static void XYZ(int endx, int endy, int endz, Action<int, int, int> act) => XYZ(endx, endy, endz, 0, 0, 0, act);
+		public static int Pairing(int a, int b) => (int)(.5f * (a + b) * (a + b + 1) + b);
 	}
 	static class TextureExtend
 	{

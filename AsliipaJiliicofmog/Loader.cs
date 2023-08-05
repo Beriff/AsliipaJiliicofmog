@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace AsliipaJiliicofmog
 {
@@ -14,6 +16,16 @@ namespace AsliipaJiliicofmog
 		public static Dictionary<string, Material> Materials;
 		public static Dictionary<string, Tile> Tiles;
 		public static Dictionary<string, Biome> Biomes;
+
+		public static Tile GetTile(ushort id)
+		{
+			foreach(var tile in Tiles.Values)
+			{
+				if (tile.ID == id)
+					return tile;
+			}
+			throw new Exception("No tile found");
+		}
 	}
 	static class Loader
 	{
@@ -83,7 +95,7 @@ namespace AsliipaJiliicofmog
 				Tile tile = new Tile(
 					Registry.Textures[data.texture.ToString()], data.name.ToString(), bool.Parse(data.solid.ToString()),
 					Registry.Materials[data.material.ToString()], float.Parse(data.material_amount.ToString()),
-					mask
+					mask, (ushort)Registry.Tiles.Count
 					);
 				Registry.Tiles[tile.Name] = tile;
 			}
@@ -103,6 +115,60 @@ namespace AsliipaJiliicofmog
 				Biome biome = new Biome(name, range, reqs, pattern);
 				Registry.Biomes.Add(biome.Name, biome);
 			}
+		}
+	}
+
+	class JsonChunk
+	{
+		public Dictionary<Vector3, ushort> ChunkChanges;
+		public void AddChunkToWorld(Vector2 worldpos, World w)
+		{
+			w.GenerateChunk(worldpos);
+			Chunk c = w.WorldMap[worldpos];
+			
+			foreach(var pair in ChunkChanges)
+			{
+				int x = (int)pair.Key.X;
+				int y = (int)pair.Key.Y;
+				int z = (int)pair.Key.Z;
+				c.Grid[x, y, z] = Registry.GetTile(pair.Value);
+			}
+		}
+	}
+	static class WorldSerializer
+	{
+		public static string WorldFilePath = @"C:\ProgramData\Asliipa\";
+		public static void UnloadChunk(World w, Chunk c, Vector2 v)
+		{
+			#if DEBUG
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine($"[debug] unloaded chunk at {v}");
+				Console.ResetColor();
+			#endif
+			w.WorldMap.Remove(v);
+			Dictionary<Vector3, ushort> changes = new();
+			foreach (var pair in c.Changes)
+				changes[pair.Key] = pair.Value.ID;
+			var deserialized = JsonConvert.DeserializeObject<Dictionary<Vector2, JsonChunk>>(File.ReadAllText(WorldFilePath + w.Name + ".json"));
+			if(deserialized == null) { deserialized = new(); }
+			deserialized[v] = new JsonChunk() { ChunkChanges = changes };
+			File.WriteAllText(WorldFilePath + w.Name + ".json", JsonConvert.SerializeObject(deserialized));
+		}
+		public static bool LoadChunk(World w, Vector2 v)
+		{
+			#if DEBUG
+				Console.ForegroundColor = ConsoleColor.Green;
+				Console.WriteLine($"[debug] loaded chunk at {v}");
+				Console.ResetColor();
+			#endif
+			var deserialized = JsonConvert.DeserializeObject<Dictionary<Vector2, JsonChunk>>(File.ReadAllText(WorldFilePath + w.Name + ".json"));
+			if (deserialized.ContainsKey(v))
+			{
+				deserialized[v].AddChunkToWorld(v, w);
+				return true;
+			}
+			else
+				return false;
 		}
 	}
 }

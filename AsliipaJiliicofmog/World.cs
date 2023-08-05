@@ -3,10 +3,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace AsliipaJiliicofmog
 {
+	/* Coordinates Reference
+	 * world_pos (WP) - position in world, in pixels
+	 * chunk_pos (CHP) - chunk position (ex. {2,2} would be {2,2} * chunkSizePixels in world_pos)
+	 * screen_pos (SP) - like world_pos but is bound to the screen (ex. {0,0} is always top left corner)
+	 * tile_pos (TP) - tile position (ex. {2,2} would be {2,2} * tileSizePixels in world_pos)
+	 * 
+	 * Keys for World.WorldMap are measured in CHP
+	 * World.RenderDistance is measured in CHP
+	 */
 	class ValueNoise
 	{
 		//Noise settings
@@ -14,17 +24,19 @@ namespace AsliipaJiliicofmog
 		public int Frequency = 15;
 		public Dictionary<Vector2, float> LatticeNodes;
 		public Random NoiseSeed;
-		public ValueNoise((int,int) range, int freq, Random r)
+		public int Seed;
+		public ValueNoise((int,int) range, int freq, int seed)
 		{
 			LatticeNodes = new();
 			Frequency = freq;
 			Range = range;
-			NoiseSeed = r;
+			NoiseSeed = new Random(seed);
 		}
 		public float GetValue(Vector2 pos)
 		{
 				if (LatticeNodes.ContainsKey(pos)) { return LatticeNodes[pos]; }
-				else { return LatticeNodes[pos] = NoiseSeed.Next(Range.a, Range.b); }
+				else { return LatticeNodes[pos] = 
+					new Random(NumExtend.Pairing(Seed, NumExtend.Pairing((int)pos.X, (int)pos.Y) )).Next(Range.a, Range.b); }
 		}
 		public virtual float Noise(Vector2 point)
 		{
@@ -45,13 +57,13 @@ namespace AsliipaJiliicofmog
 	{
 		public List<ValueNoise> Octaves;
 		public int NormalizationValue = 0;
-		public OctaveValueNoise(Random r, params ((int,int) range, int freq)[] octaves )
+		public OctaveValueNoise(int seed, params ((int,int) range, int freq)[] octaves )
 		{
 			Octaves = new();
 			foreach(var octave in octaves)
 			{
 				NormalizationValue += octave.range.Item2;
-				Octaves.Add(new ValueNoise(octave.range, octave.freq, r));
+				Octaves.Add(new ValueNoise(octave.range, octave.freq, seed));
 			}
 		}
 		public float Noise(Vector2 point)
@@ -63,10 +75,10 @@ namespace AsliipaJiliicofmog
 			}
 			return val / NormalizationValue;
 		}
-		public static OctaveValueNoise WorldNoise(Random r) => new OctaveValueNoise(r,
+		public static OctaveValueNoise WorldNoise(int seed) => new OctaveValueNoise(seed,
 				((0, 255), 70), ((0, 128), 50), ((0, 64), 10), ((0, 32), 5), ((0, 16), 2)
 				);
-		public static OctaveValueNoise AuxiliaryNoise(Random r) => new OctaveValueNoise(r,
+		public static OctaveValueNoise AuxiliaryNoise(int seed) => new OctaveValueNoise(seed,
 				((0, 128), 40), ((0, 64), 10), ((0, 32), 5), ((0, 16), 2)
 				);
 	}
@@ -135,24 +147,28 @@ namespace AsliipaJiliicofmog
 	class World
 	{
 		public Dictionary<Vector2, Chunk> WorldMap;
+		public string Name = "world1";
+
 		public const float MinTemperature = -273.15f; //hi absolute zero
 		public const float MaxTemperature = 10_000f;
 
-		public const int RenderDistance = 5;
+		public const int RenderDistance = 8;
+		public const int RenderRadius = (int)( (RenderDistance+1) * NumExtend.Sqrt2 * Chunk.CHUNKSIZEPX);
 
 		public Vector2 Camera;
 		public int ZLevel;
 
 		protected OctaveValueNoise RawTemperatureMap;
 		protected OctaveValueNoise RawHeightmap;
-		public Chunk RequestChunk(Vector2 chunk_origin)
+		public Chunk RequestChunk(Vector2 chunk_pos)
 		{
-			if(WorldMap.ContainsKey(chunk_origin))
+			if(WorldMap.ContainsKey(chunk_pos))
 			{
-				return WorldMap[chunk_origin];
+				return WorldMap[chunk_pos];
 			}
-			GenerateChunk(chunk_origin);
-			return WorldMap[chunk_origin];
+			if(WorldSerializer.LoadChunk(this, chunk_pos)) { return WorldMap[chunk_pos]; }
+			GenerateChunk(chunk_pos);
+			return WorldMap[chunk_pos];
 		}
 		public float TemperatureAt(Vector2 pos)
 		{
@@ -162,6 +178,10 @@ namespace AsliipaJiliicofmog
 		}
 		public void GenerateChunk(Vector2 origin)
 		{
+			#if DEBUG
+				Console.WriteLine($"[debug] generating chunk at {origin}");
+			#endif
+
 			Tile[,,] grid = new Tile[Chunk.CHUNKSIZE, Chunk.CHUNKSIZE, Chunk.CHUNKDEPTH];
 
 			NumExtend.XYZ(Chunk.CHUNKSIZE, Chunk.CHUNKSIZE, Chunk.CHUNKDEPTH, (x, y, z) =>
@@ -182,8 +202,8 @@ namespace AsliipaJiliicofmog
 		}
 		public void GenerateWorld(WorldGenSettings settings)
 		{
-			RawHeightmap = OctaveValueNoise.WorldNoise(Client.GameRandom);
-			RawTemperatureMap = OctaveValueNoise.AuxiliaryNoise(Client.GameRandom);
+			RawHeightmap = OctaveValueNoise.WorldNoise(Client.Seed);
+			RawTemperatureMap = OctaveValueNoise.AuxiliaryNoise(Client.Seed);
 			NumExtend.XY(settings.InitialWorldSize, settings.InitialWorldSize, (x, y) =>
 			{
 				GenerateChunk(new Vector2(x, y) * Chunk.CHUNKSIZE);
@@ -195,9 +215,19 @@ namespace AsliipaJiliicofmog
 		}
 		public void Render(SpriteBatch sb)
 		{
-			Vector2 camera_chunk_origin = Camera - new Vector2(Camera.X % Tile.TILESIZE, Camera.Y % Tile.TILESIZE);
+			//unload chunks that are far away
+			foreach(var pos in WorldMap.Keys)
+			{
+				if ((pos * Tile.TILESIZE).Distance(Camera) > RenderRadius)
+				{
 
-			NumExtend.XY(-RenderDistance, -RenderDistance, RenderDistance, RenderDistance, (x, y) =>
+					WorldSerializer.UnloadChunk(this, WorldMap[pos], pos);
+				}
+			}
+
+			Vector2 camera_chunk_origin = Camera - new Vector2(Camera.X % Chunk.CHUNKSIZEPX, Camera.Y % Chunk.CHUNKSIZEPX);
+			camera_chunk_origin /= Tile.TILESIZE;
+			NumExtend.XY(RenderDistance / 2, RenderDistance / 2, -RenderDistance / 2 , -RenderDistance / 2, (x, y) =>
 			{
 				Vector2 chunk_origin = camera_chunk_origin + new Vector2(x, y) * Chunk.CHUNKSIZE;
 				RequestChunk(chunk_origin);
@@ -205,7 +235,6 @@ namespace AsliipaJiliicofmog
 			foreach(var pos in WorldMap.Keys)
 			{
 				Chunk chunk = WorldMap[pos];
-				Console.WriteLine(pos);
 				chunk.Render(pos * new Vector2(Tile.TILESIZE, Tile.TILESIZE) - Camera, ZLevel, sb);
 			}
 			
