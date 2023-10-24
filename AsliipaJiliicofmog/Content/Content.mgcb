@@ -31,6 +31,9 @@
 #begin AsliipaData/Textures/bg1.png
 /copy:AsliipaData/Textures/bg1.png
 
+#begin AsliipaData/Textures/crate.png
+/copy:AsliipaData/Textures/crate.png
+
 #begin AsliipaData/Textures/dirt.png
 /copy:AsliipaData/Textures/dirt.png
 
