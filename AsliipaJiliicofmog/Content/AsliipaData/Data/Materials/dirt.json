@@ -1,8 +1,0 @@
-{
-    "name": "dirt",
-    "hardness": 0.5,
-    "material_type": "soil",
-    "sandlike": true,
-    "flammable": false,
-    "density": 1
-}

@@ -13,37 +13,5 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin AsliipaData/Data/Biomes/sea.json
-/copy:AsliipaData/Data/Biomes/sea.json
 
-#begin AsliipaData/Data/Biomes/wasteland.json
-/copy:AsliipaData/Data/Biomes/wasteland.json
-
-#begin AsliipaData/Data/Materials/dirt.json
-/copy:AsliipaData/Data/Materials/dirt.json
-
-#begin AsliipaData/Data/Tiles/dirt.json
-/copy:AsliipaData/Data/Tiles/dirt.json
-
-#begin AsliipaData/Data/Tiles/water.json
-/copy:AsliipaData/Data/Tiles/water.json
-
-#begin AsliipaData/Textures/bg1.png
-/copy:AsliipaData/Textures/bg1.png
-
-#begin AsliipaData/Textures/crate.png
-/copy:AsliipaData/Textures/crate.png
-
-#begin AsliipaData/Textures/dirt.png
-/copy:AsliipaData/Textures/dirt.png
-
-#begin AsliipaData/Textures/water.png
-/copy:AsliipaData/Textures/water.png
-
-#begin File.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:File.spritefont;mplus.spritefont
 

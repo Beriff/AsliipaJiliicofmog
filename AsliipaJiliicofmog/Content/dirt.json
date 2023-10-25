@@ -1,8 +1,0 @@
-{
-    "name": "dirt",
-    "texture": "dirt",
-    "solid": true,
-    "item_drop": false,
-    "material": "dirt",
-    "material_amount": 100
-}

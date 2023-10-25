@@ -1,7 +1,0 @@
-{
-  "name": "wasteland",
-  "generation_height": [0.45, 1],
-  "generation_reqs": ["spawn_always"],
-  "generation_pattern": "wasteland",
-  "subbiome_patterns": ["midfoliage", "no_foliage", "mushrooms"]
-}
