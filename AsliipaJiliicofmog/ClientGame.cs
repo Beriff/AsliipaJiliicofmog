@@ -1,4 +1,6 @@
 ﻿using AsliipaJiliicofmog;
+using AsliipaJiliicofmog.Data;
+using AsliipaJiliicofmog.Env;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,6 +14,7 @@ namespace AsliipaJiliicofmog
 	{
 		public GraphicsDeviceManager Graphics;
 		public SpriteBatch SB;
+		public Chunk c;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -28,7 +31,8 @@ namespace AsliipaJiliicofmog
 		}
 		protected override void LoadContent()
 		{
-			
+			Registry.Initialize(Content, GraphicsDevice);
+			c = new(Registry.Tiles["Grass"]);
 		}
 		protected override void Update(GameTime gameTime)
 		{
@@ -39,6 +43,7 @@ namespace AsliipaJiliicofmog
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			SB.Begin();
+			c.Render(SB, Vector2.Zero);
 			SB.End();
 			
 			base.Draw(gameTime);
