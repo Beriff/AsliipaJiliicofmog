@@ -12,6 +12,11 @@ namespace AsliipaJiliicofmog.Data
 		public static Dictionary<string, Texture2D> Textures = new();
 		public static Dictionary<string, Tile> Tiles = new();
 
+		private static void GenerateBiomes()
+		{
+
+		}
+
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
 		{
 			string path = Path.Combine(content.RootDirectory, "Textures");
@@ -30,6 +35,8 @@ namespace AsliipaJiliicofmog.Data
 				Tile t = Tile.Deserialize(File.ReadAllText(name));
 				Tiles[t.Name] = t;
 			}
+
+			GenerateBiomes();
 		}
 	}
 }

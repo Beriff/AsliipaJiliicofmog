@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -25,5 +26,13 @@ namespace AsliipaJiliicofmog.Math
 
 		public static int Flatten(int x, int y, int w) => w * y + x;
 		public static int Pairing(int a, int b) => (int)(.5f * (a + b) * (a + b + 1) + b);
+	}
+
+	static class ExtendVector
+	{
+		public static Vector2 Add(this Vector2 a, (float x, float y) b)
+		{
+			return new Vector2(a.X + b.x, a.Y + b.y);
+		}
 	}
 }

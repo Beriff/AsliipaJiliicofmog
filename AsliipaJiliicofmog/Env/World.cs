@@ -1,5 +1,6 @@
 ﻿using AsliipaJiliicofmog.Math;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -88,25 +89,67 @@ namespace AsliipaJiliicofmog.Env
 
 		public Dictionary<Vector2, Chunk> Chunks;
 
+		WorldView View;
+
 		public World(int seed)
 		{
 			Heightmap = OctaveValueNoise.WorldNoise(seed);
 			TemperatureMap = OctaveValueNoise.AuxiliaryNoise(seed);
 			HumidityMap = OctaveValueNoise.AuxiliaryNoise(seed + 1);
 			Chunks = new();
+			View = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
+		}
+		public Tile GenerateTile(Vector2 position)
+		{
+			foreach(var biome in Biome.Biomes) {
+				if(biome.TestTile(this,position))
+				{
+					return biome.GetTile(this, position);
+				}
+			}
+			return Biome.Fallback.GetTile(this, position);
 		}
 
 		public Chunk GenerateChunk(Vector2 topleft)
 		{
-			return new();
+            Console.WriteLine($"[Debug] Requested chunk gen at {topleft}");
+            Chunk chunk = new();
+			for(int x = 0; x < Chunk.Width; x++)
+			{
+				for(int y = 0; y < Chunk.Height; y++)
+				{
+					chunk.Grid[x, y] = GenerateTile(topleft + new Vector2(x,y) );
+				}
+			}
+			Chunks[topleft] = chunk;
+			return chunk;
 		}
 		public Chunk RequestChunk(Vector2 topleft)
 		{
 			if (Chunks.ContainsKey(topleft)) { return Chunks[topleft]; }
-			else
+			else { return GenerateChunk(topleft); }
+		}
+
+		public void Render(SpriteBatch sb)
+		{
+			(int x, int y) vp = new(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
+			Vector2 middle_px = new(vp.x / 2, vp.y / 2);
+			Vector2 middle_chunk_origin_px = middle_px - Chunk.SizePx / 2;
+			Vector2 tl_chunk_origin_px = middle_chunk_origin_px - Chunk.SizePx * View.RenderDistance;
+			Vector2 tl_chunk_coords = Chunk.Modulo(View.Position) - Chunk.SizePx * View.RenderDistance;
+			Vector2 br_chunk_coords = Chunk.Modulo(View.Position) + Chunk.SizePx * View.RenderDistance;
+
+			for (int x = (int)tl_chunk_coords.X; x < br_chunk_coords.X; x += (int)Chunk.SizePx.X) 
 			{
-				//generate chunk
-				return null;
+				for (int y = (int)tl_chunk_coords.Y; y < br_chunk_coords.Y; y += (int)Chunk.SizePx.Y)
+				{
+					int steps_x = (int)(x - tl_chunk_coords.X) / (int)Chunk.SizePx.X;
+					int steps_y = (int)(y - tl_chunk_coords.Y) / (int)Chunk.SizePx.Y;
+                    Vector2 chunk_pos = new(x, y);
+
+					RequestChunk(chunk_pos).Render(sb,
+						tl_chunk_origin_px + Chunk.SizePx * new Vector2(steps_x, steps_y));
+				}
 			}
 		}
 	}

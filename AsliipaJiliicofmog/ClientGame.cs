@@ -14,7 +14,7 @@ namespace AsliipaJiliicofmog
 	{
 		public GraphicsDeviceManager Graphics;
 		public SpriteBatch SB;
-		public Chunk c;
+		public World w;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -32,7 +32,7 @@ namespace AsliipaJiliicofmog
 		protected override void LoadContent()
 		{
 			Registry.Initialize(Content, GraphicsDevice);
-			c = new(Registry.Tiles["Grass"]);
+            w = new World(1);
 		}
 		protected override void Update(GameTime gameTime)
 		{
@@ -43,7 +43,7 @@ namespace AsliipaJiliicofmog
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			SB.Begin();
-			c.Render(SB, Vector2.Zero);
+			w.Render(SB);
 			SB.End();
 			
 			base.Draw(gameTime);
