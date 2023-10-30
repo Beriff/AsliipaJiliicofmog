@@ -7,6 +7,9 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Env
 {
+	/// <summary>
+	/// A class that generates value noise given a seed
+	/// </summary>
 	class ValueNoise
 	{
 		//Noise settings
@@ -46,6 +49,10 @@ namespace AsliipaJiliicofmog.Env
 				);
 		}
 	}
+
+	/// <summary>
+	/// A class that supports multiple layers of <c cref="ValueNoise">ValueNoise</c> for a more natural texture
+	/// </summary>
 	class OctaveValueNoise
 	{
 		public List<ValueNoise> Octaves;
@@ -59,6 +66,11 @@ namespace AsliipaJiliicofmog.Env
 				Octaves.Add(new ValueNoise(range, freq, seed));
 			}
 		}
+		/// <summary>
+		/// Get a noise float value
+		/// </summary>
+		/// <param name="point">a 2D point where the value should be sampled</param>
+		/// <returns>a float value at the given point</returns>
 		public float Noise(Vector2 point)
 		{
 			float val = 0;
@@ -75,12 +87,15 @@ namespace AsliipaJiliicofmog.Env
 				((0, 128), 40), ((0, 64), 10), ((0, 32), 5), ((0, 16), 2)
 				);
 	}
-	internal struct WorldView
+	internal struct Camera
 	{
 		public Vector2 Position;
 		public int RenderDistance;
 		public float Scale;
 	}
+	/// <summary>
+	/// A global state that represents the game world
+	/// </summary>
 	internal class World
 	{
 		public OctaveValueNoise Heightmap;
@@ -89,7 +104,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public Dictionary<Vector2, Chunk> Chunks;
 
-		WorldView View;
+		Camera Camera;
 
 		public World(int seed)
 		{
@@ -97,8 +112,12 @@ namespace AsliipaJiliicofmog.Env
 			TemperatureMap = OctaveValueNoise.AuxiliaryNoise(seed);
 			HumidityMap = OctaveValueNoise.AuxiliaryNoise(seed + 1);
 			Chunks = new();
-			View = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
+			Camera = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
 		}
+		/// <summary>
+		/// Generate the tile at the given position
+		/// </summary>
+		/// <remarks>Returns the singleton tile object. For modifiable tile use <c>GenerateTile().Copy()</c></remarks>
 		public Tile GenerateTile(Vector2 position)
 		{
 			foreach(var biome in Biome.Biomes) {
@@ -109,7 +128,10 @@ namespace AsliipaJiliicofmog.Env
 			}
 			return Biome.Fallback.GetTile(this, position);
 		}
-
+		/// <summary>
+		/// Generate a chunk and add it to <c>World.Chunks</c>. Regenerates a chunk if it has been generated before.
+		/// </summary>
+		/// <param name="topleft">Origin (top left corner) of the chunk. Measured in pixels.</param>
 		public Chunk GenerateChunk(Vector2 topleft)
 		{
             Console.WriteLine($"[Debug] Requested chunk gen at {topleft}");
@@ -118,16 +140,36 @@ namespace AsliipaJiliicofmog.Env
 			{
 				for(int y = 0; y < Chunk.Height; y++)
 				{
-					chunk.Grid[x, y] = GenerateTile(topleft + new Vector2(x,y) );
+					chunk.Grid[x, y] = GenerateTile(topleft + new Vector2(x,y) ).Copy();
 				}
 			}
 			Chunks[topleft] = chunk;
 			return chunk;
 		}
+		/// <summary>
+		/// Get a chunk at requested chunk origin position, or generate one if there's none
+		/// </summary>
 		public Chunk RequestChunk(Vector2 topleft)
 		{
 			if (Chunks.ContainsKey(topleft)) { return Chunks[topleft]; }
 			else { return GenerateChunk(topleft); }
+		}
+		/// <summary>
+		/// Get a list of chunk origin positions that will be rendered
+		/// </summary>
+		public List<Vector2> RenderedChunks()
+		{
+			List<Vector2> list = new();
+			var main_chunk_coords = Chunk.Modulo(Camera.Position);
+			var rendered_px = Chunk.SizePx * Camera.RenderDistance;
+			for(float x = main_chunk_coords.X - rendered_px.X; x < main_chunk_coords.X + rendered_px.X; x += rendered_px.X)
+			{
+				for (float y = main_chunk_coords.Y - rendered_px.Y; y < main_chunk_coords.Y + rendered_px.Y; y += rendered_px.Y)
+				{
+					list.Add(new(x, y));
+				}
+			}
+			return list;
 		}
 
 		public void Render(SpriteBatch sb)
@@ -135,9 +177,10 @@ namespace AsliipaJiliicofmog.Env
 			(int x, int y) vp = new(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
 			Vector2 middle_px = new(vp.x / 2, vp.y / 2);
 			Vector2 middle_chunk_origin_px = middle_px - Chunk.SizePx / 2;
-			Vector2 tl_chunk_origin_px = middle_chunk_origin_px - Chunk.SizePx * View.RenderDistance;
-			Vector2 tl_chunk_coords = Chunk.Modulo(View.Position) - Chunk.SizePx * View.RenderDistance;
-			Vector2 br_chunk_coords = Chunk.Modulo(View.Position) + Chunk.SizePx * View.RenderDistance;
+			Vector2 tl_chunk_origin_px = middle_chunk_origin_px - Chunk.SizePx * Camera.RenderDistance;
+			Vector2 tl_chunk_coords = Chunk.Modulo(Camera.Position) - Chunk.SizePx * Camera.RenderDistance;
+			Vector2 br_chunk_coords = Chunk.Modulo(Camera.Position) + Chunk.SizePx * Camera.RenderDistance;
+			Vector2 CameraShift = Camera.Position.Mod(Tile.Size);
 
 			for (int x = (int)tl_chunk_coords.X; x < br_chunk_coords.X; x += (int)Chunk.SizePx.X) 
 			{
@@ -145,10 +188,9 @@ namespace AsliipaJiliicofmog.Env
 				{
 					int steps_x = (int)(x - tl_chunk_coords.X) / (int)Chunk.SizePx.X;
 					int steps_y = (int)(y - tl_chunk_coords.Y) / (int)Chunk.SizePx.Y;
-                    Vector2 chunk_pos = new(x, y);
 
-					RequestChunk(chunk_pos).Render(sb,
-						tl_chunk_origin_px + Chunk.SizePx * new Vector2(steps_x, steps_y));
+					RequestChunk(new(x, y)).Render(sb,
+						tl_chunk_origin_px + Chunk.SizePx * new Vector2(steps_x, steps_y) - CameraShift);
 				}
 			}
 		}

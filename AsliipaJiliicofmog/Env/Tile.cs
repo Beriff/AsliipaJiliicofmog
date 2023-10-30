@@ -26,6 +26,11 @@ namespace AsliipaJiliicofmog.Env
 			sb.Draw(TileTexture, position, Color.White);
 		}
 
+		/// <summary>
+		/// Deserialize JSON description of a tile into an object
+		/// </summary>
+		/// <param name="json"></param>
+		/// <returns></returns>
 		public static Tile Deserialize(string json)
 		{
 			dynamic obj = JsonConvert.DeserializeObject(json);

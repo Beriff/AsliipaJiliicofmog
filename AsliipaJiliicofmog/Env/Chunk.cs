@@ -10,7 +10,13 @@ namespace AsliipaJiliicofmog.Env
 	{
 		public const int Width = 16;
 		public const int Height = 16;
+		/// <summary>
+		/// Chunk size, measured in tiles. Generally, you want to use <c>Chunk.SizePx</c>
+		/// </summary>
 		public static Vector2 Size { get => new(Width, Height); }
+		/// <summary>
+		/// Chunk size, measured in pixels.
+		/// </summary>
 		public static Vector2 SizePx { get => new Vector2(Width, Height) * Tile.Size; }
 
 		public Tile[,] Grid = new Tile[Width, Height];
@@ -41,7 +47,9 @@ namespace AsliipaJiliicofmog.Env
 					
 		}
 
-		//transform world position into parent chunk's origin position
+		/// <summary>
+		/// Given a world position (in pixels), return the origin position of the chunk containing that position
+		/// </summary>
 		public static Vector2 Modulo(Vector2 position)
 		{
 			return new(MathF.Floor(position.X / Width), MathF.Floor(position.Y / Height));

@@ -13,7 +13,11 @@ namespace AsliipaJiliicofmog.Env
 			new((_,_) => Registry.Tiles["Grass"], (_,_) => true, "unknown", 0.01f);
 
 		public Func<World, Vector2, Tile> GetTile;
+		/// <summary>
+		/// Check if the tile position can be generated using this biome
+		/// </summary>
 		public Func<World, Vector2, bool> TestTile;
+
 		public float Weight;
 		public string Name;
 
