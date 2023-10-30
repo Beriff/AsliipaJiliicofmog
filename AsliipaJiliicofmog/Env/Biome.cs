@@ -31,7 +31,7 @@ namespace AsliipaJiliicofmog.Env
 			Name = name;
 
 			Biomes.Add(this);
-			Biomes.Sort((x, y) => x.Weight.CompareTo(y.Weight));
+			Biomes.Sort((x, y) => y.Weight.CompareTo(x.Weight));
 		}
 	}
 }

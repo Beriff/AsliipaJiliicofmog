@@ -184,7 +184,7 @@ namespace AsliipaJiliicofmog.Env
 			Vector2 tl_chunk_origin_px = middle_chunk_origin_px - Chunk.SizePx * Camera.RenderDistance;
 			Vector2 tl_chunk_coords = Chunk.Modulo(Camera.Position) - Chunk.SizePx * Camera.RenderDistance;
 			Vector2 br_chunk_coords = Chunk.Modulo(Camera.Position) + Chunk.SizePx * Camera.RenderDistance;
-			Vector2 CameraShift = Camera.Position.Mod(Tile.Size);
+			Vector2 CameraShift = Camera.Position.Mod(Chunk.SizePx);
 
 			for (int x = (int)tl_chunk_coords.X; x < br_chunk_coords.X; x += (int)Chunk.SizePx.X) 
 			{

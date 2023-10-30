@@ -1,7 +1,7 @@
 ﻿using AsliipaJiliicofmog.Env;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11,12 +11,23 @@ namespace AsliipaJiliicofmog.Data
 	{
 		public static Dictionary<string, Texture2D> Textures = new();
 		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();
+		public static Dictionary<string, Biome> Biomes = new();
 
 		private static ulong TileIDCounter = 0;
 
 		private static void GenerateBiomes()
 		{
-
+			Biomes.Add("beach", new(
+				(w, pos) =>
+				{
+					return Registry.Tiles["sand"];
+				},
+				(w, pos) =>
+				{
+                    return w.Heightmap.Noise(pos) < .5f;
+				},
+				"beach"
+				));
 		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
