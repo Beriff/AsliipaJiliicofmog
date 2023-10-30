@@ -56,7 +56,7 @@ namespace AsliipaJiliicofmog.Env
 	class OctaveValueNoise
 	{
 		public List<ValueNoise> Octaves;
-		public int NormalizationValue = 0;
+		public int NormalizationValue = 1;
 		public OctaveValueNoise(int seed, params ((int, int) range, int freq)[] octaves)
 		{
 			Octaves = new();
@@ -136,11 +136,12 @@ namespace AsliipaJiliicofmog.Env
 		{
             Console.WriteLine($"\u001b[32m[Debug]\u001b[0m Requested chunk gen at {topleft} \u001b[30;1mCi:{topleft / Chunk.SizePx}\u001b[0m");
             Chunk chunk = new();
+			Vector2 tilepos = topleft / Tile.Size;
 			for(int x = 0; x < Chunk.Width; x++)
 			{
 				for(int y = 0; y < Chunk.Height; y++)
 				{
-					chunk.Grid[x, y] = GenerateTile(topleft + new Vector2(x,y) ).Copy();
+					chunk.Grid[x, y] = GenerateTile(tilepos + new Vector2(x,y) ).Copy();
 				}
 			}
 			Chunks[topleft] = chunk;

@@ -16,8 +16,14 @@
 #begin Data/Tiles/grass.json
 /copy:Data/Tiles/grass.json
 
+#begin Data/Tiles/gravel.json
+/copy:Data/Tiles/gravel.json
+
 #begin Data/Tiles/sand.json
 /copy:Data/Tiles/sand.json
+
+#begin Data/Tiles/water.json
+/copy:Data/Tiles/water.json
 
 #begin Textures/grass.png
 /importer:TextureImporter
@@ -31,6 +37,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/grass.png
 
+#begin Textures/gravel.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/gravel.png
+
 #begin Textures/sand.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -42,4 +60,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/sand.png
+
+#begin Textures/water.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/water.png
 

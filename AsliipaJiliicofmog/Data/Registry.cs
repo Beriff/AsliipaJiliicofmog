@@ -20,14 +20,53 @@ namespace AsliipaJiliicofmog.Data
 			Biomes.Add("beach", new(
 				(w, pos) =>
 				{
-					return Registry.Tiles["sand"];
+					return Tiles["sand"];
 				},
 				(w, pos) =>
 				{
-                    return w.Heightmap.Noise(pos) < .5f;
+					var val = w.Heightmap.Noise(pos);
+					return val < .5f && val > .4f;
 				},
 				"beach"
-				));
+			));
+			Biomes.Add("ocean", new(
+				(w, pos) =>
+				{
+					return Tiles["water"];
+				},
+				(w, pos) =>
+				{
+					var val = w.Heightmap.Noise(pos);
+					return val < .4f;
+				},
+				"ocean"
+			));
+			Biomes.Add("forest", new(
+				(w, pos) =>
+				{
+					return Tiles["Grass"];
+				},
+				(w, pos) =>
+				{
+					var val1 = w.Heightmap.Noise(pos);
+					var val2 = w.HumidityMap.Noise(pos);
+					return val1 > .5f && val2 > .4f;
+				},
+				"forest"
+			));
+			Biomes.Add("hills", new(
+				(w, pos) =>
+				{
+					return Tiles["gravel"];
+				},
+				(w, pos) =>
+				{
+					var val = w.Heightmap.Noise(pos);
+					var val2 = w.HumidityMap.Noise(pos);
+					return val > .5f && val2 < .4f;
+				},
+				"hills"
+			));
 		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)

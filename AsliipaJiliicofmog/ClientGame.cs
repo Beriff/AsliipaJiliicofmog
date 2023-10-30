@@ -40,6 +40,19 @@ namespace AsliipaJiliicofmog
 			{
 				w.Camera.Position += Vector2.UnitX;
 			}
+			if (Keyboard.GetState().IsKeyDown(Keys.A))
+			{
+				w.Camera.Position -= Vector2.UnitX;
+			}
+			if (Keyboard.GetState().IsKeyDown(Keys.W))
+			{
+				w.Camera.Position -= Vector2.UnitY;
+			}
+			if (Keyboard.GetState().IsKeyDown(Keys.S))
+			{
+				w.Camera.Position += Vector2.UnitY;
+			}
+
 			base.Update(gameTime);
 			
 		}
