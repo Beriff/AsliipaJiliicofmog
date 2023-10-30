@@ -1,9 +1,9 @@
-﻿using AsliipaJiliicofmog.Math;
+﻿using AsliipaJiliicofmog.Interactive;
+using AsliipaJiliicofmog.Math;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Env
 {
@@ -103,6 +103,7 @@ namespace AsliipaJiliicofmog.Env
 		public OctaveValueNoise HumidityMap;
 
 		public Dictionary<Vector2, Chunk> Chunks;
+		public List<Entity> Entities;
 
 		public Camera Camera;
 
@@ -112,6 +113,7 @@ namespace AsliipaJiliicofmog.Env
 			TemperatureMap = OctaveValueNoise.AuxiliaryNoise(seed);
 			HumidityMap = OctaveValueNoise.AuxiliaryNoise(seed + 1);
 			Chunks = new();
+			Entities = new();
 			Camera = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
 		}
 		/// <summary>
@@ -198,11 +200,17 @@ namespace AsliipaJiliicofmog.Env
 						tl_chunk_origin_px + Chunk.SizePx * new Vector2(steps_x, steps_y) - CameraShift);
 				}
 			}
+
+			//Render entities
+			foreach(var e in Entities)
+			{
+				e.RenderInWorld(sb, this);
+			}
 		}
 
 		public void Update()
 		{
-			//Unload chunks that are far away
+			Entities.Sort((e1, e2) => e2.Position.Y.CompareTo(e1.Position.Y));
 			//TODO async IO to offload the chunk info
 		}
 	}

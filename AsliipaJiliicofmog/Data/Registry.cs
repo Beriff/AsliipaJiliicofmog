@@ -1,4 +1,6 @@
 ﻿using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Interactive;
+
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,6 +14,7 @@ namespace AsliipaJiliicofmog.Data
 		public static Dictionary<string, Texture2D> Textures = new();
 		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();
 		public static Dictionary<string, Biome> Biomes = new();
+		public static Dictionary<string, Entity> Entities = new();
 
 		private static ulong TileIDCounter = 0;
 
@@ -68,6 +71,10 @@ namespace AsliipaJiliicofmog.Data
 				"hills"
 			));
 		}
+		private static void GenerateEntities()
+		{
+			Entities["Carlos"] = new("carlos", Textures["carlos"]);
+		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
 		{
@@ -89,6 +96,7 @@ namespace AsliipaJiliicofmog.Data
 			}
 
 			GenerateBiomes();
+			GenerateEntities();
 		}
 	}
 }

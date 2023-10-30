@@ -33,6 +33,7 @@ namespace AsliipaJiliicofmog
 		{
 			Registry.Initialize(Content, GraphicsDevice);
             w = new World(1);
+			w.Entities.Add(Registry.Entities["Carlos"]);
 		}
 		protected override void Update(GameTime gameTime)
 		{

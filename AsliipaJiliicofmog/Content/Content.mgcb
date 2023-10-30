@@ -25,6 +25,18 @@
 #begin Data/Tiles/water.json
 /copy:Data/Tiles/water.json
 
+#begin Textures/carlos.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/carlos.png
+
 #begin Textures/grass.png
 /importer:TextureImporter
 /processor:TextureProcessor
