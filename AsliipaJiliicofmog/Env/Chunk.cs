@@ -52,7 +52,10 @@ namespace AsliipaJiliicofmog.Env
 		/// </summary>
 		public static Vector2 Modulo(Vector2 position)
 		{
-			return new(MathF.Floor(position.X / Width), MathF.Floor(position.Y / Height));
+			return new Vector2(
+				MathF.Floor(position.X / (Width * Tile.Width) ), 
+				MathF.Floor(position.Y / (Height * Tile.Height) )
+				) * SizePx;
 		}
 	}
 }

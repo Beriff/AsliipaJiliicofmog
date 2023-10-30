@@ -10,7 +10,9 @@ namespace AsliipaJiliicofmog.Data
 	internal static class Registry
 	{
 		public static Dictionary<string, Texture2D> Textures = new();
-		public static Dictionary<string, Tile> Tiles = new();
+		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();
+
+		private static ulong TileIDCounter = 0;
 
 		private static void GenerateBiomes()
 		{
@@ -33,7 +35,7 @@ namespace AsliipaJiliicofmog.Data
 			foreach (var name in Directory.GetFiles(path))
 			{
 				Tile t = Tile.Deserialize(File.ReadAllText(name));
-				Tiles[t.Name] = t;
+				Tiles.Add(t.Name, TileIDCounter++, t);
 			}
 
 			GenerateBiomes();

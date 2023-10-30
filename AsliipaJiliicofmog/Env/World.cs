@@ -104,7 +104,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public Dictionary<Vector2, Chunk> Chunks;
 
-		Camera Camera;
+		public Camera Camera;
 
 		public World(int seed)
 		{
@@ -134,7 +134,7 @@ namespace AsliipaJiliicofmog.Env
 		/// <param name="topleft">Origin (top left corner) of the chunk. Measured in pixels.</param>
 		public Chunk GenerateChunk(Vector2 topleft)
 		{
-            Console.WriteLine($"[Debug] Requested chunk gen at {topleft}");
+            Console.WriteLine($"\u001b[32m[Debug]\u001b[0m Requested chunk gen at {topleft} \u001b[30;1mCi:{topleft / Chunk.SizePx}\u001b[0m");
             Chunk chunk = new();
 			for(int x = 0; x < Chunk.Width; x++)
 			{
@@ -172,6 +172,10 @@ namespace AsliipaJiliicofmog.Env
 			return list;
 		}
 
+		/// <summary>
+		/// Render the world, as viewed from World.Camera
+		/// </summary>
+		/// <param name="sb"></param>
 		public void Render(SpriteBatch sb)
 		{
 			(int x, int y) vp = new(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
@@ -193,6 +197,12 @@ namespace AsliipaJiliicofmog.Env
 						tl_chunk_origin_px + Chunk.SizePx * new Vector2(steps_x, steps_y) - CameraShift);
 				}
 			}
+		}
+
+		public void Update()
+		{
+			//Unload chunks that are far away
+			//TODO async IO to offload the chunk info
 		}
 	}
 }

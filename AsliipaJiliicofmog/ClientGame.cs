@@ -36,6 +36,10 @@ namespace AsliipaJiliicofmog
 		}
 		protected override void Update(GameTime gameTime)
 		{
+			if(Keyboard.GetState().IsKeyDown(Keys.D))
+			{
+				w.Camera.Position += Vector2.UnitX;
+			}
 			base.Update(gameTime);
 			
 		}
