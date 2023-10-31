@@ -27,13 +27,13 @@ namespace AsliipaJiliicofmog
 		{
 			Graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 			SB = new SpriteBatch(Graphics.GraphicsDevice);
-			base.Initialize();
+            base.Initialize();
 		}
 		protected override void LoadContent()
 		{
 			Registry.Initialize(Content, GraphicsDevice);
             w = new World(1);
-			w.Entities.Add(Registry.Entities["Carlos"]);
+            w.Entities.Add(Registry.Entities["Carlos"]);
 		}
 		protected override void Update(GameTime gameTime)
 		{

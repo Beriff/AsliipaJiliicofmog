@@ -57,4 +57,64 @@ namespace AsliipaJiliicofmog.Data
 
 		public List<V> Values() => new(_Values);
 	}
+
+	public class TreeNode<T>
+	{
+		public TreeNode<T>? Parent;
+		public List<TreeNode<T>> Children;
+		public T Content;
+		
+		public static implicit operator T(TreeNode<T> val)
+		{
+			return val.Content;
+		}
+
+		public TreeNode(T data)
+		{
+			Children = new();
+			Parent = null;
+			Content = data;
+		}
+		public TreeNode(T data, TreeNode<T> parent)
+		{
+			Content = data;
+			Children = new();
+			SetParent(parent);
+		}
+
+		public void AddChild(TreeNode<T> node)
+		{
+			Children.Add(node);
+			node.Parent = this;
+		}
+
+		public void RemoveChild(TreeNode<T> node)
+		{
+			Children.Remove(node);
+			node.Parent = null;
+		}
+
+		public void SetParent(TreeNode<T> node) 
+		{
+			RemoveParent();
+			Parent = node;
+			node.Children.Add(this);
+		}
+
+		public void RemoveParent()
+		{
+			Parent.Children.Remove(this);
+			Parent = null;
+		}
+
+		public TreeNode<T> Search(Func<TreeNode<T>, bool> action)
+		{
+			foreach (var child in Children) 
+			{ 
+				if (action(child)) 
+					return child; 
+			} 
+			return null;
+		}
+	}
 }
