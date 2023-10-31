@@ -45,6 +45,22 @@ namespace AsliipaJiliicofmog.Interactive
 		{
 			return Hitbox.Intersects(other.Hitbox);
 		}
+
+		public void Shift(Vector2 shift, World w)
+		{
+			var target = Position + shift;
+			Rectangle rect = new((target + Texture.Bounds.Size.ToVector2() * HitboxAnchor).ToPoint(),
+				HitboxSize.ToPoint());
+			foreach(var entity in w.Entities)
+			{
+				if(typeof(Entity).IsSubclassOf(typeof(PhysicalEntity))
+					&& rect.Intersects(((PhysicalEntity)entity).Hitbox))
+				{
+					return;
+				}
+			}
+			Position = target;
+		}
 		public PhysicalEntity(string name, Texture2D texture, Vector2? hitsize = null)
 			: base(name, texture)
 		{
