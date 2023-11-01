@@ -1,4 +1,5 @@
-﻿using AsliipaJiliicofmog.Interactive;
+﻿using AsliipaJiliicofmog.Event;
+using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Math;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -104,6 +105,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public Dictionary<Vector2, Chunk> Chunks;
 		public List<Entity> Entities;
+		public EventManager WorldEvents;
 
 		public Camera Camera;
 
@@ -115,6 +117,7 @@ namespace AsliipaJiliicofmog.Env
 			Chunks = new();
 			Entities = new();
 			Camera = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
+			WorldEvents = new();
 		}
 		/// <summary>
 		/// Generate the tile at the given position
@@ -212,6 +215,7 @@ namespace AsliipaJiliicofmog.Env
 		{
 			Entities.Sort((e1, e2) => e2.Position.Y.CompareTo(e1.Position.Y));
 			foreach(var e in Entities) { e.Update(this); }
+			WorldEvents.Update();
 			//TODO async IO to offload the chunk info
 		}
 	}
