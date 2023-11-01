@@ -211,6 +211,7 @@ namespace AsliipaJiliicofmog.Env
 		public void Update()
 		{
 			Entities.Sort((e1, e2) => e2.Position.Y.CompareTo(e1.Position.Y));
+			foreach(var e in Entities) { e.Update(this); }
 			//TODO async IO to offload the chunk info
 		}
 	}

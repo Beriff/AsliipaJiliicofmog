@@ -8,6 +8,12 @@ namespace AsliipaJiliicofmog.Input
 	{
 		public static readonly List<InputConsumer> Consumers = new();
 
+		static InputManager()
+		{
+			Consumers.Add(new("UI") { Active = false });
+			Consumers.Add(new("Gameplay", false));
+		}
+
 		public static InputConsumer GetConsumer(string name)
 		{
 			foreach (var consumer in Consumers)
@@ -25,7 +31,7 @@ namespace AsliipaJiliicofmog.Input
 			{
 				if(blockedflag) { consumer.IsBlocked = true; }
 				consumer.Update();
-				if(consumer.BlockInputStream) { blockedflag = true; }
+				if(consumer.BlockInputStream && consumer.Active) { blockedflag = true; }
 			}
 		}
 	}

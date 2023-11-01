@@ -103,8 +103,11 @@ namespace AsliipaJiliicofmog.Data
 
 		public void RemoveParent()
 		{
-			Parent.Children.Remove(this);
-			Parent = null;
+			if(Parent != null)
+			{
+				Parent.Children.Remove(this);
+				Parent = null;
+			}
 		}
 
 		public TreeNode<T> Search(Func<TreeNode<T>, bool> action)

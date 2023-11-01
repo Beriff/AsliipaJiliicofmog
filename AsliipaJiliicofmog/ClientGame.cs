@@ -1,12 +1,11 @@
-﻿using AsliipaJiliicofmog;
-using AsliipaJiliicofmog.Data;
+﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Input;
+using AsliipaJiliicofmog.Interactive;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog
 {
@@ -27,33 +26,19 @@ namespace AsliipaJiliicofmog
 		{
 			Graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 			SB = new SpriteBatch(Graphics.GraphicsDevice);
+
             base.Initialize();
 		}
 		protected override void LoadContent()
 		{
 			Registry.Initialize(Content, GraphicsDevice);
             w = new World(1);
-            w.Entities.Add(Registry.Entities["Carlos"]);
+            w.Entities.Add(new Player());
 		}
 		protected override void Update(GameTime gameTime)
 		{
-			if(Keyboard.GetState().IsKeyDown(Keys.D))
-			{
-				w.Camera.Position += Vector2.UnitX;
-			}
-			if (Keyboard.GetState().IsKeyDown(Keys.A))
-			{
-				w.Camera.Position -= Vector2.UnitX;
-			}
-			if (Keyboard.GetState().IsKeyDown(Keys.W))
-			{
-				w.Camera.Position -= Vector2.UnitY;
-			}
-			if (Keyboard.GetState().IsKeyDown(Keys.S))
-			{
-				w.Camera.Position += Vector2.UnitY;
-			}
-
+			InputManager.Update();
+			w.Update();
 			base.Update(gameTime);
 			
 		}

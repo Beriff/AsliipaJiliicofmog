@@ -1,5 +1,7 @@
 ﻿using AsliipaJiliicofmog.Data;
+using AsliipaJiliicofmog.Env;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
@@ -58,10 +60,13 @@ namespace AsliipaJiliicofmog.Interactive
 	internal class Creature : PhysicalEntity
 	{
 		public TreeNode<Bodypart> RootBodypart;
-		public Creature(string name, Texture2D texture)
+		public float Speed = 1;
+		public Creature(string name, Texture2D texture, TreeNode<Bodypart> root)
 			: base(name, texture)
 		{
-
+			RootBodypart = root;
 		}
+
+		public void Move(Vector2 shift, World w) => Shift(shift * Speed, w);
 	}
 }

@@ -25,6 +25,13 @@
 #begin Data/Tiles/water.json
 /copy:Data/Tiles/water.json
 
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont;defaultfont.spritefont
+
 #begin Textures/carlos.png
 /importer:TextureImporter
 /processor:TextureProcessor

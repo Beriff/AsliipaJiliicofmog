@@ -16,6 +16,8 @@ namespace AsliipaJiliicofmog.Data
 		public static Dictionary<string, Biome> Biomes = new();
 		public static Dictionary<string, Entity> Entities = new();
 
+		public static SpriteFont DefaultFont;
+
 		private static ulong TileIDCounter = 0;
 
 		private static void GenerateBiomes()
@@ -97,6 +99,7 @@ namespace AsliipaJiliicofmog.Data
 
 			GenerateBiomes();
 			GenerateEntities();
+			DefaultFont = content.Load<SpriteFont>("defaultfont");
 		}
 	}
 }

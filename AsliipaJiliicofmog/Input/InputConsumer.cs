@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework.Input;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace AsliipaJiliicofmog.Input
 {
@@ -41,7 +39,7 @@ namespace AsliipaJiliicofmog.Input
 
 		public void Update()
 		{
-			KPrevious = KCurrent;
+            KPrevious = KCurrent;
 			KCurrent = GetKeyboard();
 
 			MPrevious = MCurrent;
@@ -90,5 +88,12 @@ namespace AsliipaJiliicofmog.Input
 		{
 			return MCurrent.ScrollWheelValue - MPrevious.ScrollWheelValue;
 		}
+
+		public Vector2 GetCursorDelta()
+		{
+			return (MCurrent.Position - MPrevious.Position).ToVector2();
+		}
+
+		public Vector2 MousePos() => MCurrent.Position.ToVector2();
 	}
 }
