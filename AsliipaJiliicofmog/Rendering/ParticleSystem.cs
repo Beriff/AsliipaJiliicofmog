@@ -55,26 +55,26 @@ internal class Emitter
 
   public Particle(Vector2 l, Texture2D t, Vector2 s, Vector2 v)
   {
-    position = l;
-    acceleration = new Vector2(0, 0.01f);
-    velocity = v;
-    lifespan = 255;
-    texture = t;
-    scale = s;
+    Position = l;
+    Acceleration = new Vector2(0, 0.01f);
+    Velocity = v;
+    Lifespan = 255;
+    Texture = t;
+    Scale = s;
   }
 
   public void Update()
   {
-    velocity += acceleration;
-    position += velocity;
-    lifespan -= 1;
+    Velocity += Acceleration;
+    Position += Velocity;
+    Lifespan -= 1;
   }
 
-  public bool IsDead() => lifespan < 0;
+  public bool IsDead() => Lifespan < 0;
 
   public void Display(SpriteBatch sb, World w)
   {
     // sb.Draw(texture, w.GetWorldPosition(position, sb), new Color(255, 255, 255, lifespan));
-    sb.Draw(texture, w.GetWorldPosition(position, sb), null, new Color(255, 255, 255, lifespan), 0f, new Vector2(0, 0), scale, SpriteEffects.None, 0f);
+    sb.Draw(Texture, w.GetWorldPosition(Position, sb), null, new Color(255, 255, 255, Lifespan), 0f, new Vector2(0, 0), Scale, SpriteEffects.None, 0f);
   }
 }
