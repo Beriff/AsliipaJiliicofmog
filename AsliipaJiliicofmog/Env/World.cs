@@ -1,6 +1,7 @@
 ﻿using AsliipaJiliicofmog.Event;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Math;
+using AsliipaJiliicofmog.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -105,6 +106,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public Dictionary<Vector2, Chunk> Chunks;
 		public List<Entity> Entities;
+		public List<Particle> Particles = new();
 		public EventManager WorldEvents;
 
 		public Camera Camera;
@@ -123,6 +125,7 @@ namespace AsliipaJiliicofmog.Env
 		/// Generate the tile at the given position
 		/// </summary>
 		/// <remarks>Returns the singleton tile object. For modifiable tile use <c>GenerateTile().Copy()</c></remarks>
+		public Vector2 GetWorldPosition (Vector2 p, SpriteBatch sb) => p - Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2;
 		public Tile GenerateTile(Vector2 position)
 		{
 			foreach(var biome in Biome.Biomes) {
@@ -192,7 +195,7 @@ namespace AsliipaJiliicofmog.Env
 			Vector2 br_chunk_coords = Chunk.Modulo(Camera.Position) + Chunk.SizePx * Camera.RenderDistance;
 			Vector2 CameraShift = Camera.Position.Mod(Chunk.SizePx);
 
-			for (int x = (int)tl_chunk_coords.X; x < br_chunk_coords.X; x += (int)Chunk.SizePx.X) 
+			for (int x = (int)tl_chunk_coords.X; x < br_chunk_coords.X; x += (int)Chunk.SizePx.X)
 			{
 				for (int y = (int)tl_chunk_coords.Y; y < br_chunk_coords.Y; y += (int)Chunk.SizePx.Y)
 				{
@@ -209,12 +212,14 @@ namespace AsliipaJiliicofmog.Env
 			{
 				e.RenderInWorld(sb, this);
 			}
+			foreach(Particle x in Particles) x.Display(sb, this);
 		}
 
 		public void Update()
 		{
 			Entities.Sort((e1, e2) => e2.Position.Y.CompareTo(e1.Position.Y));
 			foreach(var e in Entities) { e.Update(this); }
+			foreach(Particle x in Particles) x.Update();
 			WorldEvents.Update();
 			//TODO async IO to offload the chunk info
 		}

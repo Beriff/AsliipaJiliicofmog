@@ -2,6 +2,7 @@
 using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
+using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Interactive;
 
 using Microsoft.Xna.Framework;
@@ -18,7 +19,7 @@ namespace AsliipaJiliicofmog
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
-			
+
 
 			Content.RootDirectory = "Content";
 			IsMouseVisible = true;
@@ -27,21 +28,21 @@ namespace AsliipaJiliicofmog
 		{
 			Graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 			SB = new SpriteBatch(Graphics.GraphicsDevice);
-
-            base.Initialize();
+			base.Initialize();
 		}
 		protected override void LoadContent()
 		{
 			Registry.Initialize(Content, GraphicsDevice);
-            w = new World(1);
-            w.Entities.Add(new Player());
+			w = new World(1);
+			w.Entities.Add(new Player());
+			w.Particles.Add(new Particle(new Vector2(0, 0), Registry.Textures["fire"], new Vector2(0.01f, 0.01f)));
 		}
 		protected override void Update(GameTime gameTime)
 		{
 			InputManager.Update();
 			w.Update();
 			base.Update(gameTime);
-			
+
 		}
 		protected override void Draw(GameTime gameTime)
 		{
@@ -49,7 +50,8 @@ namespace AsliipaJiliicofmog
 			SB.Begin();
 			w.Render(SB);
 			SB.End();
-			
+			w.Particles.Add(new Particle(new Vector2(0, 0), Registry.Textures["fire"], new Vector2(0.01f, 0.01f)));
+
 			base.Draw(gameTime);
 		}
 	}
