@@ -212,7 +212,7 @@ namespace AsliipaJiliicofmog.Env
 			{
 				e.RenderInWorld(sb, gt, this);
 			}
-			foreach(Particle x in Particles) x.Display(sb, this);
+			foreach (Particle p in Particles) { p.Render(sb, this); }
 		}
 
 		public void Update()
