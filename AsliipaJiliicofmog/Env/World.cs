@@ -217,7 +217,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public void Update()
 		{
-			Entities.Sort((e1, e2) => e2.Position.Y.CompareTo(e1.Position.Y));
+			Entities.Sort((e1, e2) => e1.Position.Y.CompareTo(e2.Position.Y));
 			foreach(var e in Entities) { e.Update(this); }
 			foreach(Particle x in Particles) x.Update();
 			WorldEvents.Update();

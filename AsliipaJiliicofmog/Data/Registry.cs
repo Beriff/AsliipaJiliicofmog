@@ -76,7 +76,8 @@ namespace AsliipaJiliicofmog.Data
 		}
 		private static void GenerateEntities()
 		{
-			Entities["Carlos"] = new("carlos", new AnimatedTexture(Textures["heart"], 16) );
+			Entities["Crate"] = new PhysicalEntity("Crate", new GameTexture(Textures["crate"])) 
+			{ Position = new(25) };
 		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)

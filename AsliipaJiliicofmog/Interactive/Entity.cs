@@ -1,4 +1,5 @@
-﻿using AsliipaJiliicofmog.Data;
+﻿using System;
+using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Rendering;
@@ -86,11 +87,11 @@ namespace AsliipaJiliicofmog.Interactive
 				HitboxSize.ToPoint());
 			foreach(var entity in w.Entities)
 			{
-				if(typeof(Entity).IsSubclassOf(typeof(PhysicalEntity))
-					&& rect.Intersects(((PhysicalEntity)entity).Hitbox))
-				{
-					return;
-				}
+				if (
+					entity.GetType() == typeof(PhysicalEntity) 
+					&& entity != this
+					&& rect.Intersects(((PhysicalEntity)entity).Hitbox)
+					) { return;	}
 			}
 			Position = target;
 		}

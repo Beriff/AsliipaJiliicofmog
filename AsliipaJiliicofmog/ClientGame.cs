@@ -35,6 +35,7 @@ namespace AsliipaJiliicofmog
 			Registry.Initialize(Content, GraphicsDevice);
 			w = new World(1);
 			w.Entities.Add(new Player());
+			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Particles.Add(new Particle(new Vector2(0, 0), Registry.Textures["fire"], new Vector2(0.01f, 0.01f)));
 		}
 		protected override void Update(GameTime gameTime)
