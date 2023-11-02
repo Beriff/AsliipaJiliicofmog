@@ -1,4 +1,5 @@
 ﻿using AsliipaJiliicofmog.Event;
+using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
@@ -109,9 +110,11 @@ namespace AsliipaJiliicofmog.Env
 		public List<Emitter> Emitters = new();
 		public EventManager WorldEvents;
 
+		public RenderTarget2D RenderTexture;
+
 		public Camera Camera;
 
-		public World(int seed)
+		public World(SpriteBatch sb, int seed)
 		{
 			Heightmap = OctaveValueNoise.WorldNoise(seed);
 			TemperatureMap = OctaveValueNoise.AuxiliaryNoise(seed);
@@ -120,6 +123,7 @@ namespace AsliipaJiliicofmog.Env
 			Entities = new();
 			Camera = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
 			WorldEvents = new();
+			RenderTexture = new(sb.GraphicsDevice, sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
 		}
 		/// <summary>
 		/// Generate the tile at the given position
@@ -187,6 +191,10 @@ namespace AsliipaJiliicofmog.Env
 		/// <param name="sb"></param>
 		public void Render(SpriteBatch sb, GameTime gt)
 		{
+			sb.GraphicsDevice.Clear(Color.Black);
+			sb.GraphicsDevice.SetRenderTarget(RenderTexture);
+			sb.Begin();
+
 			(int x, int y) vp = new(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
 			Vector2 middle_px = new(vp.x / 2, vp.y / 2);
 			Vector2 middle_chunk_origin_px = middle_px - Chunk.SizePx / 2;
@@ -213,10 +221,25 @@ namespace AsliipaJiliicofmog.Env
 				e.RenderInWorld(sb, gt, this);
 			}
 			foreach(Emitter x in Emitters) x.Render(sb, this);
+
+			sb.End();
+			sb.GraphicsDevice.SetRenderTarget(null);
+			sb.Begin(samplerState: SamplerState.PointWrap);
+
+
+			sb.Draw(RenderTexture, 
+				middle_px, null, Color.White, 0f, middle_px, 
+				Camera.Scale, SpriteEffects.None, 0);
+			sb.End();
 		}
 
 		public void Update()
 		{
+			Camera.Scale = 
+				MathHelper.Clamp(
+					Camera.Scale + InputManager.GetConsumer("Gameplay").GetScrollDelta() / 1000f, 
+					1f, 3f);
+
 			Entities.Sort((e1, e2) => e1.Position.Y.CompareTo(e2.Position.Y));
 			foreach(var e in Entities) { e.Update(this); }
 			foreach(Emitter x in Emitters) x.Update();
