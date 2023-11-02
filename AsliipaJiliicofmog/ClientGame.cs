@@ -35,8 +35,6 @@ namespace AsliipaJiliicofmog
 			Registry.Initialize(Content, GraphicsDevice);
             w = new World(1);
             w.Entities.Add(new Player());
-			w.WorldEvents.AddEvent(
-				new(0, 10, "", Event.EventQueueBehavior.Ignore, (e) => { Console.WriteLine(e.Progress); }));
 		}
 		protected override void Update(GameTime gameTime)
 		{

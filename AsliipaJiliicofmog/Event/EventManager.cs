@@ -66,7 +66,7 @@ namespace AsliipaJiliicofmog.Event
 				e.Update(e);
 			}
 			foreach(var e in toremove) { Events.Remove(e); }
-			foreach(var e in toadd) { Events.Add(e); }
+			foreach(var e in toadd) { Events.Add(e); Queue.Remove(e); } //add from queue
 		}
 	}
 }
