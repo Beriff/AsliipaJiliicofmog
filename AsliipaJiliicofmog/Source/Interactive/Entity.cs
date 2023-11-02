@@ -2,6 +2,7 @@
 using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
+using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
 
 using Microsoft.Xna.Framework;
@@ -27,11 +28,11 @@ namespace AsliipaJiliicofmog.Interactive
 			if(RenderName)
 			{
 				Vector2 vp_pos = ViewportPosition(sb, w);
-				Rectangle screen_hitbox = new(vp_pos.ToPoint(), Texture.Size);
+				Rectangle screen_hitbox = new(vp_pos.ToPoint(), Texture.Size.Mul(w.Camera.Scale));
 				if (screen_hitbox.Contains(LocalInput.MousePos()))
 				{
 					var text_size = Registry.DefaultFont.MeasureString(Name);
-					var renderpos = vp_pos + new Vector2(Texture.Size.X / 2f, Texture.Size.Y);
+					var renderpos = UnscaledViewportPosition(sb, w) + new Vector2(Texture.Size.X / 2f, Texture.Size.Y);
 					renderpos -= new Vector2(text_size.X / 2, 0);
 					sb.DrawString(Registry.DefaultFont, Name, renderpos, Color.White);
 				}
@@ -45,12 +46,18 @@ namespace AsliipaJiliicofmog.Interactive
 		}
 
 		/// <summary>
-		/// Convert world position to screenspace coordinates
+		/// Convert world position to screenspace coordinates account the zoom
 		/// </summary>
 		public Vector2 ViewportPosition(SpriteBatch sb, World w)
 		{
 			var vp_mid = new Vector2(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height) / 2;
-			return Position + vp_mid - w.Camera.Position;
+			return (Position - w.Camera.Position) * w.Camera.Scale + vp_mid;
+		}
+
+		public Vector2 UnscaledViewportPosition(SpriteBatch sb, World w)
+		{
+			var vp_mid = new Vector2(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height) / 2;
+			return Position - w.Camera.Position + vp_mid;
 		}
 
 		public Entity(string name, IGameTexture texture)

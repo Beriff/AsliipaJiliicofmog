@@ -46,4 +46,16 @@ namespace AsliipaJiliicofmog.Math
 			return a.Cartesian(b, NumHelper.Mod);
 		}
 	}
+
+	static class ExtendPoint
+	{
+		public static Point Mul(this Point a, Point b) 
+		{
+			return new(a.X * b.X, a.Y * b.Y);
+		}
+		public static Point Mul(this Point a, float b)
+		{
+			return new((int)(a.X * b), (int)(a.Y * b));
+		}
+	}
 }
