@@ -24,7 +24,14 @@ namespace AsliipaJiliicofmog.Rendering
     public void Render(SpriteBatch sb, World w)
     {
       foreach (Particle x in particles) x.Display(sb, w);
-      particles.Add(new Particle(origin, texture, new Vector2(0.01f, 0.01f), new Vector2((float)(((-1) ^ r.Next(0, 3)) * r.NextDouble()), 0)));
+      particles.Add(
+        new Particle(
+          origin,
+          texture,
+          new Vector2(0.01f, 0.01f),
+          new Vector2((float)((System.Math.Pow((-1), r.Next(1, 3))) * r.NextDouble()), (float)((System.Math.Pow((-1), r.Next(1, 3))) * r.NextDouble()))
+        )
+      );
     }
 
     public void Update()
