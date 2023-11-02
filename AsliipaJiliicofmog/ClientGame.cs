@@ -47,7 +47,7 @@ namespace AsliipaJiliicofmog
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			SB.Begin();
-			w.Render(SB);
+			w.Render(SB, gameTime);
 			SB.End();
 			
 			base.Draw(gameTime);

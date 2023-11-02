@@ -1,6 +1,7 @@
 ﻿using System;
 using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Rendering;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +11,7 @@ namespace AsliipaJiliicofmog.Interactive
 	internal class Player : Creature
 	{
 		public Player() 
-			: base("Carlos", Registry.Textures["carlos"], Bodypart.Humanoid())
+			: base("Carlos", new AnimatedTexture(Registry.Textures["heart"], 16, 3), Bodypart.Humanoid())
 		{
 
 		}

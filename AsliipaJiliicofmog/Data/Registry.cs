@@ -1,5 +1,6 @@
 ﻿using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Interactive;
+using AsliipaJiliicofmog.Rendering;
 
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -75,7 +76,7 @@ namespace AsliipaJiliicofmog.Data
 		}
 		private static void GenerateEntities()
 		{
-			Entities["Carlos"] = new("carlos", Textures["carlos"]);
+			Entities["Carlos"] = new("carlos", new AnimatedTexture(Textures["heart"], 16) );
 		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
