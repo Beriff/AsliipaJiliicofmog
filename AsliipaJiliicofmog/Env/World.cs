@@ -106,7 +106,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public Dictionary<Vector2, Chunk> Chunks;
 		public List<Entity> Entities;
-		public List<Particle> Particles = new();
+		public List<Emitter> Emitters = new();
 		public EventManager WorldEvents;
 
 		public Camera Camera;
@@ -212,14 +212,14 @@ namespace AsliipaJiliicofmog.Env
 			{
 				e.RenderInWorld(sb, gt, this);
 			}
-			foreach(Particle x in Particles) x.Display(sb, this);
+			foreach(Emitter x in Emitters) x.Render(sb, this);
 		}
 
 		public void Update()
 		{
 			Entities.Sort((e1, e2) => e2.Position.Y.CompareTo(e1.Position.Y));
 			foreach(var e in Entities) { e.Update(this); }
-			foreach(Particle x in Particles) x.Update();
+			foreach(Emitter x in Emitters) x.Update();
 			WorldEvents.Update();
 			//TODO async IO to offload the chunk info
 		}
