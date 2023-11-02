@@ -4,7 +4,8 @@ using AsliipaJiliicofmog.Env;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AsliipaJiliicofmog.Rendering;
+namespace AsliipaJiliicofmog.Rendering
+{
 
 internal class Emitter
 {
@@ -34,19 +35,23 @@ internal class Emitter
   }
 }
 
-internal class Particle
-{
-  Texture2D texture;
-  float lifetime;
-  float lifespan;
-  float particleLife;
-  float speed;
-  Emitter emitter;
-  float emissionRate;
-  Vector2 position;
-  Vector2 velocity;
-  Vector2 acceleration;
-  Vector2 scale;
+	internal class Particle
+	{
+		public Texture2D Texture;
+
+		public float Lifetime;
+		public float Lifespan;
+		public float ParticleLife;
+
+		public float Speed;
+		public Vector2 Position;
+		public Vector2 Velocity;
+		public Vector2 Acceleration;
+
+		public Emitter Emitter;
+		public float EmissionRate;
+
+		public Vector2 Scale;
 
   public Particle(Vector2 l, Texture2D t, Vector2 s, Vector2 v)
   {
