@@ -185,7 +185,7 @@ namespace AsliipaJiliicofmog.Env
 		/// Render the world, as viewed from World.Camera
 		/// </summary>
 		/// <param name="sb"></param>
-		public void Render(SpriteBatch sb)
+		public void Render(SpriteBatch sb, GameTime gt)
 		{
 			(int x, int y) vp = new(sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
 			Vector2 middle_px = new(vp.x / 2, vp.y / 2);
@@ -210,7 +210,7 @@ namespace AsliipaJiliicofmog.Env
 			//Render entities
 			foreach(var e in Entities)
 			{
-				e.RenderInWorld(sb, this);
+				e.RenderInWorld(sb, gt, this);
 			}
 			foreach(Particle x in Particles) x.Display(sb, this);
 		}

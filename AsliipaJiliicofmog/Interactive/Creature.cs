@@ -1,5 +1,6 @@
 ﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Rendering;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -61,7 +62,7 @@ namespace AsliipaJiliicofmog.Interactive
 	{
 		public TreeNode<Bodypart> RootBodypart;
 		public float Speed = 1;
-		public Creature(string name, Texture2D texture, TreeNode<Bodypart> root)
+		public Creature(string name, IGameTexture texture, TreeNode<Bodypart> root)
 			: base(name, texture)
 		{
 			RootBodypart = root;

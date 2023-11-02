@@ -48,7 +48,7 @@ namespace AsliipaJiliicofmog
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 			SB.Begin();
-			w.Render(SB);
+			w.Render(SB, gameTime);
 			SB.End();
 			w.Particles.Add(new Particle(new Vector2(0, 0), Registry.Textures["fire"], new Vector2(0.01f, 0.01f)));
 
