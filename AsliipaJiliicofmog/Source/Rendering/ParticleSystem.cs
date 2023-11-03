@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 
 using AsliipaJiliicofmog.Env;
-using AsliipaJiliicofmog.Interactive;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,23 +13,23 @@ namespace AsliipaJiliicofmog.Rendering
 		public Vector2 Origin;
 		readonly Texture2D Texture;
 		readonly Random r = new();
-		Action<Emitter> up;
+		readonly Action<Emitter> OnUpdate;
 
 		public Emitter(Vector2 o, Texture2D t, Action<Emitter> f)
 		{
 			Origin = o;
 			Texture = t;
-			up = f;
+			OnUpdate = f;
 		}
 
 		public void Render(SpriteBatch sb, World w)
 		{
-			foreach (Particle x in Particles) x.Display(sb, w);
+			foreach (Particle x in Particles) x.Render(sb, w);
 		}
 
 		public void Update()
 		{
-			List<Particle> temp = new();
+			List<Particle> temp = [];
 			foreach (Particle x in Particles)
 			{
 				x.Update();
@@ -38,17 +37,17 @@ namespace AsliipaJiliicofmog.Rendering
 			}
 			Particles = temp;
 			Particles.Add(
-				new (
+				new(
 					Origin,
 					Texture,
-					new (.01f, .01f),
-					new (
+					new(.01f, .01f),
+					new(
 						(float)(MathF.Pow(-1, r.Next(1, 3)) * r.NextDouble()),
 						(float)(MathF.Pow(-1, r.Next(1, 3)) * r.NextDouble())
 					)
 				)
 			);
-			up(this);
+			OnUpdate(this);
 		}
 	}
 
@@ -75,14 +74,14 @@ namespace AsliipaJiliicofmog.Rendering
 		{
 			Velocity += Acceleration;
 			Position += Velocity;
-			Lifespan -= 1;
+			Lifespan -= 5;
 		}
 
 		public bool IsDead() => Lifespan < 0;
 
-		public void Display(SpriteBatch sb, World w)
+		public void Render(SpriteBatch sb, World w)
 		{
-			sb.Draw(Texture, w.GetWorldPosition(Position, sb), null, new Color(255, 255, 255, Lifespan), 0f, new Vector2(0, 0), Scale, SpriteEffects.None, 0f);
+			sb.Draw(Texture, w.GetWorldPosition(Position, sb), null, new Color(255, 255, 255, Lifespan / 255), 0f, new Vector2(0, 0), Scale, SpriteEffects.None, 0f);
 		}
 	}
 }

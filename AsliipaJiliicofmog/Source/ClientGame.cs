@@ -38,10 +38,10 @@ namespace AsliipaJiliicofmog
 
 			w = new World(SB, 1);
 			w.Entities.Add(Registry.Entities["Crate"]);
-			w.Emitters.Add(new Emitter(w.Entities[0].Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
+			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 
-			MainUI.Add( new HorizontalBar(Vector2.Zero, new(100, 50)) );
-			
+			MainUI.Add(new HorizontalBar(Vector2.Zero, new(100, 50)));
+
 		}
 		protected override void Update(GameTime gameTime)
 		{

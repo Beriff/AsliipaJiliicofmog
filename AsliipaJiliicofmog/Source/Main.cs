@@ -1,8 +1,5 @@
 ﻿using AsliipaJiliicofmog;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Asliipa
 {
@@ -13,7 +10,7 @@ namespace Asliipa
 		{
 			using var game = new Client();
 				game.Run();
-			
+
 		}
 	}
 }
