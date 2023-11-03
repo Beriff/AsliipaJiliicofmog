@@ -38,7 +38,7 @@ namespace AsliipaJiliicofmog
 
 			w = new World(SB, 1);
 			w.Entities.Add(Registry.Entities["Crate"]);
-			w.Emitters.Add(new Emitter(w.Entities[0].Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
+			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 
 			Frame f = new(Vector2.Zero, new(50));
 			f.AddElement( new Image(
