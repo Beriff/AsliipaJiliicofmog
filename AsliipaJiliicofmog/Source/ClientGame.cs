@@ -42,6 +42,7 @@ namespace AsliipaJiliicofmog
 			w.Emitters.Add(new Emitter(new Vector2(0, 0), Registry.Textures["fire"]));
 
 			MainUI.Add( new HorizontalBar(Vector2.Zero, new(10)) );
+			w.Emitters.Add(new Emitter(w.Entities[0].Position, Registry.Textures["fire"], (x) => {x.Origin = w.Entities[0].Position;}));
 		}
 		protected override void Update(GameTime gameTime)
 		{

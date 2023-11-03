@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using AsliipaJiliicofmog.Env;
-
+using AsliipaJiliicofmog.Interactive;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,15 +10,17 @@ namespace AsliipaJiliicofmog.Rendering
 {
 	internal class Emitter
 	{
-		private List<Particle> Particles = new();
-		private Vector2 Origin;
+		List<Particle> Particles = [];
+		public Vector2 Origin;
 		readonly Texture2D Texture;
 		readonly Random r = new();
+		Action<Emitter> up;
 
-		public Emitter(Vector2 o, Texture2D t)
+		public Emitter(Vector2 o, Texture2D t, Action<Emitter> f)
 		{
 			Origin = o;
 			Texture = t;
+			up = f;
 		}
 
 		public void Render(SpriteBatch sb, World w)
@@ -46,6 +48,7 @@ namespace AsliipaJiliicofmog.Rendering
 					)
 				)
 			);
+			up(this);
 		}
 	}
 
