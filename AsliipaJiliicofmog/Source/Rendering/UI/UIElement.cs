@@ -11,7 +11,11 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 	internal abstract class UIElement
 	{
 		protected static Texture2D Texture;
-		public static void Initialize(SpriteBatch sb) { Texture = new Texture2D(sb.GraphicsDevice, 1, 1); }
+		public static void Initialize(SpriteBatch sb) 
+		{ 
+			Texture = new Texture2D(sb.GraphicsDevice, 1, 1);
+			Texture.SetData(new Color[] { Color.White });
+		}
 
 		protected Vector2 _Position;
 		protected Vector2 _Size;

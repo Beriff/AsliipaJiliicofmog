@@ -114,6 +114,8 @@ namespace AsliipaJiliicofmog.Env
 
 		public Camera Camera;
 
+		public Player Player;
+
 		public World(SpriteBatch sb, int seed)
 		{
 			Heightmap = OctaveValueNoise.WorldNoise(seed);
@@ -124,7 +126,21 @@ namespace AsliipaJiliicofmog.Env
 			Camera = new() { Position = Vector2.Zero, RenderDistance = 3, Scale = 1 };
 			WorldEvents = new();
 			RenderTexture = new(sb.GraphicsDevice, sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
+
+			Player = new();
+			Entities.Add(Player);
 		}
+
+		public Entity? FindFirstEntity<T>() where T : Entity
+		{
+			foreach (var e in Entities)
+			{
+				if (e.GetType() == typeof(T))
+					return e;
+			}
+			return null;
+		}
+
 		public Vector2 GetWorldPosition (Vector2 p, SpriteBatch sb) => p - Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2;
 		/// <summary>
 		/// Generate the tile at the given position

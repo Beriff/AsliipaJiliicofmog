@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Source.Rendering.UI
@@ -7,9 +8,10 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 	{
 		public override void Render(SpriteBatch sb, UIPalette uip)
 		{
-			sb.Draw(Texture, 
+            Console.WriteLine(AbsoluteSize);
+            sb.Draw(Texture, 
 				new Rectangle(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()), 
-				null, uip.MainDark);
+				uip.MainDark);
 		}
 		public override void Update() { }
 
