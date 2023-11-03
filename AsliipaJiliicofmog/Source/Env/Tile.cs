@@ -34,7 +34,7 @@ namespace AsliipaJiliicofmog.Env
 		public static Tile Deserialize(string json)
 		{
 			dynamic obj = JsonConvert.DeserializeObject(json);
-			return new Tile(Registry.Textures[obj.Texture.ToString()], obj.Name.ToString());
+			return new(Registry.Textures[obj.Texture.ToString()], obj.Name.ToString());
 		}
 
 		public Tile Copy() => new(TileTexture, Name);

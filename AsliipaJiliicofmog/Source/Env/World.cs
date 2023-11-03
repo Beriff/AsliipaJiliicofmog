@@ -125,11 +125,11 @@ namespace AsliipaJiliicofmog.Env
 			WorldEvents = new();
 			RenderTexture = new(sb.GraphicsDevice, sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
 		}
+		public Vector2 GetWorldPosition (Vector2 p, SpriteBatch sb) => p - Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2;
 		/// <summary>
 		/// Generate the tile at the given position
 		/// </summary>
 		/// <remarks>Returns the singleton tile object. For modifiable tile use <c>GenerateTile().Copy()</c></remarks>
-		public Vector2 GetWorldPosition (Vector2 p, SpriteBatch sb) => p - Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2;
 		public Tile GenerateTile(Vector2 position)
 		{
 			foreach(var biome in Biome.Biomes) {
@@ -140,6 +140,7 @@ namespace AsliipaJiliicofmog.Env
 			}
 			return Biome.Fallback.GetTile(this, position);
 		}
+
 		/// <summary>
 		/// Generate a chunk and add it to <c>World.Chunks</c>. Regenerates a chunk if it has been generated before.
 		/// </summary>
@@ -159,6 +160,7 @@ namespace AsliipaJiliicofmog.Env
 			Chunks[topleft] = chunk;
 			return chunk;
 		}
+
 		/// <summary>
 		/// Get a chunk at requested chunk origin position, or generate one if there's none
 		/// </summary>
@@ -167,6 +169,7 @@ namespace AsliipaJiliicofmog.Env
 			if (Chunks.ContainsKey(topleft)) { return Chunks[topleft]; }
 			else { return GenerateChunk(topleft); }
 		}
+
 		/// <summary>
 		/// Get a list of chunk origin positions that will be rendered
 		/// </summary>

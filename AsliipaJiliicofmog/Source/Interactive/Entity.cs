@@ -46,7 +46,7 @@ namespace AsliipaJiliicofmog.Interactive
 		}
 
 		/// <summary>
-		/// Convert world position to screenspace coordinates account the zoom
+		/// Convert world position to screenspace coordinates accounting the zoom
 		/// </summary>
 		public Vector2 ViewportPosition(SpriteBatch sb, World w)
 		{

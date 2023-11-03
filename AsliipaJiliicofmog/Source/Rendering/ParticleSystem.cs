@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+
 using AsliipaJiliicofmog.Env;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,8 +10,8 @@ namespace AsliipaJiliicofmog.Rendering
 {
 	internal class Emitter
 	{
-		List<Particle> Particles = [];
-		Vector2 Origin;
+		private List<Particle> Particles = new();
+		private Vector2 Origin;
 		readonly Texture2D Texture;
 		readonly Random r = new();
 
@@ -26,7 +28,7 @@ namespace AsliipaJiliicofmog.Rendering
 
 		public void Update()
 		{
-			List<Particle> temp = [];
+			List<Particle> temp = new();
 			foreach (Particle x in Particles)
 			{
 				x.Update();
@@ -34,13 +36,13 @@ namespace AsliipaJiliicofmog.Rendering
 			}
 			Particles = temp;
 			Particles.Add(
-				new Particle(
+				new (
 					Origin,
 					Texture,
-					new Vector2(0.01f, 0.01f),
-					new Vector2(
-						(float)(System.Math.Pow(-1, r.Next(1, 3)) * r.NextDouble()),
-						(float)(System.Math.Pow(-1, r.Next(1, 3)) * r.NextDouble())
+					new (.01f, .01f),
+					new (
+						(float)(MathF.Pow(-1, r.Next(1, 3)) * r.NextDouble()),
+						(float)(MathF.Pow(-1, r.Next(1, 3)) * r.NextDouble())
 					)
 				)
 			);
