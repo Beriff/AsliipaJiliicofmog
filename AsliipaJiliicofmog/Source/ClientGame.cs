@@ -40,7 +40,14 @@ namespace AsliipaJiliicofmog
 			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Emitters.Add(new Emitter(w.Entities[0].Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 
-			MainUI.Add( new HorizontalBar(Vector2.Zero, new(100, 50)) );
+			Frame f = new(Vector2.Zero, new(50));
+			f.AddElement( new Image(
+								new AnimatedTexture(Registry.Textures["heart"], 16, 3), 
+								new(0), 
+								new(16)
+								)
+						);
+			MainUI.Add(f);
 			
 		}
 		protected override void Update(GameTime gameTime)

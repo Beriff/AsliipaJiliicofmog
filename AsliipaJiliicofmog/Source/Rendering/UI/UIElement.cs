@@ -8,6 +8,9 @@ using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Source.Rendering.UI
 {
+	/// <summary>
+	/// Represents the basic drawable UI element
+	/// </summary>
 	internal abstract class UIElement
 	{
 		protected static Texture2D Texture;
@@ -26,10 +29,25 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		public bool Active = true;
 		public bool Visible = true;
 
+		/// <summary>
+		/// Get element's position in pixels.
+		/// </summary>
 		public Vector2 AbsolutePosition { get => Parent == null ? _Position : Parent.AbsolutePosition + _Position; }
+		/// <summary>
+		/// Get element's size in pixels
+		/// </summary>
 		public Vector2 AbsoluteSize { get => Parent == null ? _Size : Parent.AbsoluteSize * _Scale ; }
 
+		/// <summary>
+		/// Get element's position relative to its parent. If there's none, result is identical to AbsolutePosition
+		/// </summary>
 		public virtual Vector2 Position { get => _Position; set => _Position = value; }
+
+		/// <summary>
+		/// Get element's size in pixels. Able to set new value if there's no parent. If there is, use
+		/// <c>Scale</c> property.
+		/// </summary>
+		/// <exception cref="UIException"></exception>
 		public virtual Vector2 Size 
 		{ 
 			get => _Size; 
@@ -40,12 +58,15 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 				_Size = value;
 			} 
 		}
+		/// <summary>
+		/// Get element's scale relative to its parent ({1;1} is equal to parent's size)
+		/// </summary>
 		public virtual Vector2 Scale { get => _Scale; set => _Scale = value; }
 
 		public abstract void Render(SpriteBatch sb, UIPalette uip);
 		public abstract void Update();
 
-		protected UIElement(UIElement parent, Vector2 pos, Vector2 scale)
+		protected UIElement(UIElement? parent, Vector2 pos, Vector2 scale)
 		{
 			Parent = parent;
 			Position = pos;
@@ -72,8 +93,34 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			}
 		}
 
+		/// <summary>
+		/// Executes code after switching to render target, but before rendering children
+		/// </summary>
+		protected void Render(SpriteBatch sb, UIPalette uip, Action a)
+		{
+			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+			sb.End();
+			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
+			sb.Begin();
+			a();
+			foreach (var e in Elements)
+			{
+				if (e.Visible) { e.Render(sb, uip); }
+			}
+			sb.End();
+			sb.GraphicsDevice.SetRenderTarget(null);
+			sb.Begin();
+			sb.Draw(RenderTarget, AbsolutePosition, new(Point.Zero, AbsoluteSize.ToPoint()), Color.White);
+		}
+		/// <summary>
+		/// Renders the children elements
+		/// </summary>
+		/// <remarks>Rendering code executed before this function is discarded. Use 3 parameter overload for
+		/// alternative behavior.</remarks>
 		public override void Render(SpriteBatch sb, UIPalette uip)
 		{
+			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+
 			sb.End(); 
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
 			sb.Begin();
@@ -84,15 +131,18 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Begin();
+            sb.Draw(RenderTarget, AbsolutePosition, new(Point.Zero, AbsoluteSize.ToPoint()), Color.White);
 		}
-
+		/// <summary>
+		/// Add element as a child, and set their parent automatically
+		/// </summary>
 		public void AddElement(UIElement element)
 		{
 			Elements.Add(element);
 			element.Parent = this;
 		}
 
-		protected UIContainer(UIElement parent, Vector2 pos, Vector2 scale)
+		protected UIContainer(UIElement? parent, Vector2 pos, Vector2 scale)
 			: base(parent, pos, scale)
 		{
 			Elements = new();

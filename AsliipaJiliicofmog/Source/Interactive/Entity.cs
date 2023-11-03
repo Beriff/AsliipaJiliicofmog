@@ -19,9 +19,9 @@ namespace AsliipaJiliicofmog.Interactive
 		public readonly InputConsumer LocalInput;
 		public bool RenderName = true;
 
-		public virtual void Render(SpriteBatch sb, GameTime gt, Vector2 screenpos)
+		public virtual void Render(SpriteBatch sb, Vector2 screenpos)
 		{
-			Texture.Render(sb, gt, screenpos, Color.White);
+			Texture.Render(sb, screenpos, Color.White);
 		}
 		public virtual void RenderInWorld(SpriteBatch sb, GameTime gt, World w)
 		{
@@ -37,7 +37,7 @@ namespace AsliipaJiliicofmog.Interactive
 					sb.DrawString(Registry.DefaultFont, Name, renderpos, Color.White);
 				}
 			}
-			Texture.Render(sb, gt, Position - w.Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2, Color.White);
+			Texture.Render(sb, Position - w.Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2, Color.White);
 		}
 
 		public virtual void Update(World w) 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Source.Event
 {
@@ -28,25 +26,17 @@ namespace AsliipaJiliicofmog.Source.Event
 
 		public static Ease BounceInOut => t =>
 		{
-			float n1 = 7.5625f;
-			float d1 = 2.75f;
+			float n = 7.5625f;
+			float d = 2.75f;
 
-			if (t < 1 / d1)
-			{
-				return n1 * t * t;
-			}
-			else if (t < 2 / d1)
-			{
-				return n1 * (t -= 1.5f / d1) * t + 0.75f;
-			}
-			else if (t < 2.5f / d1)
-			{
-				return n1 * (t -= 2.25f / d1) * t + 0.9375f;
-			}
-			else
-			{
-				return n1 * (t -= 2.625f / d1) * t + 0.984375f;
-			}
+			if (t < 1 / d)
+				return n * t * t;
+			else if (t < 2 / d)
+				return n * (t -= 1.5f / d) * t + 0.75f;
+			else if (t < 2.5f / d)
+				return n * (t -= 2.25f / d) * t + 0.9375f;
+
+			return n * (t -= 2.625f / d) * t + 0.984375f;
 		};
 	}
 }

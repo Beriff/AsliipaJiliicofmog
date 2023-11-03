@@ -9,7 +9,7 @@ namespace AsliipaJiliicofmog.Rendering
 {
 	internal interface IGameTexture
 	{
-		public void Render(SpriteBatch sb, GameTime gt, Vector2 position, Color color);
+		public void Render(SpriteBatch sb, Vector2 position, Color color);
 		public Point Size { get; }
 	}
 
@@ -23,7 +23,7 @@ namespace AsliipaJiliicofmog.Rendering
 			Texture = texture;
 		}
 
-		public void Render(SpriteBatch sb, GameTime gt, Vector2 position, Color color)
+		public void Render(SpriteBatch sb, Vector2 position, Color color)
 		{
 			sb.Draw(Texture, position, color);
 		}
@@ -47,7 +47,7 @@ namespace AsliipaJiliicofmog.Rendering
 
 		private void IncrementCounter() { Counter++; if (Counter > FrameCount) { Counter = 0; } }
 
-		public void Render(SpriteBatch sb, GameTime gt, Vector2 position, Color color)
+		public void Render(SpriteBatch sb, Vector2 position, Color color)
 		{
 			RenderCallCounter++;
 

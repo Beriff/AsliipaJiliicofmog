@@ -65,9 +65,10 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			Palette = UIPalette.Default;
 		}
 
-		public void Add(UIElement e)
+		public UIElement Add(UIElement e)
 		{
 			Elements.Add(e);
+			return e;
 		}
 
 		public void Render(SpriteBatch sb, UIPalette uip)

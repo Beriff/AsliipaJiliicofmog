@@ -17,7 +17,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		}
 		public override void Update() { }
 
-		public HorizontalBar(UIElement parent, Vector2 pos, Vector2 scale)
+		public HorizontalBar(UIElement? parent, Vector2 pos, Vector2 scale)
 			: base(parent, pos, scale) { }
 
 		public HorizontalBar(Vector2 pos, Vector2 size)
