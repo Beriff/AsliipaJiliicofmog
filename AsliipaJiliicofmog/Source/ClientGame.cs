@@ -44,8 +44,8 @@ namespace AsliipaJiliicofmog
 			Fonter = new(Registry.Textures["font"]);
 
 
-			
-			MainUI.Add( new Checkbox(Vector2.Zero, new(10)) );
+
+			MainUI.Add(new HorizontalScroll(Vector2.Zero, new(150, 30)));
 			
 		}
 		protected override void Update(GameTime gameTime)

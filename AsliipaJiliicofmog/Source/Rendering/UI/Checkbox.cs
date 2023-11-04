@@ -19,9 +19,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 
 		public override void Render(SpriteBatch sb, UIPalette uip)
 		{
-			//Draw the checkbox
-			var dims = new Rectangle(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint());
-			sb.Draw(Texture, dims, uip.Main);
+			sb.Draw(Texture, Bounds, uip.Main);
 			//Draw the check
 			if(Checked)
 			{
