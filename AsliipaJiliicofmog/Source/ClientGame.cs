@@ -19,7 +19,7 @@ namespace AsliipaJiliicofmog
 		public SpriteBatch SB;
 
 		public World w;
-		public UIGroup MainUI = new("main");
+		public UIGroup MainUI;
 		public BitmapFont Fonter;
 		public Client()
 		{
@@ -42,10 +42,17 @@ namespace AsliipaJiliicofmog
 			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 			Fonter = new(Registry.Textures["font"]);
+			MainUI = new("main", Content.Load<SpriteFont>("defaultfont"));
 
 
-
-			MainUI.Add(new HorizontalScroll(Vector2.Zero, new(150, 30)));
+			MainUI.Add( 
+				new Button(
+					() => { Console.WriteLine("hi"); }, 
+					Vector2.Zero, 
+					new(100, 30)
+					) 
+				{ Label = "button" } 
+				);
 			
 		}
 		protected override void Update(GameTime gameTime)
@@ -59,7 +66,7 @@ namespace AsliipaJiliicofmog
 		protected override void Draw(GameTime gameTime)
 		{
 			w.Render(SB, gameTime);
-			MainUI.Render(SB, MainUI.Palette);
+			MainUI.Render(SB);
 			base.Draw(gameTime);
 		}
 	}

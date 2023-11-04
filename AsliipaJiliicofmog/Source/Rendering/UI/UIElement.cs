@@ -73,7 +73,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		/// </summary>
 		protected bool Hovered() => Bounds.Contains(LocalInput.MousePos());
 
-		public abstract void Render(SpriteBatch sb, UIPalette uip);
+		public abstract void Render(SpriteBatch sb, UIGroup group);
 		public abstract void Update();
 
 		protected UIElement(UIElement? parent, Vector2 pos, Vector2 scale)
@@ -106,7 +106,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		/// <summary>
 		/// Executes code after switching to render target, but before rendering children
 		/// </summary>
-		protected void Render(SpriteBatch sb, UIPalette uip, Action a)
+		protected void Render(SpriteBatch sb, UIGroup group, Action a)
 		{
 			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
 			sb.End();
@@ -115,7 +115,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			a();
 			foreach (var e in Elements)
 			{
-				if (e.Visible) { e.Render(sb, uip); }
+				if (e.Visible) { e.Render(sb, group); }
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
@@ -127,7 +127,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		/// </summary>
 		/// <remarks>Rendering code executed before this function is discarded. Use 3 parameter overload for
 		/// alternative behavior.</remarks>
-		public override void Render(SpriteBatch sb, UIPalette uip)
+		public override void Render(SpriteBatch sb, UIGroup group)
 		{
 			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
 
@@ -136,7 +136,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			sb.Begin();
 			foreach (var e in Elements)
 			{
-				if (e.Visible) { e.Render(sb, uip); }
+				if (e.Visible) { e.Render(sb, group); }
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);

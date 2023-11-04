@@ -23,20 +23,41 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 	{
 		public Color Main;
 		public Color MainDark;
+
 		public Color Highlight;
 		public Color HighlightDark;
-		public Color Accent;
 
-		public UIPalette(Color main, Color mainDark, Color highlight, Color highlightDark, Color accent)
+		public Color Readable;
+		public Color ReadableDark;
+
+		public Color Interactable;
+		public Color InteractableDark;
+
+		public Color Contour;
+		public Color ContourDark;
+
+		public UIPalette(Color main, Color mainDark, Color highlight, Color highlightDark, Color readable,
+			Color readableDark, Color inter, Color interDark, Color contour)
 		{
 			Main = main;
 			MainDark = mainDark;
 			Highlight = highlight;
 			HighlightDark = highlightDark;
-			Accent = accent;
+			Readable = readable;
+			ReadableDark = readableDark;
+			Interactable = inter;
+			InteractableDark = interDark;
+			Contour = contour;
 		}
 
-		public static UIPalette Default => new(Color.Gray, Color.DarkGray, Color.Orange, Color.DarkOrange, Color.LightGoldenrodYellow);
+		public static UIPalette Default => new(
+			new(76, 76, 76), new(56, 56, 56),
+			new(255, 106, 0), new(183, 73, 0),
+			Color.White, Color.LightGray,
+			new(158, 158, 158), new(114, 114, 114),
+			new(122, 122, 122)
+			);
+			
 	}
 	internal class UIGroup
 	{
@@ -45,6 +66,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		public UIGroupQueueType QueueType;
 		public string Name;
 		public UIPalette Palette;
+		public SpriteFont Font;
 
 		public void SetVisible(bool v)
 		{
@@ -56,12 +78,13 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			foreach (var e in Elements) { e.Active = v; }
 		}
 
-		public UIGroup(string name, UIGroupQueueType queueType = UIGroupQueueType.Discard)
+		public UIGroup(string name, SpriteFont font, UIGroupQueueType queueType = UIGroupQueueType.Discard)
 		{
 			Elements = new();
 			Name = name;
 			QueueType = queueType;
 			Palette = UIPalette.Default;
+			Font = font;
 		}
 
 		public UIElement Add(UIElement e)
@@ -70,13 +93,13 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			return e;
 		}
 
-		public void Render(SpriteBatch sb, UIPalette uip)
+		public void Render(SpriteBatch sb)
 		{
 			sb.Begin();
 			foreach (var e in Elements)
 			{
 				if (e.Visible)
-					e.Render(sb, uip);
+					e.Render(sb, this);
 			}
 			sb.End();
 		}

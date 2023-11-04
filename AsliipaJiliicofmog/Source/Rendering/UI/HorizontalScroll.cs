@@ -23,10 +23,10 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			return new(pos.ToPoint(), size);
 		}
 
-		public override void Render(SpriteBatch sb, UIPalette uip)
+		public override void Render(SpriteBatch sb, UIGroup group)
 		{
-			sb.Draw(Texture, Bounds, uip.MainDark);
-			sb.Draw(Texture, ScrollButtonBounds(), uip.Main);
+			sb.Draw(Texture, Bounds, group.Palette.MainDark);
+			sb.Draw(Texture, ScrollButtonBounds(), group.Palette.Main);
 		}
 
 		public override void Update()

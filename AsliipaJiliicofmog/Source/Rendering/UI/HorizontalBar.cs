@@ -7,13 +7,13 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 	internal class HorizontalBar : UIElement
 	{
 		public int BarWidth = 6;
-		public override void Render(SpriteBatch sb, UIPalette uip)
+		public override void Render(SpriteBatch sb, UIGroup group)
 		{
 			var pos = AbsolutePosition + new Vector2(0, (AbsoluteSize.Y - BarWidth ) / 2f);
 			var size = new Vector2(AbsoluteSize.X, BarWidth);
             sb.Draw(Texture, 
 				new Rectangle(pos.ToPoint(), size.ToPoint()), 
-				uip.MainDark);
+				group.Palette.MainDark);
 		}
 		public override void Update() { }
 

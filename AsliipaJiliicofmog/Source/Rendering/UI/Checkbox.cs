@@ -17,16 +17,16 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		public Checkbox(Vector2 pos, Vector2 size)
 			: base(pos, size) {  Checked = false; }
 
-		public override void Render(SpriteBatch sb, UIPalette uip)
+		public override void Render(SpriteBatch sb, UIGroup group)
 		{
-			sb.Draw(Texture, Bounds, uip.Main);
+			sb.Draw(Texture, Bounds, group.Palette.Main);
 			//Draw the check
 			if(Checked)
 			{
 				var cdims = new Rectangle(
 					(AbsolutePosition + AbsoluteSize / 4).ToPoint(),
 					(AbsoluteSize / 2).ToPoint());
-				sb.Draw(Texture, cdims, uip.Accent);
+				sb.Draw(Texture, cdims, group.Palette.Highlight);
 			}
 		}
 
