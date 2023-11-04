@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using AsliipaJiliicofmog.Source.Rendering.UI;
+using AsliipaJiliicofmog.Source.Rendering;
 
 namespace AsliipaJiliicofmog
 {
@@ -19,6 +20,7 @@ namespace AsliipaJiliicofmog
 
 		public World w;
 		public UIGroup MainUI = new("main");
+		public BitmapFont Fonter;
 		public Client()
 		{
 			Graphics = new GraphicsDeviceManager(this);
@@ -39,15 +41,11 @@ namespace AsliipaJiliicofmog
 			w = new World(SB, 1);
 			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
+			Fonter = new(Registry.Textures["font"]);
 
-			Frame f = new(Vector2.Zero, new(50));
-			f.AddElement( new Image(
-								new AnimatedTexture(Registry.Textures["heart"], 16, 3), 
-								new(0), 
-								new(16)
-								)
-						);
-			MainUI.Add(f);
+
+			
+			MainUI.Add( new Checkbox(Vector2.Zero, new(10)) );
 			
 		}
 		protected override void Update(GameTime gameTime)

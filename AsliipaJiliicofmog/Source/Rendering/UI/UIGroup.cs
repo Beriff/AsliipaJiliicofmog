@@ -41,7 +41,6 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 	internal class UIGroup
 	{
 		public readonly List<UIElement> Elements;
-		public static readonly InputConsumer Input = InputManager.GetConsumer("UI");
 
 		public UIGroupQueueType QueueType;
 		public string Name;

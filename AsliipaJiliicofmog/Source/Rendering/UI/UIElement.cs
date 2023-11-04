@@ -19,6 +19,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			Texture = new Texture2D(sb.GraphicsDevice, 1, 1);
 			Texture.SetData(new Color[] { Color.White });
 		}
+		public static readonly InputConsumer LocalInput = InputManager.GetConsumer("UI");
 
 		protected Vector2 _Position;
 		protected Vector2 _Size;
@@ -33,6 +34,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		/// Get element's position in pixels.
 		/// </summary>
 		public Vector2 AbsolutePosition { get => Parent == null ? _Position : Parent.AbsolutePosition + _Position; }
+
 		/// <summary>
 		/// Get element's size in pixels
 		/// </summary>
@@ -58,10 +60,18 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 				_Size = value;
 			} 
 		}
+
 		/// <summary>
 		/// Get element's scale relative to its parent ({1;1} is equal to parent's size)
 		/// </summary>
 		public virtual Vector2 Scale { get => _Scale; set => _Scale = value; }
+
+		public virtual Rectangle Bounds { get => new(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()); }
+
+		/// <summary>
+		/// Check if mouse cursor hovers over the element
+		/// </summary>
+		protected bool Hovered() => Bounds.Contains(LocalInput.MousePos());
 
 		public abstract void Render(SpriteBatch sb, UIPalette uip);
 		public abstract void Update();
