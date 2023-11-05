@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
-namespace AsliipaJiliicofmog.Source.Rendering.UI
+namespace AsliipaJiliicofmog.Rendering.UI
 {
 	/// <summary>
 	/// Represents the basic drawable UI element
@@ -56,7 +56,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 			set 
 			{
 				if(Parent != null)
-					throw new UIException("Cannot change size (parent UIelement present). Did you mean Scale? ");
+					throw new UIException("Cannot change size (parent UIelement present). Did you mean Scale?");
 				_Size = value;
 			} 
 		}
@@ -146,7 +146,7 @@ namespace AsliipaJiliicofmog.Source.Rendering.UI
 		/// <summary>
 		/// Add element as a child, and set their parent automatically
 		/// </summary>
-		public void AddElement(UIElement element)
+		public virtual void AddElement(UIElement element)
 		{
 			Elements.Add(element);
 			element.Parent = this;

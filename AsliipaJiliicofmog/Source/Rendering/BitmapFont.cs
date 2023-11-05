@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using System.Collections.Generic;
 
-namespace AsliipaJiliicofmog.Source.Rendering
+namespace AsliipaJiliicofmog.Rendering
 {
 	/// <summary>
 	/// Represents monospaced font constructed from a texture. Supports scaling and color codes.

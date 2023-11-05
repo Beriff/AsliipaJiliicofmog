@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AsliipaJiliicofmog.Source.Rendering.UI
+namespace AsliipaJiliicofmog.Rendering.UI
 {
 	/// <summary>
 	/// A simple UI container that has background color

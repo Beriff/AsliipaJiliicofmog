@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace AsliipaJiliicofmog.Source.Rendering.UI
+namespace AsliipaJiliicofmog.Rendering.UI
 {
 	internal class HorizontalBar : UIElement
 	{

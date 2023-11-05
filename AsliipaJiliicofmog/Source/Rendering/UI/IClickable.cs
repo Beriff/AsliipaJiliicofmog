@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AsliipaJiliicofmog.Source.Rendering.UI
+namespace AsliipaJiliicofmog.Rendering.UI
 {
 	internal interface IClickable
 	{

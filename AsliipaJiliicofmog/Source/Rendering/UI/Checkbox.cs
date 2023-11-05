@@ -1,11 +1,9 @@
-﻿using AsliipaJiliicofmog.Math;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using System;
 
-namespace AsliipaJiliicofmog.Source.Rendering.UI
+namespace AsliipaJiliicofmog.Rendering.UI
 {
 	internal class Checkbox : UIElement, IClickable
 	{

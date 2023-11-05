@@ -3,13 +3,11 @@ using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Rendering;
-using AsliipaJiliicofmog.Interactive;
+using AsliipaJiliicofmog.Rendering.UI;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using AsliipaJiliicofmog.Source.Rendering.UI;
-using AsliipaJiliicofmog.Source.Rendering;
+
 
 namespace AsliipaJiliicofmog
 {
@@ -44,15 +42,10 @@ namespace AsliipaJiliicofmog
 			Fonter = new(Registry.Textures["font"]);
 			MainUI = new("main", Content.Load<SpriteFont>("defaultfont"));
 
+			var layout = new GridLayout(Vector2.Zero, new(100), new(10));
+			layout.PlaceElement(new(1, 1), new Checkbox(null, new(0), new(1)));
 
-			MainUI.Add( 
-				new Button(
-					() => { Console.WriteLine("hi"); }, 
-					Vector2.Zero, 
-					new(100, 30)
-					) 
-				{ Label = "button" } 
-				);
+			MainUI.Add(layout);
 			
 		}
 		protected override void Update(GameTime gameTime)
