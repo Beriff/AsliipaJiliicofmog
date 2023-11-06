@@ -33,12 +33,12 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <summary>
 		/// Get element's position in pixels.
 		/// </summary>
-		public Vector2 AbsolutePosition { get => Parent == null ? _Position : Parent.AbsolutePosition + _Position; }
+		public virtual Vector2 AbsolutePosition { get => Parent == null ? _Position : Parent.AbsolutePosition + _Position; }
 
 		/// <summary>
 		/// Get element's size in pixels
 		/// </summary>
-		public Vector2 AbsoluteSize { get => Parent == null ? _Size : Parent.AbsoluteSize * _Scale ; }
+		public virtual Vector2 AbsoluteSize { get => Parent == null ? _Size : Parent.AbsoluteSize * _Scale ; }
 
 		/// <summary>
 		/// Get element's position relative to its parent. If there's none, result is identical to AbsolutePosition
@@ -68,11 +68,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public virtual Rectangle Bounds { get => new(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()); }
 
+		public virtual Rectangle BoundsAt(Vector2 p) => new(p.ToPoint(), AbsoluteSize.ToPoint());
+
 		/// <summary>
 		/// Check if mouse cursor hovers over the element
 		/// </summary>
 		protected bool Hovered() => Bounds.Contains(LocalInput.MousePos());
 
+		//public abstract void RenderAt(SpriteBatch sb, UIGroup group, Vector2 position);
+		//public abstract void 
 		public abstract void Render(SpriteBatch sb, UIGroup group);
 		public abstract void Update();
 

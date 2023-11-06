@@ -42,10 +42,11 @@ namespace AsliipaJiliicofmog
 			Fonter = new(Registry.Textures["font"]);
 			MainUI = new("main", Content.Load<SpriteFont>("defaultfont"));
 
-			var layout = new GridLayout(Vector2.Zero, new(100), new(10));
-			layout.PlaceElement(new(1, 1), new Checkbox(null, new(0), new(1)));
+			var f = new ScrollFrame(new(20), new(200));
+			f.AddElement(new Button(null, () => { }, Vector2.Zero, new(1, 0.1f)) { Label = "h"} );
+			f.AddElement(new Button(null, () => { }, new(0, 440), new(1, 0.1f)) { Label = "h" });
 
-			MainUI.Add(layout);
+			MainUI.Add(f);
 			
 		}
 		protected override void Update(GameTime gameTime)

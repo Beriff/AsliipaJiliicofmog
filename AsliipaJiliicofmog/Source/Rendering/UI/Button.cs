@@ -25,7 +25,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		{
 			if (RecalculateFlag) { LabelSize = group.Font.MeasureString(Label); RecalculateFlag = false; }
 			var text_pos = Bounds.Center.ToVector2() - (LabelSize / 2);
-			sb.Draw(Texture, Bounds, Hovered() ? group.Palette.Interactable : group.Palette.InteractableDark);
+            sb.Draw(Texture, Bounds, Hovered() ? group.Palette.Interactable : group.Palette.InteractableDark);
 			sb.DrawString(group.Font, Label, text_pos, group.Palette.Readable);
 		}
 
