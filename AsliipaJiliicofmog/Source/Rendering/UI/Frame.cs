@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using static AsliipaJiliicofmog.Rendering.UI.UIElement;
+
 namespace AsliipaJiliicofmog.Rendering.UI
 {
 	/// <summary>

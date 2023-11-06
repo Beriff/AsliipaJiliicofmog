@@ -4,6 +4,7 @@ using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
+using AsliipaJiliicofmog.Source.Event;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +18,8 @@ namespace AsliipaJiliicofmog
 		public SpriteBatch SB;
 
 		public World w;
-		public UIGroup MainUI;
+		public UserInterface GUI;
+
 		public BitmapFont Fonter;
 		public Client()
 		{
@@ -40,27 +42,30 @@ namespace AsliipaJiliicofmog
 			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 			Fonter = new(Registry.Textures["font"]);
-			MainUI = new("main", Content.Load<SpriteFont>("defaultfont"));
+			GUI = new();
+			var mainui_g = new UIGroup("main", Registry.DefaultFont);
+			GUI.SetGroup(mainui_g);
 
-			var f = new ScrollFrame(new(20), new(200));
-			f.AddElement(new Button(null, () => { }, Vector2.Zero, new(1, 0.1f)) { Label = "h"} );
-			f.AddElement(new Button(null, () => { }, new(0, 440), new(1, 0.1f)) { Label = "h" });
+			var b = new Button(() => { Console.WriteLine("hi"); }, Vector2.Zero, new(150, 30))
+			{ Label = "kalsep" };
 
-			MainUI.Add(f);
+			b.MakeAppear(w.WorldEvents);
+
+			mainui_g.Add(b);
 			
 		}
 		protected override void Update(GameTime gameTime)
 		{
 			InputManager.Update();
 			w.Update();
-			MainUI.Update();
+			GUI.Update();
 			base.Update(gameTime);
 
 		}
 		protected override void Draw(GameTime gameTime)
 		{
 			w.Render(SB, gameTime);
-			MainUI.Render(SB);
+			GUI.Render(SB);
 			base.Draw(gameTime);
 		}
 	}

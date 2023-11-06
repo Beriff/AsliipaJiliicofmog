@@ -113,5 +113,56 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 	}
-	
+	internal class UserInterface
+	{
+		public List<UIGroup> Groups;
+
+		public UIGroup GetGroup(string name)
+		{
+			foreach(var group in Groups) { if (group.Name == name) return group; } return null;
+		}
+		public void RemoveGroup(string name)
+		{
+			UIGroup g = null;
+			foreach (var group in Groups) 
+			{ 
+				if (group.Name == name) { g = group; break; }
+				else { throw new UIException("UI Group not found"); }
+			}
+			Groups.Remove(g);
+		}
+		public void AddElement(string groupname, UIElement element)
+		{
+			GetGroup(groupname).Add(element);
+		}
+		public void SetGroup(UIGroup g)
+		{
+			if(GetGroup(g.Name) != null)
+			{
+				switch(g.QueueType)
+				{
+					case UIGroupQueueType.Override:
+						RemoveGroup(g.Name); Groups.Add(g); break;
+					case UIGroupQueueType.Discard: break;
+				}
+			} else
+			{
+				Groups.Add(g);
+			}
+		}
+
+		public UserInterface()
+		{
+			Groups = new();
+		}
+
+		public void Update()
+		{
+			foreach (var group in Groups) { group.Update(); }
+		}
+		public void Render(SpriteBatch sb)
+		{
+			foreach (var group in Groups) { group.Render(sb); }
+		}
+	}
 }

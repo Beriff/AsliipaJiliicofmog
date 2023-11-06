@@ -1,4 +1,6 @@
-﻿using AsliipaJiliicofmog.Input;
+﻿using AsliipaJiliicofmog.Event;
+using AsliipaJiliicofmog.Input;
+using AsliipaJiliicofmog.Source.Event;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,8 +16,8 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	internal abstract class UIElement
 	{
 		protected static Texture2D Texture;
-		public static void Initialize(SpriteBatch sb) 
-		{ 
+		public static void Initialize(SpriteBatch sb)
+		{
 			Texture = new Texture2D(sb.GraphicsDevice, 1, 1);
 			Texture.SetData(new Color[] { Color.White });
 		}
@@ -38,7 +40,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <summary>
 		/// Get element's size in pixels
 		/// </summary>
-		public virtual Vector2 AbsoluteSize { get => Parent == null ? _Size : Parent.AbsoluteSize * _Scale ; }
+		public virtual Vector2 AbsoluteSize { get => Parent == null ? _Size : Parent.AbsoluteSize * _Scale; }
 
 		/// <summary>
 		/// Get element's position relative to its parent. If there's none, result is identical to AbsolutePosition
@@ -50,15 +52,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <c>Scale</c> property.
 		/// </summary>
 		/// <exception cref="UIException"></exception>
-		public virtual Vector2 Size 
-		{ 
-			get => _Size; 
-			set 
+		public virtual Vector2 Size
+		{
+			get => _Size;
+			set
 			{
-				if(Parent != null)
+				if (Parent != null)
 					throw new UIException("Cannot change size (parent UIelement present). Did you mean Scale?");
 				_Size = value;
-			} 
+			}
 		}
 
 		/// <summary>
@@ -75,8 +77,6 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// </summary>
 		protected bool Hovered() => Bounds.Contains(LocalInput.MousePos());
 
-		//public abstract void RenderAt(SpriteBatch sb, UIGroup group, Vector2 position);
-		//public abstract void 
 		public abstract void Render(SpriteBatch sb, UIGroup group);
 		public abstract void Update();
 
@@ -93,6 +93,47 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			Position = pos;
 			Size = size;
 		}
+
+
+		public void MakeAppear(EventManager em, Easing.Ease? smoothing = null)
+		{
+			Easing.Ease ease = smoothing ?? Easing.SmoothStep;
+
+			if (Parent == null)
+			{
+				em.AddEvent(new(Size.X, 60, GetHashCode().ToString() + "1",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Size = new(ease(self.Progress) * self.Data, Size.Y);
+                    })
+					);
+				em.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "2",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Size = new(Size.X, ease(self.Progress) * self.Data);
+					})
+					);
+				Size = Vector2.Zero;
+
+			}
+			else
+			{
+				em.AddEvent(new(Scale.X, 60, GetHashCode().ToString() + "1",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Scale = new(ease(self.Progress) * self.Data, Scale.Y);
+					})
+					);
+				em.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "2",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Scale = new(Scale.X, ease(self.Progress) * self.Data);
+					})
+					);
+				Scale = Vector2.Zero;
+			}
+		}
+
 	}
 	internal abstract class UIContainer : UIElement
 	{
