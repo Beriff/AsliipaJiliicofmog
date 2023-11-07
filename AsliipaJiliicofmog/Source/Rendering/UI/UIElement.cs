@@ -1,6 +1,5 @@
 ﻿using AsliipaJiliicofmog.Event;
 using AsliipaJiliicofmog.Input;
-using AsliipaJiliicofmog.Source.Event;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,7 +34,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <summary>
 		/// Get element's position in pixels.
 		/// </summary>
-		public virtual Vector2 AbsolutePosition { get => Parent == null ? _Position : Parent.AbsolutePosition + _Position; }
+		public virtual Vector2 AbsolutePosition { get => Parent == null ? Position : Parent.AbsolutePosition + Position; }
 
 		/// <summary>
 		/// Get element's size in pixels
@@ -54,7 +53,12 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <exception cref="UIException"></exception>
 		public virtual Vector2 Size
 		{
-			get => _Size;
+			get
+			{
+				if (Parent == null)
+					return _Size;
+				return AbsoluteSize;
+			}
 			set
 			{
 				if (Parent != null)
@@ -98,6 +102,8 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public void MakeAppear(EventManager em, Easing.Ease? smoothing = null)
 		{
 			Easing.Ease ease = smoothing ?? Easing.SmoothStep;
+			Visible = true;
+			Active = true;
 
 			if (Parent == null)
 			{
@@ -134,6 +140,47 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 
+		public void MakeDisappear(EventManager em, Easing.Ease? smoothing = null) 
+		{
+			Easing.Ease ease = smoothing ?? Easing.SmoothStep;
+
+			if (Parent == null)
+			{
+				em.AddEvent(new(Size.X, 60, GetHashCode().ToString() + "1",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Size = new(ease(1 - self.Progress) * self.Data, Size.Y);
+					})
+					);
+				em.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "2",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Size = new(Size.X, ease(1 - self.Progress) * self.Data);
+					})
+					{ OnEnd = (ge) => { Visible = false; Active = false; } }
+					);
+				Size = Vector2.Zero;
+
+			}
+			else
+			{
+				em.AddEvent(new(Scale.X, 60, GetHashCode().ToString() + "1",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Scale = new(ease(1 - self.Progress) * self.Data, Scale.Y);
+					})
+					);
+				em.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "2",
+					EventQueueBehavior.Discard, (self) =>
+					{
+						Scale = new(Scale.X, ease(1 - self.Progress) * self.Data);
+					})
+					{ OnEnd = (ge) => { Visible = false; Active = false; } }
+					);
+				Scale = Vector2.Zero;
+			}
+		}
+
 	}
 	internal abstract class UIContainer : UIElement
 	{
@@ -153,14 +200,21 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// </summary>
 		protected void Render(SpriteBatch sb, UIGroup group, Action a)
 		{
+			if ((int)AbsoluteSize.X == 0 || (int)AbsoluteSize.Y == 0) { return; }
+
 			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
-			sb.End();
+            Console.WriteLine(RenderTarget.RenderTargetUsage);
+
+            sb.End();
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
+			sb.GraphicsDevice.Clear(Color.Black);
 			sb.Begin();
 			a();
 			foreach (var e in Elements)
 			{
-				if (e.Visible) { e.Render(sb, group); }
+				e.Position -= AbsolutePosition;
+                if (e.Visible) { e.Render(sb, group); }
+				e.Position += AbsolutePosition;
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
@@ -178,10 +232,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 			sb.End(); 
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
+			sb.GraphicsDevice.Clear(Color.Black);
 			sb.Begin();
 			foreach (var e in Elements)
 			{
-				if (e.Visible) { e.Render(sb, group); }
+				e.Position -= AbsolutePosition;
+                if (e.Visible) { e.Render(sb, group); }
+				e.Position += AbsolutePosition;
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);

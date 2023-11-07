@@ -7,7 +7,7 @@ namespace AsliipaJiliicofmog.Event
 	internal class EventManager
 	{
 		public List<GameEvent> Events;
-		private List<GameEvent> Queue;
+		private readonly List<GameEvent> Queue;
 		public EventManager()
 		{
 			Events = new();
@@ -65,7 +65,7 @@ namespace AsliipaJiliicofmog.Event
 				}
 				e.Update(e);
 			}
-			foreach(var e in toremove) { Events.Remove(e); }
+			foreach(var e in toremove) { e.OnEnd(e); Events.Remove(e); }
 			foreach(var e in toadd) { Events.Add(e); Queue.Remove(e); } //add from queue
 		}
 	}

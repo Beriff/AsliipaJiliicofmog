@@ -45,21 +45,11 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 
-		/*public override Vector2 AbsolutePosition
-		{
-			get {
-				int offset = (int)((MaxY - MinY) * Scroll.Progress);
-				return base.AbsolutePosition - new Vector2(0, offset);
-			}
-		}*/
-
 		public override void Render(SpriteBatch sb, UIGroup group)
 		{
 			ElementOffset = (int)((MaxY - MinY) * Scroll.Progress);
 
             RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y + (MaxY - MinY));
-
-			
 
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
@@ -85,6 +75,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var e in Elements)
 			{
 				e.Position -= new Vector2(0, ElementOffset);
+				if(e.Position.Y + e.Size.Y <= 0 || e.Position.Y >= Size.Y) { continue; } 
 				if (e.Active) { e.Update(); }
 				e.Position += new Vector2(0, ElementOffset);
 			}

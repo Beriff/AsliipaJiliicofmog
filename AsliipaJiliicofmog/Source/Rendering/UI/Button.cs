@@ -31,7 +31,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public override void Update()
 		{
-			if(Hovered() && LocalInput.GetM1State() == Input.PressType.Released)
+            if (Hovered() && LocalInput.GetM1State() == Input.PressType.Released)
 				OnClick();
 		}
 

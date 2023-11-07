@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AsliipaJiliicofmog.Source.Event
+namespace AsliipaJiliicofmog.Event
 {
 	internal static class Easing
 	{

@@ -1,14 +1,13 @@
 ﻿using System;
+
 using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
-using AsliipaJiliicofmog.Source.Event;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 
 namespace AsliipaJiliicofmog
 {
@@ -46,12 +45,10 @@ namespace AsliipaJiliicofmog
 			var mainui_g = new UIGroup("main", Registry.DefaultFont);
 			GUI.SetGroup(mainui_g);
 
-			var b = new Button(() => { Console.WriteLine("hi"); }, Vector2.Zero, new(150, 30))
-			{ Label = "kalsep" };
+			var window = Frame.Window(w.WorldEvents, new(10), new(100));
+			window.MakeAppear(w.WorldEvents);
 
-			b.MakeAppear(w.WorldEvents);
-
-			mainui_g.Add(b);
+			mainui_g.Add(window);
 			
 		}
 		protected override void Update(GameTime gameTime)

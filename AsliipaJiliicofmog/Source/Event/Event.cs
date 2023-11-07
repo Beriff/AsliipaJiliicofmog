@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Event
 {
@@ -33,6 +31,7 @@ namespace AsliipaJiliicofmog.Event
 			Token = token;
 			QueueBehavior = behavior;
 			Update = update;
+			OnEnd = _ => { };
 		}
 
 		public static GameEvent Delay(Action<GameEvent> onend, int delay, string token, EventQueueBehavior behavior)
