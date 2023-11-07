@@ -202,13 +202,21 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		{
 			if ((int)AbsoluteSize.X == 0 || (int)AbsoluteSize.Y == 0) { return; }
 
-			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
-            Console.WriteLine(RenderTarget.RenderTargetUsage);
+			
 
             sb.End();
-			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
+
+			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+
+			if (RenderTarget.Bounds != new Rectangle(Point.Zero, AbsoluteSize.ToPoint())) 
+			{
+				RenderTarget.Dispose();
+				RenderTarget = new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+            }
+
+            sb.GraphicsDevice.SetRenderTarget(RenderTarget);
 			sb.GraphicsDevice.Clear(Color.Black);
-			sb.Begin();
+			sb.Begin(samplerState: SamplerState.PointWrap);
 			a();
 			foreach (var e in Elements)
 			{
