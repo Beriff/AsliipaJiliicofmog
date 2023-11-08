@@ -18,14 +18,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public Frame (Vector2 pos, Vector2 size)
 			: base(pos, size) { }
 
-		public override void Render(SpriteBatch sb, UIGroup group)
+		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
-			base.Render(sb, group, () =>
+			base.RenderAt(sb, group, () =>
 			{
 				sb.Draw(Texture,
 				new Rectangle(Point.Zero, AbsoluteSize.ToPoint()),
 				group.Palette.Main);
-			});
+			}, p);
 		}
 
 		/// <summary>

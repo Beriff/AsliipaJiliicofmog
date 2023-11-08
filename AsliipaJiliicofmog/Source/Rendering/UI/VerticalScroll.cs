@@ -16,22 +16,22 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public VerticalScroll(Vector2 pos, Vector2 scale)
 			: base(pos, scale) { }
 
-		protected Rectangle ScrollButtonBounds()
+		protected Rectangle ScrollButtonBounds(Vector2 p)
 		{
 			var size = new Point((int)AbsoluteSize.X);
-			var pos = new Vector2(AbsolutePosition.X, AbsolutePosition.Y + Progress * (AbsoluteSize.Y - size.Y));
+			var pos = new Vector2(p.X, p.Y + Progress * (AbsoluteSize.Y - size.Y));
 			return new(pos.ToPoint(), size);
 		}
 
-		public override void Render(SpriteBatch sb, UIGroup group)
+		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
-			sb.Draw(Texture, Bounds, group.Palette.MainDark);
-            sb.Draw(Texture, ScrollButtonBounds(), group.Palette.Main);
+			sb.Draw(Texture, BoundsAt(p), group.Palette.MainDark);
+            sb.Draw(Texture, ScrollButtonBounds(p), group.Palette.Main);
 		}
 
-		public override void Update()
+		public override void UpdateAt(Vector2 pos)
 		{
-			var bounds = ScrollButtonBounds();
+			var bounds = ScrollButtonBounds(pos);
 			if (LocalInput.GetM1State() == Input.PressType.Pressed
 				&& bounds.Contains(LocalInput.MousePos()) )
 			{
@@ -45,7 +45,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			if(ButtonHeld)
 			{
 				var cursor_y = LocalInput.MousePos().Y;
-				float p = (cursor_y - AbsolutePosition.Y - InnerOffset) / (AbsoluteSize.Y - AbsoluteSize.X);
+				float p = (cursor_y - pos.Y - InnerOffset) / (AbsoluteSize.Y - AbsoluteSize.X);
 				Progress = p;
 			}
 			

@@ -73,16 +73,18 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public virtual Vector2 Scale { get => _Scale; set => _Scale = value; }
 
 		public virtual Rectangle Bounds { get => new(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()); }
-
-		public virtual Rectangle BoundsAt(Vector2 p) => new(p.ToPoint(), AbsoluteSize.ToPoint());
+		public virtual Rectangle BoundsAt(Vector2 pos) => new(pos.ToPoint(), AbsoluteSize.ToPoint());
 
 		/// <summary>
 		/// Check if mouse cursor hovers over the element
 		/// </summary>
 		protected bool Hovered() => Bounds.Contains(LocalInput.MousePos());
+		protected bool Hovered(Vector2 pos) => BoundsAt(pos).Contains(LocalInput.MousePos());
 
-		public abstract void Render(SpriteBatch sb, UIGroup group);
-		public abstract void Update();
+		public abstract void RenderAt(SpriteBatch sb, UIGroup group, Vector2 position);
+		public void Render(SpriteBatch sb, UIGroup group) => RenderAt(sb, group, AbsolutePosition);
+		public abstract void UpdateAt(Vector2 position);
+		public void Update() => UpdateAt(AbsolutePosition);
 
 		protected UIElement(UIElement? parent, Vector2 pos, Vector2 scale)
 		{
@@ -187,18 +189,18 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public List<UIElement> Elements;
 		protected RenderTarget2D RenderTarget;
 
-		public override void Update()
+		public override void UpdateAt(Vector2 pos)
 		{
 			foreach (var e in Elements)
 			{
-				if(e.Active) { e.Update(); }
+				if (e.Active) { e.UpdateAt(pos + e.Position); }
 			}
 		}
 
 		/// <summary>
 		/// Executes code after switching to render target, but before rendering children
 		/// </summary>
-		protected void Render(SpriteBatch sb, UIGroup group, Action a)
+		protected void RenderAt(SpriteBatch sb, UIGroup group, Action a, Vector2 p)
 		{
 			if ((int)AbsoluteSize.X == 0 || (int)AbsoluteSize.Y == 0) { return; }
 
@@ -220,23 +222,27 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			a();
 			foreach (var e in Elements)
 			{
-				e.Position -= AbsolutePosition;
-                if (e.Visible) { e.Render(sb, group); }
-				e.Position += AbsolutePosition;
-			}
+                if (e.Visible) { e.RenderAt(sb, group, e.Position); }
+            }
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Begin();
-			sb.Draw(RenderTarget, AbsolutePosition, new(Point.Zero, AbsoluteSize.ToPoint()), Color.White);
+			sb.Draw(RenderTarget, p, new(Point.Zero, AbsoluteSize.ToPoint()), Color.White);
 		}
 		/// <summary>
 		/// Renders the children elements
 		/// </summary>
 		/// <remarks>Rendering code executed before this function is discarded. Use 3 parameter overload for
 		/// alternative behavior.</remarks>
-		public override void Render(SpriteBatch sb, UIGroup group)
+		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
 			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+
+			if (RenderTarget.Bounds != new Rectangle(Point.Zero, AbsoluteSize.ToPoint()))
+			{
+				RenderTarget.Dispose();
+				RenderTarget = new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+			}
 
 			sb.End(); 
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
@@ -244,9 +250,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			sb.Begin();
 			foreach (var e in Elements)
 			{
-				e.Position -= AbsolutePosition;
-                if (e.Visible) { e.Render(sb, group); }
-				e.Position += AbsolutePosition;
+                if (e.Visible) { e.RenderAt(sb, group, e.Position); }
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);

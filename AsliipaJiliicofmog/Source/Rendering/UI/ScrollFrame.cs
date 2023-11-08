@@ -45,39 +45,42 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 
-		public override void Render(SpriteBatch sb, UIGroup group)
+		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
 			ElementOffset = (int)((MaxY - MinY) * Scroll.Progress);
 
-            RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y + (MaxY - MinY));
+			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y + (MaxY - MinY));
+
+			if (RenderTarget.Bounds != new Rectangle(Point.Zero, AbsoluteSize.ToPoint()))
+			{
+				RenderTarget.Dispose();
+				RenderTarget = new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+			}
 
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
 			sb.Begin();
 			sb.Draw(Texture,
-				new Rectangle(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()),
+				new Rectangle(p.ToPoint(), AbsoluteSize.ToPoint()),
 				group.Palette.Main);
             foreach (var e in Elements)
 			{
-                e.Position -= new Vector2(0, ElementOffset);
-				if (e.Visible) { e.Render(sb, group); }
-				e.Position += new Vector2(0, ElementOffset);
+				if (e.Visible) { e.RenderAt(sb, group, e.Position - new Vector2(0, ElementOffset)); }
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Begin();
-			sb.Draw(RenderTarget, AbsolutePosition, new(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()), Color.White);
-			Scroll.Render(sb, group);
+			sb.Draw(RenderTarget, p, new(p.ToPoint(), AbsoluteSize.ToPoint()), Color.White);
+			Scroll.RenderAt(sb, group, p);
 		}
-		public override void Update()
+		public override void UpdateAt(Vector2 p)
 		{
-			Scroll.Update();
+			p -= AbsolutePosition;
+			Scroll.UpdateAt(Scroll.AbsolutePosition + p);
 			foreach (var e in Elements)
 			{
-				e.Position -= new Vector2(0, ElementOffset);
 				if(e.Position.Y + e.Size.Y <= 0 || e.Position.Y >= Size.Y) { continue; } 
-				if (e.Active) { e.Update(); }
-				e.Position += new Vector2(0, ElementOffset);
+				if (e.Active) { e.UpdateAt(e.AbsolutePosition - new Vector2(0, ElementOffset)); }
 			}
 		}
 	}

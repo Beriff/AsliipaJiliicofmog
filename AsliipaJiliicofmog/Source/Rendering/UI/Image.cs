@@ -19,10 +19,10 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			Picture = picture;
 		}
 
-		public override void Render(SpriteBatch sb, UIGroup group)
+		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
-			Picture.Render(sb, AbsolutePosition, Color.White);
+			Picture.Render(sb, p, Color.White);
 		}
-		public override void Update() { }
+		public override void UpdateAt(Vector2 p) { }
 	}
 }
