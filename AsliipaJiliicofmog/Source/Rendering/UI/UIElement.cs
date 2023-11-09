@@ -25,16 +25,19 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		protected Vector2 _Position;
 		protected Vector2 _Size;
 		protected Vector2 _Scale;
+		protected Vector2 _Pivot;
 
 		public UIElement? Parent;
 
 		public bool Active = true;
 		public bool Visible = true;
 
+		public string Name;
+
 		/// <summary>
-		/// Get element's position in pixels.
+		/// Get element's position in pixels, including pivot shift
 		/// </summary>
-		public virtual Vector2 AbsolutePosition { get => Parent == null ? Position : Parent.AbsolutePosition + Position; }
+		public virtual Vector2 AbsolutePosition { get => Parent == null ? Position + Pivot : Parent.AbsolutePosition + Position + Pivot; }
 
 		/// <summary>
 		/// Get element's size in pixels
@@ -43,8 +46,9 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		/// <summary>
 		/// Get element's position relative to its parent. If there's none, result is identical to AbsolutePosition
+		/// (includes pivot shift)
 		/// </summary>
-		public virtual Vector2 Position { get => _Position; set => _Position = value; }
+		public virtual Vector2 Position { get => _Position + Pivot; set => _Position = value; }
 
 		/// <summary>
 		/// Get element's size in pixels. Able to set new value if there's no parent. If there is, use
@@ -72,6 +76,8 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// </summary>
 		public virtual Vector2 Scale { get => _Scale; set => _Scale = value; }
 
+		public virtual Vector2 Pivot { get => _Pivot * -Size; set => _Pivot = value; }
+
 		public virtual Rectangle Bounds { get => new(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint()); }
 		public virtual Rectangle BoundsAt(Vector2 pos) => new(pos.ToPoint(), AbsoluteSize.ToPoint());
 
@@ -91,6 +97,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			Parent = parent;
 			Position = pos;
 			Scale = scale;
+			Pivot = Vector2.Zero;
 		}
 
 		protected UIElement(Vector2 pos, Vector2 size)
@@ -98,6 +105,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			Parent = null;
 			Position = pos;
 			Size = size;
+			Pivot = Vector2.Zero;
 		}
 
 
@@ -188,6 +196,16 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	{
 		public List<UIElement> Elements;
 		protected RenderTarget2D RenderTarget;
+
+		public UIElement FindElement(string name)
+		{
+			foreach(var e in Elements)
+			{
+				if (e.Name == name)
+					return e;
+			}
+			throw new UIException("Element not found");
+		}
 
 		public override void UpdateAt(Vector2 pos)
 		{

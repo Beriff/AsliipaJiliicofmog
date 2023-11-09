@@ -78,6 +78,9 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var e in Elements) { e.Active = v; }
 		}
 
+		public void Disable() { foreach (var e in Elements) { e.Active = false; e.Visible = false; } }
+		public void Enable() { foreach (var e in Elements) { e.Active = true; e.Visible = true; } }
+
 		public UIGroup(string name, SpriteFont font, UIGroupQueueType queueType = UIGroupQueueType.Discard)
 		{
 			Elements = new();
@@ -111,6 +114,16 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				if (e.Active)
 					e.Update();
 			}
+		}
+
+		public UIElement FindElement(string name)
+		{
+			foreach (var e in Elements)
+			{
+				if (e.Name == name)
+					return e;
+			}
+			throw new UIException("Element not found");
 		}
 	}
 	internal class UserInterface

@@ -17,7 +17,6 @@ namespace AsliipaJiliicofmog
 		public SpriteBatch SB;
 
 		public World w;
-		public UserInterface GUI;
 
 		public BitmapFont Fonter;
 		public Client()
@@ -41,28 +40,20 @@ namespace AsliipaJiliicofmog
 			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 			Fonter = new(Registry.Textures["font"]);
-			GUI = new();
-			var mainui_g = new UIGroup("main", Registry.DefaultFont);
-			GUI.SetGroup(mainui_g);
-
-			var window = Frame.Window(w.WorldEvents, new(10), new(100));
-			window.MakeAppear(w.WorldEvents);
-
-			mainui_g.Add(window);
 			
 		}
 		protected override void Update(GameTime gameTime)
 		{
 			InputManager.Update();
 			w.Update();
-			GUI.Update();
+			Registry.UI.Update();
 			base.Update(gameTime);
 
 		}
 		protected override void Draw(GameTime gameTime)
 		{
 			w.Render(SB, gameTime);
-			GUI.Render(SB);
+			Registry.UI.Render(SB);
 			base.Draw(gameTime);
 		}
 	}

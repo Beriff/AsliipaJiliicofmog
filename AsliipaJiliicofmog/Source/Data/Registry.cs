@@ -1,7 +1,10 @@
 ﻿using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Event;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Rendering;
+using AsliipaJiliicofmog.Rendering.UI;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +19,9 @@ namespace AsliipaJiliicofmog.Data
 		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();
 		public static Dictionary<string, Biome> Biomes = new();
 		public static Dictionary<string, Entity> Entities = new();
+
+		public static UserInterface UI = new();
+		public static EventManager UIEvents = new();
 
 		public static SpriteFont DefaultFont;
 
@@ -80,6 +86,24 @@ namespace AsliipaJiliicofmog.Data
 			{ Position = new(25) };
 		}
 
+		private static void GenerateUIs(GraphicsDevice gd)
+		{
+            var viewport = gd.Viewport.Bounds;
+			var vp_size = viewport.Size.ToVector2();
+			var half_vp = vp_size / 2;
+
+			// Generate a container for main menus
+			var menuGroup = new UIGroup("MenuGroup", DefaultFont);
+			UI.SetGroup(menuGroup);
+
+			// A frame for "paused menu"
+			var pauseMenu = Frame.Window(UIEvents, half_vp, half_vp);
+			pauseMenu.Pivot = new(.5f, .5f);
+
+			menuGroup.Add(pauseMenu);
+			//menuGroup.Disable();
+		}
+
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
 		{
 			string path = Path.Combine(content.RootDirectory, "Textures");
@@ -99,9 +123,11 @@ namespace AsliipaJiliicofmog.Data
 				Tiles.Add(t.Name, TileIDCounter++, t);
 			}
 
+			DefaultFont = content.Load<SpriteFont>("defaultfont");
+
 			GenerateBiomes();
 			GenerateEntities();
-			DefaultFont = content.Load<SpriteFont>("defaultfont");
+			GenerateUIs(graphicsDevice);
 		}
 	}
 }
