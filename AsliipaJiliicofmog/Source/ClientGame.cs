@@ -38,6 +38,7 @@ namespace AsliipaJiliicofmog
 
 			w = new World(SB, 1);
 			w.Entities.Add(Registry.Entities["Crate"]);
+			w.Entities.Add(Registry.Entities["Tree"]);
 			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 			Fonter = new(Registry.Textures["font"]);
 

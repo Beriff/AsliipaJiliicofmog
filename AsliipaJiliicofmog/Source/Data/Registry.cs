@@ -84,7 +84,16 @@ namespace AsliipaJiliicofmog.Data
 		private static void GenerateEntities()
 		{
 			Entities["Crate"] = new PhysicalEntity("Crate", new GameTexture(Textures["crate"]))
-			{ Position = new(25) };
+			{
+				Position = new(25),
+			}.SetBottomHitbox();
+
+			Entities["Tree"] = new PhysicalEntity("Tree", new GameTexture(Textures["tree"]))
+			{
+				Position = new(64),
+				TextureOffsetPivot = new(0, 1),
+				HitboxScale = new(.5f, .2f),
+			};
 		}
 
 		private static void GenerateUIs(GraphicsDevice gd)

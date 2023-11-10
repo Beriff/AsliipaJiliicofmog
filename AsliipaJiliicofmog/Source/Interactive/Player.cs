@@ -13,7 +13,7 @@ namespace AsliipaJiliicofmog.Interactive
 		public Player() 
 			: base("Carlos", new AnimatedTexture(Registry.Textures["heart"], 16, 3), Bodypart.Humanoid())
 		{
-
+			SetBottomHitbox();
 		}
 
 		public override void Update(World w)
