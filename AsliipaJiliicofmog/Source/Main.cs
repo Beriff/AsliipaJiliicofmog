@@ -9,8 +9,7 @@ namespace Asliipa
 		static void Main(string[] args)
 		{
 			using var game = new Client();
-				game.Run();
-
+			game.Run();
 		}
 	}
 }
