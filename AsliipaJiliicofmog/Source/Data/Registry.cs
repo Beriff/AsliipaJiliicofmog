@@ -137,6 +137,8 @@ namespace AsliipaJiliicofmog.Data
 				Tiles.Add(t.Name, TileIDCounter++, t);
 			}
 
+			DefaultFont = content.Load<SpriteFont>("defaultfont");
+
 			GenerateBiomes();
 			GenerateEntities();
 			GenerateUIs(graphicsDevice);

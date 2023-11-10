@@ -40,13 +40,6 @@ namespace AsliipaJiliicofmog
 			w.Entities.Add(Registry.Entities["Crate"]);
 			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
 			Fonter = new(Registry.Textures["font"]);
-			MainUI = new("main", Content.Load<SpriteFont>("defaultfont"));
-
-			var layout = new GridLayout(Vector2.Zero, new(100), new(10));
-			layout.PlaceElement(new(1, 1), new Checkbox(null, new(0), new(1)));
-
-			MainUI.Add(layout);
-
 
 		}
 		protected override void Update(GameTime gameTime)
@@ -55,7 +48,6 @@ namespace AsliipaJiliicofmog
 			InputManager.Update();
 			w.Update();
 			base.Update(gameTime);
-			Console.WriteLine(Registry.Materials);
 		}
 		protected override void Draw(GameTime gameTime)
 		{
