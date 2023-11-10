@@ -73,14 +73,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			sb.Draw(RenderTarget, p, new(p.ToPoint(), AbsoluteSize.ToPoint()), Color.White);
 			Scroll.RenderAt(sb, group, p);
 		}
-		public override void UpdateAt(Vector2 p)
+		public override void UpdateAt(UIGroup group, Vector2 p)
 		{
 			p -= AbsolutePosition;
-			Scroll.UpdateAt(Scroll.AbsolutePosition + p);
+			Scroll.UpdateAt(group, Scroll.AbsolutePosition + p);
 			foreach (var e in Elements)
 			{
 				if(e.Position.Y + e.Size.Y <= 0 || e.Position.Y >= Size.Y) { continue; } 
-				if (e.Active) { e.UpdateAt(e.AbsolutePosition - new Vector2(0, ElementOffset)); }
+				if (e.Active) { e.UpdateAt(group, e.AbsolutePosition - new Vector2(0, ElementOffset)); }
 			}
 		}
 	}

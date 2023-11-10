@@ -15,7 +15,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				new Rectangle(pos.ToPoint(), size.ToPoint()), 
 				group.Palette.MainDark);
 		}
-		public override void UpdateAt(Vector2 pos) { }
+		public override void UpdateAt(UIGroup group, Vector2 pos) { }
 
 		public HorizontalBar(UIElement? parent, Vector2 pos, Vector2 scale)
 			: base(parent, pos, scale) { }

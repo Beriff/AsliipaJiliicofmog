@@ -44,9 +44,9 @@ namespace AsliipaJiliicofmog
 		}
 		protected override void Update(GameTime gameTime)
 		{
+			Registry.UI.Update();
 			InputManager.Update();
 			w.Update();
-			Registry.UI.Update();
 			base.Update(gameTime);
 
 		}

@@ -112,7 +112,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var e in Elements)
 			{
 				if (e.Active)
-					e.Update();
+					e.Update(this);
 			}
 		}
 
@@ -171,6 +171,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public void Update()
 		{
+			UIElement.UIEvents.Update();
 			foreach (var group in Groups) { group.Update(); }
 		}
 		public void Render(SpriteBatch sb)

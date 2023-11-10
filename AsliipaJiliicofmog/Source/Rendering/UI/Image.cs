@@ -23,6 +23,6 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		{
 			Picture.Render(sb, p, Color.White);
 		}
-		public override void UpdateAt(Vector2 p) { }
+		public override void UpdateAt(UIGroup group, Vector2 p) { }
 	}
 }

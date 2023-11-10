@@ -28,7 +28,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 
-		public override void UpdateAt(Vector2 pos)
+		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
 			if(Hovered(pos) && LocalInput.GetM1State() == Input.PressType.Released)
 			{

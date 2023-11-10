@@ -29,7 +29,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			sb.Draw(Texture, ScrollButtonBounds(p), group.Palette.Main);
 		}
 
-		public override void UpdateAt(Vector2 pos)
+		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
 			var bounds = ScrollButtonBounds(pos);
 			if (LocalInput.GetM1State() == Input.PressType.Pressed

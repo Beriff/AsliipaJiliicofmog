@@ -20,7 +20,6 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
-            Console.WriteLine(AbsolutePosition);
             base.RenderAt(sb, group, () =>
 			{
                 sb.Draw(Texture,
@@ -32,16 +31,17 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <summary>
 		/// Creates a frame with a button to close it
 		/// </summary>
-		public static Frame Window(EventManager em, Vector2 pos, Vector2 size)
+		public static Frame Window(Vector2 pos, Vector2 size)
 		{
             Frame f = new(pos, size);
 			var b = new Button(
-					null, () => { f.MakeDisappear(em); },
+					null, () => { f.MakeDisappear(); },
 					new(0, 0),
-					new(.2f, .2f)
+					new(20 / size.X, 20 / size.Y)
 					)
 			{
 				Label = "x",
+				Name = $"{f.GetHashCode()}_btn",
 			};
 			f.AddElement(b);
 

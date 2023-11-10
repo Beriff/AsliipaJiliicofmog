@@ -62,6 +62,6 @@ namespace AsliipaJiliicofmog.Rendering.UI
             sb.DrawString(group.Font, Text, textpos, Color);
 		}
 
-		public override void UpdateAt(Vector2 position) { }
+		public override void UpdateAt(UIGroup group, Vector2 position) { }
 	}
 }

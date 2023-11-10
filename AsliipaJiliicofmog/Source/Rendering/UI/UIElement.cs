@@ -21,11 +21,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			Texture.SetData(new Color[] { Color.White });
 		}
 		public static readonly InputConsumer LocalInput = InputManager.GetConsumer("UI");
+		public static readonly EventManager UIEvents = new();
 
 		protected Vector2 _Position;
 		protected Vector2 _Size;
 		protected Vector2 _Scale;
 		protected Vector2 _Pivot;
+
+		protected bool IsHovered = false;
 
 		public UIElement? Parent;
 
@@ -33,11 +36,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public bool Visible = true;
 
 		public string Name;
+		public Action<UIGroup, Vector2> OnHoverStart = (_,_) => { };
+		public Action<UIGroup, Vector2> OnHoverEnd = (_,_) => { };
 
 		/// <summary>
 		/// Get element's position in pixels, including pivot shift
 		/// </summary>
-		public virtual Vector2 AbsolutePosition { get => Parent == null ? Position + Pivot : Parent.AbsolutePosition + Position + Pivot; }
+		public virtual Vector2 AbsolutePosition { get => Parent == null ? Position : Parent.AbsolutePosition + Position + Pivot; }
 
 		/// <summary>
 		/// Get element's size in pixels
@@ -89,8 +94,22 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public abstract void RenderAt(SpriteBatch sb, UIGroup group, Vector2 position);
 		public void Render(SpriteBatch sb, UIGroup group) => RenderAt(sb, group, AbsolutePosition);
-		public abstract void UpdateAt(Vector2 position);
-		public void Update() => UpdateAt(AbsolutePosition);
+
+		/// <summary>
+		/// Call from child class if you need OnHoverStart and OnHoverEnd functionality
+		/// </summary>
+		public virtual void UpdateAt(UIGroup group, Vector2 position)
+		{
+			var new_frame_hover = Hovered(position);
+
+			if (!IsHovered && new_frame_hover)
+				OnHoverStart(group, position);
+			else if(IsHovered && !new_frame_hover)
+				OnHoverEnd(group, position);
+
+			IsHovered = new_frame_hover;
+		}
+		public void Update(UIGroup group) => UpdateAt(group, AbsolutePosition);
 
 		protected UIElement(UIElement? parent, Vector2 pos, Vector2 scale)
 		{
@@ -109,7 +128,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		}
 
 
-		public void MakeAppear(EventManager em, Easing.Ease? smoothing = null)
+		public void MakeAppear(Easing.Ease? smoothing = null)
 		{
 			Easing.Ease ease = smoothing ?? Easing.SmoothStep;
 			Visible = true;
@@ -117,13 +136,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 			if (Parent == null)
 			{
-				em.AddEvent(new(Size.X, 60, GetHashCode().ToString() + "1",
+				UIEvents.AddEvent(new(Size.X, 60, GetHashCode().ToString() + "_ax",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(ease(self.Progress) * self.Data, Size.Y);
                     })
 					);
-				em.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "2",
+				UIEvents.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "_ay",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(Size.X, ease(self.Progress) * self.Data);
@@ -134,13 +153,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 			else
 			{
-				em.AddEvent(new(Scale.X, 60, GetHashCode().ToString() + "1",
+				UIEvents.AddEvent(new(Scale.X, 60, GetHashCode().ToString() + "_ax",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Scale = new(ease(self.Progress) * self.Data, Scale.Y);
 					})
 					);
-				em.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "2",
+				UIEvents.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "_ay",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Scale = new(Scale.X, ease(self.Progress) * self.Data);
@@ -150,19 +169,19 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 
-		public void MakeDisappear(EventManager em, Easing.Ease? smoothing = null) 
+		public void MakeDisappear(Easing.Ease? smoothing = null) 
 		{
 			Easing.Ease ease = smoothing ?? Easing.SmoothStep;
 
 			if (Parent == null)
 			{
-				em.AddEvent(new(Size.X, 60, GetHashCode().ToString() + "1",
+				UIEvents.AddEvent(new(Size.X, 60, GetHashCode().ToString() + "_dx",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(ease(1 - self.Progress) * self.Data, Size.Y);
 					})
 					);
-				em.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "2",
+				UIEvents.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "_dy",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(Size.X, ease(1 - self.Progress) * self.Data);
@@ -174,13 +193,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 			else
 			{
-				em.AddEvent(new(Scale.X, 60, GetHashCode().ToString() + "1",
+				UIEvents.AddEvent(new(Scale.X, 60, GetHashCode().ToString() + "_dx",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Scale = new(ease(1 - self.Progress) * self.Data, Scale.Y);
 					})
 					);
-				em.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "2",
+				UIEvents.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "_dy",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Scale = new(Scale.X, ease(1 - self.Progress) * self.Data);
@@ -189,6 +208,11 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					);
 				Scale = Vector2.Zero;
 			}
+		}
+
+		public Vector2 SizeToScale(Vector2 size)
+		{
+			return size / AbsoluteSize;
 		}
 
 	}
@@ -207,11 +231,11 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			throw new UIException("Element not found");
 		}
 
-		public override void UpdateAt(Vector2 pos)
+		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
 			foreach (var e in Elements)
 			{
-				if (e.Active) { e.UpdateAt(pos + e.Position); }
+				if (e.Active) { e.UpdateAt(group, pos + e.Position); }
 			}
 		}
 

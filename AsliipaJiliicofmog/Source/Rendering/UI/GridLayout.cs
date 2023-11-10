@@ -74,14 +74,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					e.RenderAt(sb, group, e.Position + p - AbsolutePosition);
 			}
 		}
-		public override void UpdateAt(Vector2 pos)
+		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
 			pos -= AbsolutePosition;
 			foreach((Vector2 p, UIElement e) in Grid)
 			{
 				e.Size = e.Scale * AbsoluteCellSize;
 				e.Position = AbsoluteCellPos(p) + pos;
-				e.Update();
+				e.Update(group);
             }
 		}
 	}

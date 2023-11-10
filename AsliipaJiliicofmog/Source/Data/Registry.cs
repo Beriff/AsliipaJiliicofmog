@@ -21,7 +21,6 @@ namespace AsliipaJiliicofmog.Data
 		public static Dictionary<string, Entity> Entities = new();
 
 		public static UserInterface UI = new();
-		public static EventManager UIEvents = new();
 
 		public static SpriteFont DefaultFont;
 
@@ -97,7 +96,7 @@ namespace AsliipaJiliicofmog.Data
 			UI.SetGroup(menuGroup);
 
 			// A frame for "paused menu"
-			var pauseMenu = Frame.Window(UIEvents, half_vp, half_vp);
+			var pauseMenu = Frame.Window(half_vp, half_vp);
 			pauseMenu.Pivot = new(.5f, .5f);
 
 			menuGroup.Add(pauseMenu);

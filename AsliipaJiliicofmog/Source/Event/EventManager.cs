@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Event
 {
@@ -46,10 +45,32 @@ namespace AsliipaJiliicofmog.Event
 						Queue.Add(gameEvent); break;
 				}
 			} else { Events.Add(gameEvent); }
+            Console.WriteLine($"\u001b[32m[Debug]\u001b[32;1m +Event \u001b[30;1m{gameEvent.Token}\u001b[0m");
+        }
+		public void RemoveEvent(GameEvent gameEvent)
+		{
+			foreach(var e in Events)
+			{
+				if(e ==  gameEvent)
+				{
+					Events.Remove(e); break;
+				}
+			}
 		}
+		public void RemoveEvent(string name)
+		{
+			foreach(var e in Events)
+			{
+				if(e.Token == name)
+				{
+					Events.Remove(e); break;
+				}
+			}
+		}
+
 		public void Update()
 		{
-			List<GameEvent> toremove = new();
+            List<GameEvent> toremove = new();
 			List<GameEvent> toadd = new();
 			foreach(GameEvent e in Events)
 			{
