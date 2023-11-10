@@ -16,6 +16,7 @@ namespace AsliipaJiliicofmog.Data
 		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();
 		public static Dictionary<string, Biome> Biomes = new();
 		public static Dictionary<string, Entity> Entities = new();
+		public static Dictionary<string, Material> Materials = new();
 
 		public static SpriteFont DefaultFont;
 
@@ -76,14 +77,14 @@ namespace AsliipaJiliicofmog.Data
 		}
 		private static void GenerateEntities()
 		{
-			Entities["Crate"] = new PhysicalEntity("Crate", new GameTexture(Textures["crate"])) 
+			Entities["Crate"] = new PhysicalEntity("Crate", new GameTexture(Textures["crate"]))
 			{ Position = new(25) };
 		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
 		{
 			string path = Path.Combine(content.RootDirectory, "Textures");
-			foreach(var name in Directory.GetFiles(path))
+			foreach (var name in Directory.GetFiles(path))
 			{
 				var filename = Path.GetFileNameWithoutExtension(name);
 				var filepath = Path.Combine("Textures", filename);
@@ -97,6 +98,13 @@ namespace AsliipaJiliicofmog.Data
 			{
 				Tile t = Tile.Deserialize(File.ReadAllText(name));
 				Tiles.Add(t.Name, TileIDCounter++, t);
+			}
+
+			path = Path.Combine(content.RootDirectory, "Data", "Materials");
+			foreach (var name in Directory.GetFiles(path))
+			{
+				Material m = Material.Deserialize(File.ReadAllText(name));
+				Materials.Add(m.Name, m);
 			}
 
 			GenerateBiomes();

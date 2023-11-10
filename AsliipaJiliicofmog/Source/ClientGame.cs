@@ -46,7 +46,7 @@ namespace AsliipaJiliicofmog
 			layout.PlaceElement(new(1, 1), new Checkbox(null, new(0), new(1)));
 
 			MainUI.Add(layout);
-			
+
 		}
 		protected override void Update(GameTime gameTime)
 		{
@@ -54,7 +54,7 @@ namespace AsliipaJiliicofmog
 			w.Update();
 			MainUI.Update();
 			base.Update(gameTime);
-
+			Console.WriteLine(Registry.Materials);
 		}
 		protected override void Draw(GameTime gameTime)
 		{
