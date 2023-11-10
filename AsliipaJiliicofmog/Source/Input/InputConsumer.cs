@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -24,6 +26,8 @@ namespace AsliipaJiliicofmog.Input
 		private MouseState MPrevious;
 		private MouseState MCurrent;
 
+		private readonly List<Action<InputConsumer>> Listeners = new();
+
 		public InputConsumer(string name, bool blockstream = true)
 		{
 			Name = name;
@@ -44,7 +48,13 @@ namespace AsliipaJiliicofmog.Input
 
 			MPrevious = MCurrent;
 			MCurrent = GetMouse();
+
+			foreach (var l in Listeners)
+				l(this);
 		}
+		
+		public void AddListener(Action<InputConsumer> listener) => Listeners.Add(listener);
+
 		public KeyboardState GetKeyboard() => IsBlocked ? new() : Keyboard.GetState();
 		public MouseState GetMouse() => IsBlocked ? new() : Mouse.GetState();
 

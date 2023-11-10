@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AsliipaJiliicofmog.Source.Event
+namespace AsliipaJiliicofmog.Event
 {
 	internal static class Easing
 	{
@@ -17,7 +17,12 @@ namespace AsliipaJiliicofmog.Source.Event
 			t => 2.70158f * t * t * t - 1.70158f * t * t;
 
 		public static Ease BackOut =>
-			t => 1 + 2.70158f * MathF.Pow(t - 1, 3) + 2.70158f * MathF.Pow(t - 1, 2);
+			t => {
+				float c1 = 1.70158f;
+				float c3 = c1 + 1;
+
+				return 1 + c3 * MathF.Pow(t - 1, 3) + c1 * MathF.Pow(t - 1, 2);
+			};
 
 		public static Ease BackInOut =>
 			t => t < 0.5
@@ -38,5 +43,8 @@ namespace AsliipaJiliicofmog.Source.Event
 
 			return n * (t -= 2.625f / d) * t + 0.984375f;
 		};
+
+		public static Ease SmoothStep => t =>
+			t * t * (3.0f - 2.0f * t);
 	}
 }

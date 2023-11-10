@@ -1,4 +1,5 @@
 ﻿using System;
+
 using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
@@ -8,7 +9,6 @@ using AsliipaJiliicofmog.Rendering.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-
 namespace AsliipaJiliicofmog
 {
 	class Client : Game
@@ -17,7 +17,7 @@ namespace AsliipaJiliicofmog
 		public SpriteBatch SB;
 
 		public World w;
-		public UIGroup MainUI;
+
 		public BitmapFont Fonter;
 		public Client()
 		{
@@ -47,19 +47,20 @@ namespace AsliipaJiliicofmog
 
 			MainUI.Add(layout);
 
+
 		}
 		protected override void Update(GameTime gameTime)
 		{
+			Registry.UI.Update();
 			InputManager.Update();
 			w.Update();
-			MainUI.Update();
 			base.Update(gameTime);
 			Console.WriteLine(Registry.Materials);
 		}
 		protected override void Draw(GameTime gameTime)
 		{
 			w.Render(SB, gameTime);
-			MainUI.Render(SB);
+			Registry.UI.Render(SB);
 			base.Draw(gameTime);
 		}
 	}

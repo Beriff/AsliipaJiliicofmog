@@ -163,7 +163,7 @@ namespace AsliipaJiliicofmog.Env
 		/// <param name="topleft">Origin (top left corner) of the chunk. Measured in pixels.</param>
 		public Chunk GenerateChunk(Vector2 topleft)
 		{
-            Console.WriteLine($"\u001b[32m[Debug]\u001b[0m Requested chunk gen at {topleft} \u001b[30;1mCi:{topleft / Chunk.SizePx}\u001b[0m");
+            Console.WriteLine($"\u001b[32m[Debug]\u001b[0m ChunkGen \u001b[30;1m{topleft / Chunk.SizePx}\u001b[0m");
             Chunk chunk = new();
 			Vector2 tilepos = topleft / Tile.Size;
 			for(int x = 0; x < Chunk.Width; x++)

@@ -78,6 +78,10 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var e in Elements) { e.Active = v; }
 		}
 
+		public void Disable() { foreach (var e in Elements) { e.Active = false; e.Visible = false; } }
+		public void Enable() { foreach (var e in Elements) { e.Active = true; e.Visible = true; } }
+		public void Toggle() { foreach (var e in Elements) { e.Active = !e.Active; e.Visible = !e.Visible; } }
+
 		public UIGroup(string name, SpriteFont font, UIGroupQueueType queueType = UIGroupQueueType.Discard)
 		{
 			Elements = new();
@@ -109,9 +113,71 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var e in Elements)
 			{
 				if (e.Active)
-					e.Update();
+					e.Update(this);
 			}
 		}
+
+		public UIElement FindElement(string name)
+		{
+			foreach (var e in Elements)
+			{
+				if (e.Name == name)
+					return e;
+			}
+			throw new UIException("Element not found");
+		}
 	}
-	
+	internal class UserInterface
+	{
+		public List<UIGroup> Groups;
+
+		public UIGroup GetGroup(string name)
+		{
+			foreach(var group in Groups) { if (group.Name == name) return group; } return null;
+		}
+		public void RemoveGroup(string name)
+		{
+			UIGroup g = null;
+			foreach (var group in Groups) 
+			{ 
+				if (group.Name == name) { g = group; break; }
+				else { throw new UIException("UI Group not found"); }
+			}
+			Groups.Remove(g);
+		}
+		public void AddElement(string groupname, UIElement element)
+		{
+			GetGroup(groupname).Add(element);
+		}
+		public void SetGroup(UIGroup g)
+		{
+			if(GetGroup(g.Name) != null)
+			{
+				switch(g.QueueType)
+				{
+					case UIGroupQueueType.Override:
+						RemoveGroup(g.Name); Groups.Add(g); break;
+					case UIGroupQueueType.Discard: break;
+				}
+			} else
+			{
+				Groups.Add(g);
+			}
+		}
+
+		public UserInterface()
+		{
+			Groups = new();
+		}
+
+		public void Update()
+		{
+			UIElement.UIEvents.Update();
+			foreach (var group in Groups) { group.Update(); }
+		}
+		public void Render(SpriteBatch sb)
+		{
+			foreach (var group in Groups) { group.Render(sb); }
+		}
+	}
 }

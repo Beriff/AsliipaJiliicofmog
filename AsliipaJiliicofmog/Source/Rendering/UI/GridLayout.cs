@@ -66,21 +66,22 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public UIElement ElementAt(Vector2 coord) => Grid[coord];
 
-		public override void Render(SpriteBatch sb, UIGroup group)
+		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
 			foreach((Vector2 _, UIElement e) in Grid)
 			{
 				if(e.Visible)
-					e.Render(sb, group);
+					e.RenderAt(sb, group, e.Position + p - AbsolutePosition);
 			}
 		}
-		public override void Update()
+		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
+			pos -= AbsolutePosition;
 			foreach((Vector2 p, UIElement e) in Grid)
 			{
 				e.Size = e.Scale * AbsoluteCellSize;
-				e.Position = AbsoluteCellPos(p);
-				e.Update();
+				e.Position = AbsoluteCellPos(p) + pos;
+				e.Update(group);
             }
 		}
 	}

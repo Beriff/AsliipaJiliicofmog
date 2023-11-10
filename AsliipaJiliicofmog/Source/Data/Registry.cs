@@ -1,10 +1,14 @@
 ﻿using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Event;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Rendering;
+using AsliipaJiliicofmog.Rendering.UI;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using Microsoft.Xna.Framework.Input;
+
 using System.Collections.Generic;
 using System.IO;
 
@@ -17,6 +21,8 @@ namespace AsliipaJiliicofmog.Data
 		public static Dictionary<string, Biome> Biomes = new();
 		public static Dictionary<string, Entity> Entities = new();
 		public static Dictionary<string, Material> Materials = new();
+
+		public static UserInterface UI = new();
 
 		public static SpriteFont DefaultFont;
 
@@ -81,6 +87,37 @@ namespace AsliipaJiliicofmog.Data
 			{ Position = new(25) };
 		}
 
+		private static void GenerateUIs(GraphicsDevice gd)
+		{
+            var viewport = gd.Viewport.Bounds;
+			var vp_size = viewport.Size.ToVector2();
+			var half_vp = vp_size / 2;
+
+			// Generate a container for main menus
+			var menuGroup = new UIGroup("MenuGroup", DefaultFont);
+			UI.SetGroup(menuGroup);
+			// Make any main menu appear/disappear when Esc pressed
+			UIElement.LocalInput.AddListener(
+				input =>
+				{ if (input.GetKeyState(Keys.Escape) == Input.PressType.Released) menuGroup.Toggle(); }
+				);
+
+			// A frame for "paused menu"
+			var pauseMenu = Frame.Window("Game Paused", DefaultFont, half_vp, half_vp);
+			pauseMenu.Pivot = new(.5f, .5f);
+			pauseMenu.AddElement(new Button(null, () => { pauseMenu.MakeDisappear(); }, pauseMenu.Size / 2,
+				new(.5f, .15f))
+			{
+				Label = "Resume",
+				Name = $"pause_resumebtn",
+				Pivot = new(.5f, .5f),
+			}
+				);
+
+			menuGroup.Add(pauseMenu);
+			menuGroup.Disable();
+		}
+
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
 		{
 			string path = Path.Combine(content.RootDirectory, "Textures");
@@ -100,16 +137,9 @@ namespace AsliipaJiliicofmog.Data
 				Tiles.Add(t.Name, TileIDCounter++, t);
 			}
 
-			path = Path.Combine(content.RootDirectory, "Data", "Materials");
-			foreach (var name in Directory.GetFiles(path))
-			{
-				Material m = Material.Deserialize(File.ReadAllText(name));
-				Materials.Add(m.Name, m);
-			}
-
 			GenerateBiomes();
 			GenerateEntities();
-			DefaultFont = content.Load<SpriteFont>("defaultfont");
+			GenerateUIs(graphicsDevice);
 		}
 	}
 }
