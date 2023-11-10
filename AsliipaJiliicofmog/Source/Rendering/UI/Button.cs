@@ -11,7 +11,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	internal class Button : UIElement, IClickable
 	{
 		public Action OnClick { get; set; }
-
+		//Indicates that the text changed, and the placement needs to be recalculated
 		protected bool RecalculateFlag = false;
 		protected string _Label;
 		protected Color CurrentBGColor;

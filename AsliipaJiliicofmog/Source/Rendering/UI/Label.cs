@@ -25,9 +25,9 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public string Text { get => _Text; }
 		public Color Color = Color.White;
 
-		public Label WithText(string text, UIGroup group)
+		public Label WithText(string text, SpriteFont font)
 		{
-			TextSize = group.Font.MeasureString(text);
+			TextSize = font.MeasureString(text);
 			_Text = text;
 			return this;
 		}

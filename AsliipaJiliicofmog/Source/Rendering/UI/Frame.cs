@@ -4,8 +4,6 @@ using AsliipaJiliicofmog.Event;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using static AsliipaJiliicofmog.Rendering.UI.UIElement;
-
 namespace AsliipaJiliicofmog.Rendering.UI
 {
 	/// <summary>
@@ -31,10 +29,10 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <summary>
 		/// Creates a frame with a button to close it
 		/// </summary>
-		public static Frame Window(Vector2 pos, Vector2 size)
+		public static Frame Window(string title, SpriteFont font, Vector2 pos, Vector2 size)
 		{
             Frame f = new(pos, size);
-			var b = new Button(
+			var button = new Button(
 					null, () => { f.MakeDisappear(); },
 					new(0, 0),
 					new(20 / size.X, 20 / size.Y)
@@ -43,7 +41,17 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				Label = "x",
 				Name = $"{f.GetHashCode()}_btn",
 			};
-			f.AddElement(b);
+			var label = new Label(
+				null, new(20, 0),
+				new((size.X - 20) / size.X, 20 / size.Y)
+				)
+			{
+				Alignment = (TextAlignX.Middle, TextAlignY.Middle)
+			};
+			label.WithText(title, font);
+
+			f.AddElement(button);
+			f.AddElement(label);
 
 			return f;
 		}

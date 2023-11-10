@@ -180,15 +180,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					{
 						Size = new(ease(1 - self.Progress) * self.Data, Size.Y);
 					})
+					{ OnEnd = (ge) => { Size = new(ge.Data, Size.Y); } }
 					);
 				UIEvents.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "_dy",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(Size.X, ease(1 - self.Progress) * self.Data);
 					})
-					{ OnEnd = (ge) => { Visible = false; Active = false; } }
+					{ OnEnd = (ge) => { Visible = false; Active = false; Size = new(Size.X, ge.Data); } }
 					);
-				Size = Vector2.Zero;
 
 			}
 			else
@@ -198,15 +198,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					{
 						Scale = new(ease(1 - self.Progress) * self.Data, Scale.Y);
 					})
+					{ OnEnd = (ge) => { Size = new(ge.Data, Size.Y); } }
 					);
 				UIEvents.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "_dy",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Scale = new(Scale.X, ease(1 - self.Progress) * self.Data);
 					})
-					{ OnEnd = (ge) => { Visible = false; Active = false; } }
+					{ OnEnd = (ge) => { Visible = false; Active = false; Size = new(Size.X, ge.Data); } }
 					);
-				Scale = Vector2.Zero;
 			}
 		}
 

@@ -80,6 +80,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public void Disable() { foreach (var e in Elements) { e.Active = false; e.Visible = false; } }
 		public void Enable() { foreach (var e in Elements) { e.Active = true; e.Visible = true; } }
+		public void Toggle() { foreach (var e in Elements) { e.Active = !e.Active; e.Visible = !e.Visible; } }
 
 		public UIGroup(string name, SpriteFont font, UIGroupQueueType queueType = UIGroupQueueType.Discard)
 		{

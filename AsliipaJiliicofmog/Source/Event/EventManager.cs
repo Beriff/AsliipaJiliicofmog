@@ -3,9 +3,12 @@ using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Event
 {
+	/// <summary>
+	/// Updates events and managers how they should be added
+	/// </summary>
 	internal class EventManager
 	{
-		public List<GameEvent> Events;
+		protected List<GameEvent> Events;
 		private readonly List<GameEvent> Queue;
 		public EventManager()
 		{

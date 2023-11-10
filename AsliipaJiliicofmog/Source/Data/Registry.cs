@@ -7,7 +7,8 @@ using AsliipaJiliicofmog.Rendering.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using Microsoft.Xna.Framework.Input;
+
 using System.Collections.Generic;
 using System.IO;
 
@@ -94,13 +95,26 @@ namespace AsliipaJiliicofmog.Data
 			// Generate a container for main menus
 			var menuGroup = new UIGroup("MenuGroup", DefaultFont);
 			UI.SetGroup(menuGroup);
+			// Make any main menu appear/disappear when Esc pressed
+			UIElement.LocalInput.AddListener(
+				input => 
+				{ if (input.GetKeyState(Keys.Escape) == Input.PressType.Released) menuGroup.Toggle(); }
+				);
 
 			// A frame for "paused menu"
-			var pauseMenu = Frame.Window(half_vp, half_vp);
+			var pauseMenu = Frame.Window("Game Paused", DefaultFont, half_vp, half_vp);
 			pauseMenu.Pivot = new(.5f, .5f);
+			pauseMenu.AddElement(new Button(null, () => { pauseMenu.MakeDisappear(); }, pauseMenu.Size / 2,
+				new(.5f, .15f))
+			{
+				Label = "Resume",
+				Name = $"pause_resumebtn",
+				Pivot = new(.5f, .5f),
+			}
+				);
 
 			menuGroup.Add(pauseMenu);
-			//menuGroup.Disable();
+			menuGroup.Disable();
 		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
