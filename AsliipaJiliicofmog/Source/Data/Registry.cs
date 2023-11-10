@@ -146,6 +146,14 @@ namespace AsliipaJiliicofmog.Data
 				Tiles.Add(t.Name, TileIDCounter++, t);
 			}
 
+			path = Path.Combine(content.RootDirectory, "Data", "Materials");
+
+			foreach (var name in Directory.GetFiles(path))
+			{
+				Material m = Material.Deserialize(File.ReadAllText(name));
+				Materials.Add(m.Name, m);
+			}
+
 			DefaultFont = content.Load<SpriteFont>("defaultfont");
 
 			GenerateBiomes();
