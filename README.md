@@ -12,6 +12,10 @@ Asliipa Jiliicofmog (Asliipa) is a sandbox topdown 2D game set in an original fa
 ## Running
 Asliipa uses minimal amount of dependencies (Newtonsoft Json & [Monogame framework](https://github.com/MonoGame/MonoGame)), so downloading the solution file and building it would be sufficient. Alternatively, if there are releases available, you can [download](https://github.com/Beriff/AsliipaJiliicofmog/releases) .exe file directly.
 
+## Features
+1. [Integrated wiki](https://github.com/Beriff/AsliipaJiliicofmog/wiki)
+2. Own in-game constructed language
+
 ## Roadmap
 ### Far-fetched goals:
 1. Multiplayer
