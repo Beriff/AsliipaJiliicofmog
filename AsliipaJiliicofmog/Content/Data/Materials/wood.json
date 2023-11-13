@@ -1,0 +1,8 @@
+{
+    "Element": "Organic",
+    "Name": "Wood",
+    "Density": 0.6,
+    "Color": [186, 140, 99],
+    "Strength": 120,
+    "MeltingPoint": null
+}
