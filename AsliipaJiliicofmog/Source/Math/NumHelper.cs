@@ -45,6 +45,21 @@ namespace AsliipaJiliicofmog.Math
 		{
 			return a.Cartesian(b, NumHelper.Mod);
 		}
+
+		public static Vector2 Rotated(this Vector2 a, float theta)
+		{
+			return new(a.X * MathF.Cos(theta) - a.Y * MathF.Sin(theta), a.X * MathF.Sin(theta) + a.Y * MathF.Cos(theta));
+		}
+
+		public static Vector2 Normalized(this Vector2 a)
+		{
+			return a / a.Length();
+		}
+
+		public static Vector2 Apply(this Vector2 a, Func<float, float> b)
+		{
+			return new Vector2(b(a.X), b(a.Y));
+		}
 	}
 
 	static class ExtendPoint

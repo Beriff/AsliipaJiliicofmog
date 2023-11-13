@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace AsliipaJiliicofmog.Rendering
 {
 	internal interface IGameTexture
@@ -36,7 +32,6 @@ namespace AsliipaJiliicofmog.Rendering
 		private readonly Texture2D Frames;
 		private int Counter = 0;
 		private int RenderCallCounter = 0;
-		private float RenderTimeStart = 0;
 
 		public int Framerate;
 		public int FrameCount;

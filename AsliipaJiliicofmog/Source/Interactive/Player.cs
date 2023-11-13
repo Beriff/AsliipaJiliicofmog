@@ -1,5 +1,4 @@
-﻿using System;
-using AsliipaJiliicofmog.Data;
+﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Rendering;
 
@@ -11,7 +10,9 @@ namespace AsliipaJiliicofmog.Interactive
 	internal class Player : Creature
 	{
 		public Player() 
-			: base("Carlos", new AnimatedTexture(Registry.Textures["heart"], 16, 3), Bodypart.Humanoid())
+			: base("Carlos", 
+				  new StateTexture(("rest",new AnimatedTexture(Registry.Textures["heart"], 16, 5))), 
+				  Bodypart.Humanoid())
 		{
 			SetBottomHitbox();
 		}

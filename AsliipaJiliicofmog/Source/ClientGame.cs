@@ -2,6 +2,7 @@
 using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
+using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
 
@@ -28,7 +29,8 @@ namespace AsliipaJiliicofmog
 		{
 			Graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 			SB = new SpriteBatch(Graphics.GraphicsDevice);
-			base.Initialize();
+
+            base.Initialize();
 		}
 
 		protected override void LoadContent()
@@ -38,17 +40,7 @@ namespace AsliipaJiliicofmog
 
 			World = new World(SB, 1);
 			World.Entities.Add(Registry.Entities["Crate"]);
-			World.Emitters.Add(
-				new Emitter(
-					World.Player.Position,
-					Registry.Textures["fire"],
-					x => { x.Origin = World.Player.Position; }
-				)
-			);
-			w = new World(SB, 1);
-			w.Entities.Add(Registry.Entities["Crate"]);
-			w.Entities.Add(Registry.Entities["Tree"]);
-			w.Emitters.Add(new Emitter(w.Player.Position, Registry.Textures["fire"], (x) => { x.Origin = w.Player.Position; }));
+			World.Entities.Add(Registry.Entities["Tree"]);
 			Fonter = new(Registry.Textures["font"]);
 		}
 

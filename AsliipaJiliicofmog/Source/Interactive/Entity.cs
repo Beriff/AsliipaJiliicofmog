@@ -12,6 +12,8 @@ namespace AsliipaJiliicofmog.Interactive
 {
 	internal class Entity
 	{
+		public static Texture2D BlankTexture;
+
 		protected Vector2 _TextureOffsetPivot;
 
 		virtual public Vector2 Position { get; set; }
@@ -45,6 +47,19 @@ namespace AsliipaJiliicofmog.Interactive
 					sb.DrawString(Registry.DefaultFont, Name, renderpos, Color.White);
 				}
 			}
+
+			//Draw shadow
+			sb.Draw(BlankTexture,
+				new Rectangle(
+					(Position
+						- w.Camera.Position
+						+ sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2
+						+ TextureOffsetPivot
+						+ Texture.Size.ToVector2() * new Vector2(0, 1) - new Vector2(0, 5)
+						).ToPoint(), new(Texture.Size.X, 10)),
+				new Color(0, 0, 0, .5f)
+				);
+
 			Texture.Render(sb, 
 				Position 
 					- w.Camera.Position 

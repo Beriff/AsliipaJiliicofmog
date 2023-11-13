@@ -1,5 +1,4 @@
 ﻿using AsliipaJiliicofmog.Env;
-using AsliipaJiliicofmog.Event;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
@@ -81,8 +80,11 @@ namespace AsliipaJiliicofmog.Data
 				"hills"
 			));
 		}
-		private static void GenerateEntities()
+		private static void GenerateEntities(GraphicsDevice gd)
 		{
+			Entity.BlankTexture = new(gd, 1, 1);
+			Entity.BlankTexture.SetData(new Color[] { Color.White });
+
 			Entities["Crate"] = new PhysicalEntity("Crate", new GameTexture(Textures["crate"]))
 			{
 				Position = new(25),
@@ -157,7 +159,7 @@ namespace AsliipaJiliicofmog.Data
 			DefaultFont = content.Load<SpriteFont>("defaultfont");
 
 			GenerateBiomes();
-			GenerateEntities();
+			GenerateEntities(graphicsDevice);
 			GenerateUIs(graphicsDevice);
 		}
 	}
