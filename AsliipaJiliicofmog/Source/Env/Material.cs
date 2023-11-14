@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace AsliipaJiliicofmog.Env;
 
-internal class Material
+public class Material
 {
   public string Element { get; set; }
   public string Name { get; set; }

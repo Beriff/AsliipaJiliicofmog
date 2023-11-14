@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	internal class Image : UIElement
+	public class Image : UIElement
 	{
 		public IGameTexture Picture;
 		public Image(IGameTexture picture, Vector2 pos, Vector2 size)

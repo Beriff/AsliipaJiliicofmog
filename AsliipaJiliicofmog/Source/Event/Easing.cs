@@ -2,7 +2,7 @@
 
 namespace AsliipaJiliicofmog.Event
 {
-	internal static class Easing
+	public static class Easing
 	{
 		public delegate float Ease(float t);
 

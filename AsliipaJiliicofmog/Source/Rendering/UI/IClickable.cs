@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	internal interface IClickable
+	public interface IClickable
 	{
 		public Action OnClick { get; set; }
 	}

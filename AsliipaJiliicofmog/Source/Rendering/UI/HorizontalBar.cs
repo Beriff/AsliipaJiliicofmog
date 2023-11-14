@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	internal class HorizontalBar : UIElement
+	public class HorizontalBar : UIElement
 	{
 		public int BarWidth = 6;
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 position)

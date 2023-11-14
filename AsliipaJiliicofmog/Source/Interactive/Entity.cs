@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Interactive
 {
-	internal class Entity
+	public class Entity
 	{
 		public static Texture2D BlankTexture;
 
@@ -97,7 +97,7 @@ namespace AsliipaJiliicofmog.Interactive
 		}
 	}
 
-	internal class PhysicalEntity : Entity
+	public class PhysicalEntity : Entity
 	{
 		public Vector2 HitboxSize;
 		public Vector2 HitboxAnchor;

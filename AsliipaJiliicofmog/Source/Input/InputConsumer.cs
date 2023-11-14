@@ -6,14 +6,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace AsliipaJiliicofmog.Input
 {
-	enum PressType
+	public enum PressType
 	{
 		Up, // Was up prev frame, still up
 		Down, // Was down prev frame, still down
 		Pressed, // Got pressed down this frame
 		Released // Got released this frame
 	}
-	internal class InputConsumer
+	public class InputConsumer
 	{
 		public bool Active;
 		public string Name;

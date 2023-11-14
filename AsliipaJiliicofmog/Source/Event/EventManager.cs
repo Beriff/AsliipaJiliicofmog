@@ -6,10 +6,10 @@ namespace AsliipaJiliicofmog.Event
 	/// <summary>
 	/// Updates events and managers how they should be added
 	/// </summary>
-	internal class EventManager
+	public class EventManager
 	{
-		protected List<GameEvent> Events;
-		private readonly List<GameEvent> Queue;
+		public readonly List<GameEvent> Events;
+		public readonly List<GameEvent> Queue;
 		public EventManager()
 		{
 			Events = new();

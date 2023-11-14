@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	internal class HorizontalScroll : UIElement
+	public class HorizontalScroll : UIElement
 	{
 		protected float _Progress = 0;
 		protected int InnerOffset;

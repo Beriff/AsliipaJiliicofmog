@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Math
 {
-	internal static class NumHelper
+	public static class NumHelper
 	{
 		public static float Lerp(float v0, float v1, float t)
 		{
@@ -29,7 +29,7 @@ namespace AsliipaJiliicofmog.Math
 		public static int Pairing(int a, int b) => (int)(.5f * (a + b) * (a + b + 1) + b);
 	}
 
-	static class ExtendVector
+	public static class ExtendVector
 	{
 		public static Vector2 Add(this Vector2 a, (float x, float y) b)
 		{
@@ -62,7 +62,7 @@ namespace AsliipaJiliicofmog.Math
 		}
 	}
 
-	static class ExtendPoint
+	public static class ExtendPoint
 	{
 		public static Point Mul(this Point a, Point b) 
 		{

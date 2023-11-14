@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace AsliipaJiliicofmog.Env
 {
-	internal class Tile
+	public class Tile
 	{
 		public const int Width = 16;
 		public const int Height = 16;

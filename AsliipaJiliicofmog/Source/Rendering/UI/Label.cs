@@ -3,19 +3,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	enum TextAlignX
+	public enum TextAlignX
 	{
 		Right,
 		Middle,
 		Left
 	}
-	enum TextAlignY
+	public enum TextAlignY
 	{
 		Top,
 		Middle,
 		Bottom
 	}
-	internal class Label : UIElement
+	public class Label : UIElement
 	{
 		public (TextAlignX X, TextAlignY Y) Alignment = (TextAlignX.Middle, TextAlignY.Middle);
 

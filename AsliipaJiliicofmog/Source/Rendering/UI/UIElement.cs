@@ -12,7 +12,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	/// <summary>
 	/// Represents the basic drawable UI element
 	/// </summary>
-	internal abstract class UIElement
+	public abstract class UIElement
 	{
 		protected static Texture2D Texture;
 		public static void Initialize(SpriteBatch sb)
@@ -216,7 +216,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		}
 
 	}
-	internal abstract class UIContainer : UIElement
+	public abstract class UIContainer : UIElement
 	{
 		public List<UIElement> Elements;
 		protected RenderTarget2D RenderTarget;

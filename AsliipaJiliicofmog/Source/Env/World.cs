@@ -13,7 +13,7 @@ namespace AsliipaJiliicofmog.Env
 	/// <summary>
 	/// A class that generates value noise given a seed
 	/// </summary>
-	class ValueNoise
+	public class ValueNoise
 	{
 		//Noise settings
 		public (int a, int b) Range;
@@ -56,7 +56,7 @@ namespace AsliipaJiliicofmog.Env
 	/// <summary>
 	/// A class that supports multiple layers of <c cref="ValueNoise">ValueNoise</c> for a more natural texture
 	/// </summary>
-	class OctaveValueNoise
+	public class OctaveValueNoise
 	{
 		public List<ValueNoise> Octaves;
 		public int NormalizationValue = 1;
@@ -90,7 +90,7 @@ namespace AsliipaJiliicofmog.Env
 				((0, 128), 40), ((0, 64), 10), ((0, 32), 5), ((0, 16), 2)
 				);
 	}
-	internal struct Camera
+	public struct Camera
 	{
 		public Vector2 Position;
 		public int RenderDistance;
@@ -99,7 +99,7 @@ namespace AsliipaJiliicofmog.Env
 	/// <summary>
 	/// A global state that represents the game world
 	/// </summary>
-	internal class World
+	public class World
 	{
 		public OctaveValueNoise Heightmap;
 		public OctaveValueNoise TemperatureMap;
@@ -128,6 +128,7 @@ namespace AsliipaJiliicofmog.Env
 			RenderTexture = new(sb.GraphicsDevice, sb.GraphicsDevice.Viewport.Width, sb.GraphicsDevice.Viewport.Height);
 
 			Player = new();
+			Camera.Position += Player.Texture.Size.ToVector2() / 2;
 			Entities.Add(Player);
 		}
 

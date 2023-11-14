@@ -10,7 +10,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	/// Places items accordingly to a specified grid. Unlike ordinary containers,
 	/// doesn't change element.Parent value.
 	/// </summary>
-	internal class GridLayout : UIContainer
+	public class GridLayout : UIContainer
 	{
 		protected Vector2 _CellSize;
 		protected Dictionary<Vector2, UIElement> Grid = new();

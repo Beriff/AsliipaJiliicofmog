@@ -5,7 +5,7 @@ namespace AsliipaJiliicofmog.Event
 	/// <summary>
 	/// Indicates how EventManager should treat the event when added
 	/// </summary>
-	enum EventQueueBehavior
+	public enum EventQueueBehavior
 	{
 		/// <summary>
 		/// Add a copy of the event to the currently updated events
@@ -27,7 +27,7 @@ namespace AsliipaJiliicofmog.Event
 	/// <summary>
 	/// A wrapper for a function that is executed every Update() cycle by an event manager
 	/// </summary>
-	internal class GameEvent
+	public class GameEvent
 	{
 		/// <summary>
 		/// Internal data if the event requires it

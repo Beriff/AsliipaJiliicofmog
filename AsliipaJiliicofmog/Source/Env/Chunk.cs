@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Env
 {
-	internal class Chunk
+	public class Chunk
 	{
 		public const int Width = 16;
 		public const int Height = 16;

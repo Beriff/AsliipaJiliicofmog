@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Env
 {
-	internal class Biome
+	public class Biome
 	{
 		public static List<Biome> Biomes { get; set; } = new();
 		public static readonly Biome Fallback = 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Input
 {
-	internal static class InputManager
+	public static class InputManager
 	{
 		public static readonly List<InputConsumer> Consumers = new();
 

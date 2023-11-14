@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Rendering
 {
-	internal class StateTexture : IGameTexture
+	public class StateTexture : IGameTexture
 	{
 		public Dictionary<string, IGameTexture> States;
 		public IGameTexture SelectedState;

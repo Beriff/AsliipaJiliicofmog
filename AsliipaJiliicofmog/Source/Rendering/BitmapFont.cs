@@ -8,7 +8,7 @@ namespace AsliipaJiliicofmog.Rendering
 	/// <summary>
 	/// Represents monospaced font constructed from a texture. Supports scaling and color codes.
 	/// </summary>
-	internal class BitmapFont
+	public class BitmapFont
 	{
 		public Texture2D Bitmap;
 		public int CellWidth;

@@ -9,7 +9,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	/// <summary>
 	/// A simple UI container that has background color
 	/// </summary>
-	internal class Frame : UIContainer
+	public class Frame : UIContainer
 	{
 		public Frame(UIElement? parent, Vector2 pos, Vector2 scale)
 			: base(parent, pos, scale) { }

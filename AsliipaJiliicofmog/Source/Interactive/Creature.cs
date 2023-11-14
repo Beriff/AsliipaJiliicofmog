@@ -11,11 +11,11 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Interactive
 {
-	enum BPToken
+	public enum BPToken
 	{
 		Vital, Grab, Walk, Inside, Attached
 	}
-	internal struct Bodypart
+	public struct Bodypart
 	{
 		public int Health;
 		public int MaxHealth;
@@ -58,7 +58,7 @@ namespace AsliipaJiliicofmog.Interactive
 			return torso;
 		}
 	}
-	internal class Creature : PhysicalEntity
+	public class Creature : PhysicalEntity
 	{
 		public TreeNode<Bodypart> RootBodypart;
 		public float Speed = 1;

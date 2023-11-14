@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	internal class ScrollFrame : Frame
+	public class ScrollFrame : Frame
 	{
 
 		public VerticalScroll Scroll;

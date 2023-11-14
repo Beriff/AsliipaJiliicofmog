@@ -13,7 +13,7 @@ using System.IO;
 
 namespace AsliipaJiliicofmog.Data
 {
-	internal static class Registry
+	public static class Registry
 	{
 		public static Dictionary<string, Texture2D> Textures = new();
 		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();

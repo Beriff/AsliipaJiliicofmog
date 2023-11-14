@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering
 {
-	internal interface IGameTexture
+	public interface IGameTexture
 	{
 		public void Render(SpriteBatch sb, Vector2 position, Color color);
 		public Point Size { get; }
 	}
 
-	internal class GameTexture : IGameTexture
+	public class GameTexture : IGameTexture
 	{
 		public readonly Texture2D Texture;
 		public Point Size { get => Texture.Bounds.Size; }
@@ -27,7 +27,7 @@ namespace AsliipaJiliicofmog.Rendering
 		public static implicit operator Texture2D(GameTexture gt) => gt.Texture;
 	}
 
-	internal class AnimatedTexture : IGameTexture
+	public class AnimatedTexture : IGameTexture
 	{
 		private readonly Texture2D Frames;
 		private int Counter = 0;

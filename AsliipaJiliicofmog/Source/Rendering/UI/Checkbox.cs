@@ -5,7 +5,7 @@ using System;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	internal class Checkbox : UIElement, IClickable
+	public class Checkbox : UIElement, IClickable
 	{
 		public bool Checked;
 		public Action OnClick { get; set; } = () => { };

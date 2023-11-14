@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering
 {
-	internal class Emitter
+	public class Emitter
 	{
 		List<Particle> Particles = [];
 		public Vector2 Origin;
@@ -51,7 +51,7 @@ namespace AsliipaJiliicofmog.Rendering
 		}
 	}
 
-	internal class Particle
+	public class Particle
 	{
 		public Texture2D Texture;
 		public float Lifespan;

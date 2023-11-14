@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
-	enum UIGroupQueueType
+	public enum UIGroupQueueType
 	{
 		Override,
 		Discard
@@ -19,7 +19,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public UIException(string message) : base(message) { }
 		public UIException(string message, Exception innerException) : base(message, innerException) { }
 	}
-	internal class UIPalette
+	public class UIPalette
 	{
 		public Color Main;
 		public Color MainDark;
@@ -59,7 +59,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			);
 			
 	}
-	internal class UIGroup
+	public class UIGroup
 	{
 		public readonly List<UIElement> Elements;
 
@@ -127,7 +127,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			throw new UIException("Element not found");
 		}
 	}
-	internal class UserInterface
+	public class UserInterface
 	{
 		public List<UIGroup> Groups;
 
