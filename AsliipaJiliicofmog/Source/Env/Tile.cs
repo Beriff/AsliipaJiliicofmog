@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace AsliipaJiliicofmog.Env
 {
-	public class Tile
+	public class Tile : ICloneable
 	{
 		public const int Width = 16;
 		public const int Height = 16;
@@ -28,14 +28,12 @@ namespace AsliipaJiliicofmog.Env
 		/// <summary>
 		/// Deserialize JSON description of a tile into an object
 		/// </summary>
-		/// <param name="json"></param>
-		/// <returns></returns>
 		public static Tile Deserialize(string json)
 		{
 			dynamic obj = JsonConvert.DeserializeObject(json);
 			return new(Registry.Textures[obj.Texture.ToString()], obj.Name.ToString());
 		}
 
-		public Tile Copy() => new(TileTexture, Name);
+		public object Clone() => new Tile(TileTexture, Name);
 	}
 }

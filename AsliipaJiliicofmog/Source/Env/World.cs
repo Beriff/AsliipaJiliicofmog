@@ -171,7 +171,7 @@ namespace AsliipaJiliicofmog.Env
 			{
 				for(int y = 0; y < Chunk.Height; y++)
 				{
-					chunk.Grid[x, y] = GenerateTile(tilepos + new Vector2(x,y) ).Copy();
+					chunk.Grid[x, y] = GenerateTile(tilepos + new Vector2(x,y) ).Clone() as Tile;
 				}
 			}
 			Chunks[topleft] = chunk;

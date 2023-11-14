@@ -28,7 +28,7 @@ namespace AsliipaJiliicofmog.Env
 			{
 				for (int y = 0; y < Height; y++)
 				{ 
-					Grid[x, y] = tile.Copy(); 
+					Grid[x, y] = tile.Clone() as Tile; 
 				}
 			}
 				

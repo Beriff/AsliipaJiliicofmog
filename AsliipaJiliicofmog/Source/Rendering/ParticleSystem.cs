@@ -9,7 +9,7 @@ namespace AsliipaJiliicofmog.Rendering
 {
 	public class Emitter
 	{
-		List<Particle> Particles = [];
+		List<Particle> Particles = new();
 		public Vector2 Origin;
 		readonly Texture2D Texture;
 		readonly Random r = new();
@@ -29,7 +29,7 @@ namespace AsliipaJiliicofmog.Rendering
 
 		public void Update()
 		{
-			List<Particle> temp = [];
+			List<Particle> temp = new();
 			foreach (Particle x in Particles)
 			{
 				x.Update();
