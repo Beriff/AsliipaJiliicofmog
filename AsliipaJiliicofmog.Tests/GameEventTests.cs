@@ -38,7 +38,7 @@ namespace AsliipaJiliicofmog.Tests
 			em.AddEvent(parentevent);
 			GameEvent e = new(0, 1, "test", EventQueueBehavior.Ignore, _ => { });
 			em.AddEvent(e);
-			Assert.AreEqual(em.Events.Count, 2);
+			Assert.AreEqual(2, em.Events.Count);
 		}
 		[TestMethod]
 		public void EventManager_EventReplace()

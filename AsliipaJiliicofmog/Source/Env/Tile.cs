@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 namespace AsliipaJiliicofmog.Env
 {

@@ -1,4 +1,5 @@
 ﻿using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Env.Item;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
@@ -13,17 +14,17 @@ using System.IO;
 
 namespace AsliipaJiliicofmog.Data
 {
-	public static class Registry
+    public static class Registry
 	{
-		public static Dictionary<string, Texture2D> Textures = new();
-		public static DoubleKeyDict<string, ulong, Tile> Tiles = new();
-		public static Dictionary<string, Biome> Biomes = new();
-		public static Dictionary<string, Entity> Entities = new();
-		public static Dictionary<string, Material> Materials = new();
+		public static Dictionary<string, Texture2D> Textures { get; set; } = new();
+		public static DoubleKeyDict<string, ulong, Tile> Tiles { get; set; } = new();
+		public static Dictionary<string, Biome> Biomes { get; set; } = new();
+		public static Dictionary<string, Entity> Entities { get; set; } = new();
+		public static Dictionary<string, Material> Materials { get; set; } = new();
 
-		public static UserInterface UI = new();
+		public static UserInterface UI { get; set; } = new();
 
-		public static SpriteFont DefaultFont;
+		public static SpriteFont DefaultFont { get; set; }
 
 		private static ulong TileIDCounter = 0;
 
