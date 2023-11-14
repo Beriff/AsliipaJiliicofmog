@@ -65,7 +65,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Restore Testing Dependencies
-      run: dotnet restore ..\AsliipaJiliicofmog.Tests\AsliipaJiliicofmog.Tests.csproj
+      run: dotnet restore AsliipaJiliicofmog.Tests\AsliipaJiliicofmog.Tests.csproj
 
     # Install the .NET Core workload
     - name: Install .NET Core
