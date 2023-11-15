@@ -9,12 +9,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using System.Collections.Generic;
-using System.IO;
-
 namespace AsliipaJiliicofmog.Data
 {
-    public static class Registry
+	public static class Registry
 	{
 		public static Dictionary<string, Texture2D> Textures { get; set; } = new();
 		public static DoubleKeyDict<string, ulong, Tile> Tiles { get; set; } = new();
@@ -101,7 +98,7 @@ namespace AsliipaJiliicofmog.Data
 
 		private static void GenerateUIs(GraphicsDevice gd)
 		{
-            var viewport = gd.Viewport.Bounds;
+			var viewport = gd.Viewport.Bounds;
 			var vp_size = viewport.Size.ToVector2();
 			var half_vp = vp_size / 2;
 

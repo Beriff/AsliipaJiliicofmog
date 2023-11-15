@@ -2,10 +2,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace AsliipaJiliicofmog.Rendering.UI
 {
 	public class ScrollFrame : Frame
@@ -14,13 +10,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public VerticalScroll Scroll;
 		protected float ElementOffset;
 
-		public ScrollFrame(UIElement? parent, Vector2 pos, Vector2 scale) 
-			: base(parent, pos, scale) 
+		public ScrollFrame(UIElement? parent, Vector2 pos, Vector2 scale)
+			: base(parent, pos, scale)
 		{
 			Scroll = new(this, new(-10, 0), new(10f / AbsoluteSize.X, 1));
 		}
 		public ScrollFrame(Vector2 pos, Vector2 size)
-			: base(pos, size) 
+			: base(pos, size)
 		{
 			Scroll = new(this, new(-10, 0), new(10f / AbsoluteSize.X, 1));
 		}
@@ -30,7 +26,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			get
 			{
 				int min = 0;
-				foreach(var e in Elements) { min = (int)MathF.Min(min, e.Position.Y); }
+				foreach (var e in Elements) { min = (int)MathF.Min(min, e.Position.Y); }
 				return min;
 			}
 		}
@@ -63,7 +59,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			sb.Draw(Texture,
 				new Rectangle(p.ToPoint(), AbsoluteSize.ToPoint()),
 				group.Palette.Main);
-            foreach (var e in Elements)
+			foreach (var e in Elements)
 			{
 				if (e.Visible) { e.RenderAt(sb, group, e.Position - new Vector2(0, ElementOffset)); }
 			}
@@ -79,7 +75,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			Scroll.UpdateAt(group, Scroll.AbsolutePosition + p);
 			foreach (var e in Elements)
 			{
-				if(e.Position.Y + e.Size.Y <= 0 || e.Position.Y >= Size.Y) { continue; } 
+				if (e.Position.Y + e.Size.Y <= 0 || e.Position.Y >= Size.Y) { continue; }
 				if (e.Active) { e.UpdateAt(group, e.AbsolutePosition - new Vector2(0, ElementOffset)); }
 			}
 		}

@@ -9,15 +9,15 @@ namespace AsliipaJiliicofmog.Interactive
 {
 	public class Player : Creature
 	{
-		public Player() 
-			: base("Carlos", 
+		public Player()
+			: base("Carlos",
 				  new StateTexture(
 					  ("rest", new AnimatedTexture(Registry.Textures["heart"], 16, 5)),
 					  ("left", new GameTexture(Registry.Textures["arrow_left"])),
 					  ("right", new GameTexture(Registry.Textures["arrow_right"])),
 					  ("up", new GameTexture(Registry.Textures["arrow_up"])),
 					  ("down", new GameTexture(Registry.Textures["arrow_down"]))
-					  ), 
+					  ),
 				  Bodypart.Humanoid())
 		{
 			SetBottomHitbox();
@@ -29,7 +29,7 @@ namespace AsliipaJiliicofmog.Interactive
 			w.Camera.Position = Position;
 			bool pressed = false;
 
-            if (LocalInput.GetKeyboard().IsKeyDown(Keys.W))
+			if (LocalInput.GetKeyboard().IsKeyDown(Keys.W))
 			{
 				Move(-Vector2.UnitY, w);
 				(Texture as StateTexture).SwitchState("up");
@@ -41,7 +41,7 @@ namespace AsliipaJiliicofmog.Interactive
 				(Texture as StateTexture).SwitchState("down");
 				pressed = true;
 			}
-				
+
 			if (LocalInput.GetKeyboard().IsKeyDown(Keys.A))
 			{
 				Move(-Vector2.UnitX, w);
@@ -55,7 +55,7 @@ namespace AsliipaJiliicofmog.Interactive
 				pressed = true;
 			}
 
-			if(!pressed) { (Texture as StateTexture).SwitchState("rest"); }
+			if (!pressed) { (Texture as StateTexture).SwitchState("rest"); }
 		}
 	}
 }

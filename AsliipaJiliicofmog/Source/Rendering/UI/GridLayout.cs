@@ -1,8 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
@@ -16,18 +14,18 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		protected Dictionary<Vector2, UIElement> Grid = new();
 
 		public Vector2 CellScale { get; set; }
-		public Vector2 AbsoluteCellSize { get => Parent == null? _CellSize : CellScale * Parent.AbsoluteSize; }
-		public Vector2 CellSize 
-		{ 
-			get => _CellSize; 
+		public Vector2 AbsoluteCellSize { get => Parent == null ? _CellSize : CellScale * Parent.AbsoluteSize; }
+		public Vector2 CellSize
+		{
+			get => _CellSize;
 			set
 			{
-				if(Parent == null) { _CellSize = value; }
+				if (Parent == null) { _CellSize = value; }
 				else
 				{
 					throw new UIException("Cannot change cell size (parent UIelement present). Did you mean CellScale?");
 				}
-			} 
+			}
 		}
 
 		public Vector2 AbsoluteCellPos(Vector2 cellPos) => cellPos * AbsoluteCellSize;
@@ -50,10 +48,11 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// <exception cref="UIException"></exception>
 		public void PlaceElement(Vector2 cellpos, UIElement element)
 		{
-			if(element.Parent == null)
+			if (element.Parent == null)
 			{
 				Grid[cellpos] = element;
-			} else
+			}
+			else
 			{
 				throw new UIException("Cannot assign element to a layout that has a parent.");
 			}
@@ -68,21 +67,21 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
-			foreach((Vector2 _, UIElement e) in Grid)
+			foreach ((Vector2 _, UIElement e) in Grid)
 			{
-				if(e.Visible)
+				if (e.Visible)
 					e.RenderAt(sb, group, e.Position + p - AbsolutePosition);
 			}
 		}
 		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
 			pos -= AbsolutePosition;
-			foreach((Vector2 p, UIElement e) in Grid)
+			foreach ((Vector2 p, UIElement e) in Grid)
 			{
 				e.Size = e.Scale * AbsoluteCellSize;
 				e.Position = AbsoluteCellPos(p) + pos;
 				e.Update(group);
-            }
+			}
 		}
 	}
 }

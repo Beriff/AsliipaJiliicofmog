@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System.Collections.Generic;
-
 namespace AsliipaJiliicofmog.Rendering
 {
 	/// <summary>
@@ -50,7 +48,7 @@ namespace AsliipaJiliicofmog.Rendering
 		public void RenderString(SpriteBatch sb, float scale, string s, Vector2 position)
 		{
 			Vector2 charpos = position;
-			for(int i = 0; i < s.Length; i++)
+			for (int i = 0; i < s.Length; i++)
 			{
 				if (s[i] == '\n') { charpos.Y += CellHeight * scale; charpos.X = position.X; continue; }
 				else { charpos.X += CellHeight * scale; }

@@ -3,11 +3,6 @@ using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Rendering;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Interactive
 {
@@ -40,14 +35,14 @@ namespace AsliipaJiliicofmog.Interactive
 		public readonly bool Has(BPToken token) => Tokens.Contains(token);
 
 		public static Func<TreeNode<Bodypart>, bool> Find(string name)
-			=> 
+			=>
 			(x) => ((Bodypart)x).Name == name;
 
 		public static TreeNode<Bodypart> Humanoid()
 		{
 			TreeNode<Bodypart> torso = new(new("torso", 100, BPToken.Vital));
-			TreeNode<Bodypart> head = new(new("head", 30, BPToken.Vital, BPToken.Attached),torso);
-			TreeNode<Bodypart> righthand = new(new("right hand", 35, BPToken.Grab, BPToken.Attached),torso);
+			TreeNode<Bodypart> head = new(new("head", 30, BPToken.Vital, BPToken.Attached), torso);
+			TreeNode<Bodypart> righthand = new(new("right hand", 35, BPToken.Grab, BPToken.Attached), torso);
 			TreeNode<Bodypart> lefthand = new(new("left hand", 35, BPToken.Grab, BPToken.Attached), torso);
 			TreeNode<Bodypart> rightleg = new(new("right leg", 50, BPToken.Walk, BPToken.Attached), torso);
 			TreeNode<Bodypart> leftleg = new(new("left leg", 50, BPToken.Walk, BPToken.Attached), torso);

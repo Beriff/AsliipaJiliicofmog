@@ -4,9 +4,6 @@ using AsliipaJiliicofmog.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
-using System.Collections.Generic;
-
 namespace AsliipaJiliicofmog.Rendering.UI
 {
 	/// <summary>
@@ -36,8 +33,8 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public bool Visible = true;
 
 		public string Name;
-		public Action<UIGroup, Vector2> OnHoverStart = (_,_) => { };
-		public Action<UIGroup, Vector2> OnHoverEnd = (_,_) => { };
+		public Action<UIGroup, Vector2> OnHoverStart = (_, _) => { };
+		public Action<UIGroup, Vector2> OnHoverEnd = (_, _) => { };
 
 		/// <summary>
 		/// Get element's position in pixels, including pivot shift
@@ -104,7 +101,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 			if (!IsHovered && new_frame_hover)
 				OnHoverStart(group, position);
-			else if(IsHovered && !new_frame_hover)
+			else if (IsHovered && !new_frame_hover)
 				OnHoverEnd(group, position);
 
 			IsHovered = new_frame_hover;
@@ -140,7 +137,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(ease(self.Progress) * self.Data, Size.Y);
-                    })
+					})
 					);
 				UIEvents.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "_ay",
 					EventQueueBehavior.Discard, (self) =>
@@ -169,7 +166,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 		}
 
-		public void MakeDisappear(Easing.Ease? smoothing = null) 
+		public void MakeDisappear(Easing.Ease? smoothing = null)
 		{
 			Easing.Ease ease = smoothing ?? Easing.SmoothStep;
 
@@ -180,14 +177,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					{
 						Size = new(ease(1 - self.Progress) * self.Data, Size.Y);
 					})
-					{ OnEnd = (ge) => { Size = new(ge.Data, Size.Y); } }
+				{ OnEnd = (ge) => { Size = new(ge.Data, Size.Y); } }
 					);
 				UIEvents.AddEvent(new(Size.Y, 60, GetHashCode().ToString() + "_dy",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Size = new(Size.X, ease(1 - self.Progress) * self.Data);
 					})
-					{ OnEnd = (ge) => { Visible = false; Active = false; Size = new(Size.X, ge.Data); } }
+				{ OnEnd = (ge) => { Visible = false; Active = false; Size = new(Size.X, ge.Data); } }
 					);
 
 			}
@@ -198,14 +195,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 					{
 						Scale = new(ease(1 - self.Progress) * self.Data, Scale.Y);
 					})
-					{ OnEnd = (ge) => { Size = new(ge.Data, Size.Y); } }
+				{ OnEnd = (ge) => { Size = new(ge.Data, Size.Y); } }
 					);
 				UIEvents.AddEvent(new(Scale.Y, 60, GetHashCode().ToString() + "_dy",
 					EventQueueBehavior.Discard, (self) =>
 					{
 						Scale = new(Scale.X, ease(1 - self.Progress) * self.Data);
 					})
-					{ OnEnd = (ge) => { Visible = false; Active = false; Size = new(Size.X, ge.Data); } }
+				{ OnEnd = (ge) => { Visible = false; Active = false; Size = new(Size.X, ge.Data); } }
 					);
 			}
 		}
@@ -223,7 +220,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public UIElement FindElement(string name)
 		{
-			foreach(var e in Elements)
+			foreach (var e in Elements)
 			{
 				if (e.Name == name)
 					return e;
@@ -246,26 +243,26 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		{
 			if ((int)AbsoluteSize.X == 0 || (int)AbsoluteSize.Y == 0) { return; }
 
-			
 
-            sb.End();
+
+			sb.End();
 
 			RenderTarget ??= new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
 
-			if (RenderTarget.Bounds != new Rectangle(Point.Zero, AbsoluteSize.ToPoint())) 
+			if (RenderTarget.Bounds != new Rectangle(Point.Zero, AbsoluteSize.ToPoint()))
 			{
 				RenderTarget.Dispose();
 				RenderTarget = new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
-            }
+			}
 
-            sb.GraphicsDevice.SetRenderTarget(RenderTarget);
+			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
 			sb.GraphicsDevice.Clear(Color.Black);
 			sb.Begin(samplerState: SamplerState.PointWrap);
 			a();
 			foreach (var e in Elements)
 			{
-                if (e.Visible) { e.RenderAt(sb, group, e.Position); }
-            }
+				if (e.Visible) { e.RenderAt(sb, group, e.Position); }
+			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Begin();
@@ -286,18 +283,18 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				RenderTarget = new(sb.GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
 			}
 
-			sb.End(); 
+			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(RenderTarget);
 			sb.GraphicsDevice.Clear(Color.Black);
 			sb.Begin();
 			foreach (var e in Elements)
 			{
-                if (e.Visible) { e.RenderAt(sb, group, e.Position); }
+				if (e.Visible) { e.RenderAt(sb, group, e.Position); }
 			}
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Begin();
-            sb.Draw(RenderTarget, AbsolutePosition, new(Point.Zero, AbsoluteSize.ToPoint()), Color.White);
+			sb.Draw(RenderTarget, AbsolutePosition, new(Point.Zero, AbsoluteSize.ToPoint()), Color.White);
 		}
 		/// <summary>
 		/// Add element as a child, and set their parent automatically

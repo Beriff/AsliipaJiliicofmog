@@ -1,8 +1,6 @@
-﻿using System;
-using AsliipaJiliicofmog.Data;
+﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
-using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
 
@@ -30,7 +28,7 @@ namespace AsliipaJiliicofmog
 			Graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 			SB = new SpriteBatch(Graphics.GraphicsDevice);
 
-            base.Initialize();
+			base.Initialize();
 		}
 
 		protected override void LoadContent()

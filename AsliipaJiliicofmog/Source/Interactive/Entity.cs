@@ -1,5 +1,4 @@
-﻿using System;
-using AsliipaJiliicofmog.Data;
+﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Math;
@@ -19,10 +18,10 @@ namespace AsliipaJiliicofmog.Interactive
 		virtual public Vector2 Position { get; set; }
 		virtual public string Name { get; set; }
 		virtual public IGameTexture Texture { get; set; }
-		virtual public Vector2 TextureOffsetPivot 
+		virtual public Vector2 TextureOffsetPivot
 		{
-			get => -_TextureOffsetPivot * Texture.Size.ToVector2(); 
-			set => _TextureOffsetPivot = value; 
+			get => -_TextureOffsetPivot * Texture.Size.ToVector2();
+			set => _TextureOffsetPivot = value;
 		}
 
 		public readonly InputConsumer LocalInput;
@@ -34,7 +33,7 @@ namespace AsliipaJiliicofmog.Interactive
 		}
 		public virtual void RenderInWorld(SpriteBatch sb, GameTime gt, World w)
 		{
-			if(RenderName)
+			if (RenderName)
 			{
 				Vector2 vp_pos = ViewportPosition(sb, w);
 				Rectangle screen_hitbox = new((vp_pos + TextureOffsetPivot * w.Camera.Scale).ToPoint(), Texture.Size.Mul(w.Camera.Scale));
@@ -60,15 +59,15 @@ namespace AsliipaJiliicofmog.Interactive
 				new Color(0, 0, 0, .5f)
 				);
 
-			Texture.Render(sb, 
-				Position 
-					- w.Camera.Position 
+			Texture.Render(sb,
+				Position
+					- w.Camera.Position
 					+ sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2
 					+ TextureOffsetPivot,
 				Color.White);
 		}
 
-		public virtual void Update(World w) 
+		public virtual void Update(World w)
 		{
 
 		}
@@ -103,13 +102,13 @@ namespace AsliipaJiliicofmog.Interactive
 		public Vector2 HitboxAnchor;
 		public Vector2 HitboxScale;
 		public Vector2 TexturePivot = Vector2.Zero;
-		public Rectangle Hitbox 
-		{ 
-			get => 
+		public Rectangle Hitbox
+		{
+			get =>
 				new(
-					(Position + Texture.Size.ToVector2() * HitboxAnchor).ToPoint(), 
+					(Position + Texture.Size.ToVector2() * HitboxAnchor).ToPoint(),
 					(HitboxSize * HitboxScale).ToPoint()
-					); 
+					);
 		}
 
 		public bool Collides(PhysicalEntity other)
@@ -119,14 +118,14 @@ namespace AsliipaJiliicofmog.Interactive
 
 		public void Shift(Vector2 shift, World w)
 		{
-			Rectangle rect = new (Hitbox.Location + shift.ToPoint(), Hitbox.Size);
-			foreach(var entity in w.Entities)
+			Rectangle rect = new(Hitbox.Location + shift.ToPoint(), Hitbox.Size);
+			foreach (var entity in w.Entities)
 			{
 				if (
-					entity.GetType() == typeof(PhysicalEntity) 
+					entity.GetType() == typeof(PhysicalEntity)
 					&& entity != this
 					&& rect.Intersects(((PhysicalEntity)entity).Hitbox)
-					) { return;	}
+					) { return; }
 			}
 			Position += shift;
 		}

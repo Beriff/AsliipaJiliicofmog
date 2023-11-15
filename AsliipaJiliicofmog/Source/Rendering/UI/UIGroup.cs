@@ -1,10 +1,5 @@
-﻿using AsliipaJiliicofmog.Input;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
-using System;
-using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
@@ -57,7 +52,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			new(158, 158, 158), new(114, 114, 114),
 			new(122, 122, 122)
 			);
-			
+
 	}
 	public class UIGroup
 	{
@@ -133,13 +128,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public UIGroup GetGroup(string name)
 		{
-			foreach(var group in Groups) { if (group.Name == name) return group; } return null;
+			foreach (var group in Groups) { if (group.Name == name) return group; }
+			return null;
 		}
 		public void RemoveGroup(string name)
 		{
 			UIGroup g = null;
-			foreach (var group in Groups) 
-			{ 
+			foreach (var group in Groups)
+			{
 				if (group.Name == name) { g = group; break; }
 				else { throw new UIException("UI Group not found"); }
 			}
@@ -151,15 +147,16 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		}
 		public void SetGroup(UIGroup g)
 		{
-			if(GetGroup(g.Name) != null)
+			if (GetGroup(g.Name) != null)
 			{
-				switch(g.QueueType)
+				switch (g.QueueType)
 				{
 					case UIGroupQueueType.Override:
 						RemoveGroup(g.Name); Groups.Add(g); break;
 					case UIGroupQueueType.Discard: break;
 				}
-			} else
+			}
+			else
 			{
 				Groups.Add(g);
 			}

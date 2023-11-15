@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Env
 {
@@ -27,11 +24,11 @@ namespace AsliipaJiliicofmog.Env
 			for (int x = 0; x < Width; x++)
 			{
 				for (int y = 0; y < Height; y++)
-				{ 
-					Grid[x, y] = tile.Clone() as Tile; 
+				{
+					Grid[x, y] = tile.Clone() as Tile;
 				}
 			}
-				
+
 		}
 
 		public void Render(SpriteBatch sb, Vector2 position)
@@ -43,8 +40,8 @@ namespace AsliipaJiliicofmog.Env
 					Grid[x, y].Render(sb, position + new Vector2(x, y) * Tile.Size);
 				}
 			}
-				
-					
+
+
 		}
 
 		/// <summary>
@@ -53,8 +50,8 @@ namespace AsliipaJiliicofmog.Env
 		public static Vector2 Modulo(Vector2 position)
 		{
 			return new Vector2(
-				MathF.Floor(position.X / (Width * Tile.Width) ), 
-				MathF.Floor(position.Y / (Height * Tile.Height) )
+				MathF.Floor(position.X / (Width * Tile.Width)),
+				MathF.Floor(position.Y / (Height * Tile.Height))
 				) * SizePx;
 		}
 	}

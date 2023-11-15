@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace AsliipaJiliicofmog.Data
+﻿namespace AsliipaJiliicofmog.Data
 {
 	/// <summary>
 	/// Acts like a dictionary, but every value can be accessed by two differently typed keys.
@@ -14,13 +9,13 @@ namespace AsliipaJiliicofmog.Data
 	/// <typeparam name="V">Value</typeparam>
 	public class DoubleKeyDict<K1, K2, V>
 	{
-		private List<K1> FirstKeys = new ();
-		private List<K2> SecondKeys = new ();
-		private List<V> _Values = new ();
+		private List<K1> FirstKeys = new();
+		private List<K2> SecondKeys = new();
+		private List<V> _Values = new();
 
 		public void Add(K1 k1, K2 k2, V v)
 		{
-			if(FirstKeys.Contains(k1)) { throw new ArgumentException("dictionary already has first key"); }
+			if (FirstKeys.Contains(k1)) { throw new ArgumentException("dictionary already has first key"); }
 			if (SecondKeys.Contains(k2)) { throw new ArgumentException("dictionary already has second key"); }
 
 			FirstKeys.Add(k1);
@@ -63,7 +58,7 @@ namespace AsliipaJiliicofmog.Data
 		public TreeNode<T>? Parent;
 		public List<TreeNode<T>> Children;
 		public T Content;
-		
+
 		public static implicit operator T(TreeNode<T> val)
 		{
 			return val.Content;
@@ -94,7 +89,7 @@ namespace AsliipaJiliicofmog.Data
 			node.Parent = null;
 		}
 
-		public void SetParent(TreeNode<T> node) 
+		public void SetParent(TreeNode<T> node)
 		{
 			RemoveParent();
 			Parent = node;
@@ -103,7 +98,7 @@ namespace AsliipaJiliicofmog.Data
 
 		public void RemoveParent()
 		{
-			if(Parent != null)
+			if (Parent != null)
 			{
 				Parent.Children.Remove(this);
 				Parent = null;
@@ -112,11 +107,11 @@ namespace AsliipaJiliicofmog.Data
 
 		public TreeNode<T> Search(Func<TreeNode<T>, bool> action)
 		{
-			foreach (var child in Children) 
-			{ 
-				if (action(child)) 
-					return child; 
-			} 
+			foreach (var child in Children)
+			{
+				if (action(child))
+					return child;
+			}
 			return null;
 		}
 	}

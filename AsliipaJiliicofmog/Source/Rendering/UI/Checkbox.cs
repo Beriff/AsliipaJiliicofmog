@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
-
 namespace AsliipaJiliicofmog.Rendering.UI
 {
 	public class Checkbox : UIElement, IClickable
@@ -11,15 +9,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public Action OnClick { get; set; } = () => { };
 
 		public Checkbox(UIElement? parent, Vector2 pos, Vector2 scale)
-			: base(parent, pos, scale) { Checked  = false; }
+			: base(parent, pos, scale) { Checked = false; }
 		public Checkbox(Vector2 pos, Vector2 size)
-			: base(pos, size) {  Checked = false; }
+			: base(pos, size) { Checked = false; }
 
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 pos)
 		{
 			sb.Draw(Texture, BoundsAt(pos), group.Palette.Main);
 			//Draw the check
-			if(Checked)
+			if (Checked)
 			{
 				var cdims = new Rectangle(
 					(pos + AbsoluteSize / 4).ToPoint(),
@@ -30,7 +28,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
-			if(Hovered(pos) && LocalInput.GetM1State() == Input.PressType.Released)
+			if (Hovered(pos) && LocalInput.GetM1State() == Input.PressType.Released)
 			{
 				Checked = !Checked;
 				OnClick();

@@ -1,7 +1,4 @@
-﻿using System;
-using AsliipaJiliicofmog.Event;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI
@@ -13,14 +10,14 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	{
 		public Frame(UIElement? parent, Vector2 pos, Vector2 scale)
 			: base(parent, pos, scale) { }
-		public Frame (Vector2 pos, Vector2 size)
+		public Frame(Vector2 pos, Vector2 size)
 			: base(pos, size) { }
 
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
-            base.RenderAt(sb, group, () =>
+			base.RenderAt(sb, group, () =>
 			{
-                sb.Draw(Texture,
+				sb.Draw(Texture,
 				new Rectangle(Point.Zero, AbsoluteSize.ToPoint()),
 				group.Palette.Main);
 			}, p);
@@ -31,7 +28,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// </summary>
 		public static Frame Window(string title, SpriteFont font, Vector2 pos, Vector2 size)
 		{
-            Frame f = new(pos, size);
+			Frame f = new(pos, size);
 			var button = new Button(
 					null, () => { f.MakeDisappear(); },
 					new(0, 0),

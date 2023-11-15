@@ -1,6 +1,4 @@
-﻿using AsliipaJiliicofmog.Rendering;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI

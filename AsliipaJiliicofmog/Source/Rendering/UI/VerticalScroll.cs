@@ -26,29 +26,30 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
 			sb.Draw(Texture, BoundsAt(p), group.Palette.MainDark);
-            sb.Draw(Texture, ScrollButtonBounds(p), group.Palette.Main);
+			sb.Draw(Texture, ScrollButtonBounds(p), group.Palette.Main);
 		}
 
 		public override void UpdateAt(UIGroup group, Vector2 pos)
 		{
 			var bounds = ScrollButtonBounds(pos);
 			if (LocalInput.GetM1State() == Input.PressType.Pressed
-				&& bounds.Contains(LocalInput.MousePos()) )
+				&& bounds.Contains(LocalInput.MousePos()))
 			{
-                ButtonHeld = true;
+				ButtonHeld = true;
 				InnerOffset = (int)LocalInput.MousePos().Y - bounds.Location.Y;
-			} else if (LocalInput.GetM1State() == Input.PressType.Released)
+			}
+			else if (LocalInput.GetM1State() == Input.PressType.Released)
 			{
 				ButtonHeld = false;
 			}
 
-			if(ButtonHeld)
+			if (ButtonHeld)
 			{
 				var cursor_y = LocalInput.MousePos().Y;
 				float p = (cursor_y - pos.Y - InnerOffset) / (AbsoluteSize.Y - AbsoluteSize.X);
 				Progress = p;
 			}
-			
+
 
 		}
 	}

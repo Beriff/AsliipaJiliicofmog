@@ -41,7 +41,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public override void RenderAt(SpriteBatch sb, UIGroup group, Vector2 p)
 		{
 			var textpos = Vector2.Zero;
-			switch(Alignment.X)
+			switch (Alignment.X)
 			{
 				case TextAlignX.Left:
 					textpos.X = p.X; break;
@@ -55,11 +55,11 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				case TextAlignY.Top:
 					textpos.Y = p.Y; break;
 				case TextAlignY.Middle:
-					textpos.Y= p.Y + AbsoluteSize.Y / 2 - TextSize.Y / 2; break;
+					textpos.Y = p.Y + AbsoluteSize.Y / 2 - TextSize.Y / 2; break;
 				case TextAlignY.Bottom:
 					textpos.Y = p.Y + AbsoluteSize.Y - TextSize.Y; break;
 			}
-            sb.DrawString(group.Font, Text, textpos, Color);
+			sb.DrawString(group.Font, Text, textpos, Color);
 		}
 
 		public override void UpdateAt(UIGroup group, Vector2 position) { }
