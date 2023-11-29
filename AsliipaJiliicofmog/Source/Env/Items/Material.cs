@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace AsliipaJiliicofmog.Env.Item
+namespace AsliipaJiliicofmog.Env.Items
 {
 	public enum MaterialType
 	{

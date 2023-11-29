@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.Xna.Framework.Graphics;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -118,6 +120,15 @@ namespace AsliipaJiliicofmog.Data
 					return child; 
 			} 
 			return null;
+		}
+	}
+
+	public static class ExtendGraphicsDevice
+	{
+		public static void SetTarget(this GraphicsDevice a, RenderTarget2D? b)
+		{
+			a.SetRenderTarget(b);
+			Registry.CurrentRenderTarget = b;
 		}
 	}
 }

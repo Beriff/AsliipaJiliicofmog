@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
 
-namespace AsliipaJiliicofmog.Env.Item
+namespace AsliipaJiliicofmog.Env.Items
 {
 	public class Item : ICloneable
 	{

@@ -9,6 +9,8 @@ using AsliipaJiliicofmog.Rendering.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Newtonsoft.Json;
+
 namespace AsliipaJiliicofmog
 {
 	class Client : Game
@@ -29,14 +31,12 @@ namespace AsliipaJiliicofmog
 		{
 			Graphics.GraphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 			SB = new SpriteBatch(Graphics.GraphicsDevice);
-
-            base.Initialize();
+			base.Initialize();
 		}
 
 		protected override void LoadContent()
 		{
 			Registry.Initialize(Content, GraphicsDevice);
-			UIElement.Initialize(SB);
 
 			World = new World(SB, 1);
 			World.Entities.Add(Registry.Entities["Crate"]);
@@ -46,16 +46,19 @@ namespace AsliipaJiliicofmog
 
 		protected override void Update(GameTime gameTime)
 		{
-			Registry.UI.Update();
 			InputManager.Update();
 			World.Update();
 			base.Update(gameTime);
-		}
+        }
 
 		protected override void Draw(GameTime gameTime)
 		{
+			GraphicsDevice.Clear(Color.Black);
 			World.Render(SB, gameTime);
-			Registry.UI.Render(SB);
+			//Registry.UI.Render(SB);
+			
+			SB.Begin();
+			SB.End();
 			base.Draw(gameTime);
 		}
 	}

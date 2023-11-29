@@ -16,6 +16,9 @@
 #begin Data/Materials/iron.json
 /copy:Data/Materials/iron.json
 
+#begin Data/Materials/wood.json
+/copy:Data/Materials/wood.json
+
 #begin Data/Tiles/grass.json
 /copy:Data/Tiles/grass.json
 
