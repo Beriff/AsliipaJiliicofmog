@@ -1,16 +1,14 @@
 ﻿
 using AsliipaJiliicofmog.Data;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Env
 {
 	public class Biome
 	{
 		public static List<Biome> Biomes { get; set; } = new();
-		public static readonly Biome Fallback = 
-			new((_,_) => Registry.Tiles["Grass"], (_,_) => true, "unknown", 0.01f);
+		public static readonly Biome Fallback =
+			new((_, _) => Registry.Tiles["Grass"], (_, _) => true, "unknown", 0.01f);
 
 		public Func<World, Vector2, Tile> GetTile;
 		/// <summary>
@@ -23,7 +21,7 @@ namespace AsliipaJiliicofmog.Env
 
 		public Biome
 			(Func<World, Vector2, Tile> getTile, Func<World, Vector2, bool> testTile,
-			string name, float weight = 1f )
+			string name, float weight = 1f)
 		{
 			GetTile = getTile;
 			TestTile = testTile;

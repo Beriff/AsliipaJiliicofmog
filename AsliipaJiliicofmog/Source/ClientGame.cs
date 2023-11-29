@@ -1,8 +1,6 @@
-﻿using System;
-using AsliipaJiliicofmog.Data;
+﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Input;
-using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
 

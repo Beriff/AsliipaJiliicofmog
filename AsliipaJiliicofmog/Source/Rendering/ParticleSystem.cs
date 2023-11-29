@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using AsliipaJiliicofmog.Env;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,15 +7,17 @@ namespace AsliipaJiliicofmog.Rendering
 	public class Emitter
 	{
 		List<Particle> Particles = new();
-		public Vector2 Origin;
+		Vector2 Origin;
 		readonly Texture2D Texture;
 		readonly Random r = new();
 		readonly Action<Emitter> OnUpdate;
+		Vector2 Scale;
 
-		public Emitter(Vector2 o, Texture2D t, Action<Emitter> f)
+		public Emitter(Vector2 o, Texture2D t, Vector2 s, Action<Emitter> f)
 		{
 			Origin = o;
 			Texture = t;
+			Scale = s;
 			OnUpdate = f;
 		}
 
@@ -40,7 +39,7 @@ namespace AsliipaJiliicofmog.Rendering
 				new(
 					Origin,
 					Texture,
-					new(.01f, .01f),
+					Scale,
 					new(
 						(float)(MathF.Pow(-1, r.Next(1, 3)) * r.NextDouble()),
 						(float)(MathF.Pow(-1, r.Next(1, 3)) * r.NextDouble())
@@ -53,12 +52,12 @@ namespace AsliipaJiliicofmog.Rendering
 
 	public class Particle
 	{
-		public Texture2D Texture;
-		public float Lifespan;
-		public Vector2 Position;
-		public Vector2 Velocity;
-		public Vector2 Acceleration;
-		public Vector2 Scale;
+		readonly Texture2D Texture;
+		float Lifespan;
+		Vector2 Position;
+		Vector2 Velocity;
+		Vector2 Acceleration;
+		Vector2 Scale;
 
 		public Particle(Vector2 l, Texture2D t, Vector2 s, Vector2 v)
 		{

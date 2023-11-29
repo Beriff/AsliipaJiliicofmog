@@ -1,7 +1,5 @@
 using AsliipaJiliicofmog.Event;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 namespace AsliipaJiliicofmog.Tests
 {
 	[TestClass]
@@ -17,7 +15,7 @@ namespace AsliipaJiliicofmog.Tests
 			em.AddEvent(e);
 
 			Assert.IsFalse(em.Events.Contains(e));
-			
+
 		}
 		[TestMethod]
 		public void EventManager_EventEnqueue()

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AsliipaJiliicofmog.Event
+﻿namespace AsliipaJiliicofmog.Event
 {
 	/// <summary>
 	/// Indicates how EventManager should treat the event when added

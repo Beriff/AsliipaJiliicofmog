@@ -16,7 +16,7 @@ namespace AsliipaJiliicofmog.Env.Items
 	{
 		public GameWorldException() { }
 		public GameWorldException(string message) : base(message) { }
-		public GameWorldException(string message,  Exception innerException) : base(message, innerException) { }
+		public GameWorldException(string message, Exception innerException) : base(message, innerException) { }
 	}
 
 	public class Material
@@ -27,7 +27,6 @@ namespace AsliipaJiliicofmog.Env.Items
 		public Color Color { get; set; }
 		public float Strength { get; set; }
 		public float MeltingPoint { get; set; }
-
 		public bool Composite { get; set; }
 		public (Material m1, Material m2)? ParentMaterials { get; set; }
 
@@ -46,8 +45,8 @@ namespace AsliipaJiliicofmog.Env.Items
 		{
 			if (a.Type != b.Type)
 				throw new GameWorldException("Cannot combine materials of different type");
-			return new(a.Type, "", a.Density * b.Density, Color.Lerp(a.Color, b.Color, .5f), 
-				a.Strength * b.Strength, (a.MeltingPoint*b.MeltingPoint)/(a.MeltingPoint+b.MeltingPoint));
+			return new(a.Type, "", a.Density * b.Density, Color.Lerp(a.Color, b.Color, .5f),
+				a.Strength * b.Strength, (a.MeltingPoint * b.MeltingPoint) / (a.MeltingPoint + b.MeltingPoint));
 		}
 
 		public static Material Deserialize(string json)
@@ -61,11 +60,8 @@ namespace AsliipaJiliicofmog.Env.Items
 				new Color(l[0], l[1], l[2]),
 				float.Parse(obj.Strength.ToString()),
 				float.Parse(obj.MeltingPoint.ToString())
-				)
+			)
 			{ Composite = false };
 		}
 	}
-
 }
-
-

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 namespace AsliipaJiliicofmog.Input
@@ -43,7 +40,7 @@ namespace AsliipaJiliicofmog.Input
 
 		public void Update()
 		{
-            KPrevious = KCurrent;
+			KPrevious = KCurrent;
 			KCurrent = GetKeyboard();
 
 			MPrevious = MCurrent;
@@ -52,7 +49,7 @@ namespace AsliipaJiliicofmog.Input
 			foreach (var l in Listeners)
 				l(this);
 		}
-		
+
 		public void AddListener(Action<InputConsumer> listener) => Listeners.Add(listener);
 
 		public KeyboardState GetKeyboard() => IsBlocked ? new() : Keyboard.GetState();
@@ -60,7 +57,7 @@ namespace AsliipaJiliicofmog.Input
 
 		public PressType GetKeyState(Keys k)
 		{
-			if(KPrevious.IsKeyDown(k))
+			if (KPrevious.IsKeyDown(k))
 			{
 				if (KCurrent.IsKeyDown(k)) { return PressType.Down; }
 				return PressType.Released;

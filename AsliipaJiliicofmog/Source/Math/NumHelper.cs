@@ -1,8 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsliipaJiliicofmog.Math
 {
@@ -36,7 +32,7 @@ namespace AsliipaJiliicofmog.Math
 			return new Vector2(a.X + b.x, a.Y + b.y);
 		}
 
-		public static Vector2 Cartesian(this Vector2 a, Vector2 b, Func<float,float,float> action)
+		public static Vector2 Cartesian(this Vector2 a, Vector2 b, Func<float, float, float> action)
 		{
 			return new(action(a.X, b.X), action(a.Y, b.Y));
 		}
@@ -64,7 +60,7 @@ namespace AsliipaJiliicofmog.Math
 
 	public static class ExtendPoint
 	{
-		public static Point Mul(this Point a, Point b) 
+		public static Point Mul(this Point a, Point b)
 		{
 			return new(a.X * b.X, a.Y * b.Y);
 		}

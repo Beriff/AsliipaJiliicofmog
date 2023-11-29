@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AsliipaJiliicofmog.Input
+﻿namespace AsliipaJiliicofmog.Input
 {
 	public static class InputManager
 	{
@@ -27,11 +23,11 @@ namespace AsliipaJiliicofmog.Input
 		public static void Update()
 		{
 			bool blockedflag = false;
-			foreach(var consumer in Consumers)
+			foreach (var consumer in Consumers)
 			{
-				if(blockedflag) { consumer.IsBlocked = true; }
+				if (blockedflag) { consumer.IsBlocked = true; }
 				consumer.Update();
-				if(consumer.BlockInputStream && consumer.Active) { blockedflag = true; }
+				if (consumer.BlockInputStream && consumer.Active) { blockedflag = true; }
 			}
 		}
 	}

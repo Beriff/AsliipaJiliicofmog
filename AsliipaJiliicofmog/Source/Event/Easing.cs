@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AsliipaJiliicofmog.Event
+﻿namespace AsliipaJiliicofmog.Event
 {
 	public static class Easing
 	{
@@ -10,14 +8,15 @@ namespace AsliipaJiliicofmog.Event
 			t => 2 * t * t;
 		public static Ease QuadOut =>
 			t => 1 - MathF.Pow(-2 * t + 2, 2) / 2;
-		public static Ease QuadInOut => 
+		public static Ease QuadInOut =>
 			t => t < 0.5 ? 2f * t * t : 1 - MathF.Pow(-2 * t + 2, 2) / 2f;
 
-		public static Ease BackIn => 
+		public static Ease BackIn =>
 			t => 2.70158f * t * t * t - 1.70158f * t * t;
 
 		public static Ease BackOut =>
-			t => {
+			t =>
+			{
 				float c1 = 1.70158f;
 				float c3 = c1 + 1;
 

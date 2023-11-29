@@ -17,7 +17,7 @@ namespace AsliipaJiliicofmog.Env.Items
 		public List<Item> ParentItems { get; set; } = new List<Item>();
 		public Material Material { get; set; }
 		public Texture2D Texture { get; set; }
-		public Item(string name, Texture2D texture, Material m, string desc = "no description") 
+		public Item(string name, Texture2D texture, Material m, string desc = "no description")
 		{
 			Name = name;
 			Texture = texture;
@@ -38,7 +38,7 @@ namespace AsliipaJiliicofmog.Env.Items
 
 		public object Clone()
 		{
-			if(Composite)
+			if (Composite)
 				return new Item(Name, Description, Texture, ParentItems);
 			return new Item(Name, Texture, Material, Description);
 		}

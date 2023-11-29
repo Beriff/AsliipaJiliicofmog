@@ -51,7 +51,7 @@ namespace AsliipaJiliicofmog.Rendering
 
 			sb.Draw(Frames,
 				new Rectangle(position.ToPoint(), Size),
-				new Rectangle(new(Counter * FrameWidth, 0), Size), 
+				new Rectangle(new(Counter * FrameWidth, 0), Size),
 				color);
 		}
 

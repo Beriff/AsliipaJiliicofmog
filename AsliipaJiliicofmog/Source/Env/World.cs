@@ -5,8 +5,6 @@ using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace AsliipaJiliicofmog.Env
 {
@@ -83,10 +81,10 @@ namespace AsliipaJiliicofmog.Env
 			}
 			return val / NormalizationValue;
 		}
-		public static OctaveValueNoise WorldNoise(int seed) => new (seed,
+		public static OctaveValueNoise WorldNoise(int seed) => new(seed,
 				((0, 255), 70), ((0, 128), 50), ((0, 64), 10), ((0, 32), 5), ((0, 16), 2)
 				);
-		public static OctaveValueNoise AuxiliaryNoise(int seed) => new (seed,
+		public static OctaveValueNoise AuxiliaryNoise(int seed) => new(seed,
 				((0, 128), 40), ((0, 64), 10), ((0, 32), 5), ((0, 16), 2)
 				);
 	}
@@ -142,15 +140,16 @@ namespace AsliipaJiliicofmog.Env
 			return null;
 		}
 
-		public Vector2 GetWorldPosition (Vector2 p, SpriteBatch sb) => p - Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2;
+		public Vector2 GetWorldPosition(Vector2 p, SpriteBatch sb) => p - Camera.Position + sb.GraphicsDevice.Viewport.Bounds.Size.ToVector2() / 2;
 		/// <summary>
 		/// Generate the tile at the given position
 		/// </summary>
 		/// <remarks>Returns the singleton tile object. For modifiable tile use <c>GenerateTile().Copy()</c></remarks>
 		public Tile GenerateTile(Vector2 position)
 		{
-			foreach(var biome in Biome.Biomes) {
-				if(biome.TestTile(this,position))
+			foreach (var biome in Biome.Biomes)
+			{
+				if (biome.TestTile(this, position))
 				{
 					return biome.GetTile(this, position);
 				}
@@ -164,14 +163,14 @@ namespace AsliipaJiliicofmog.Env
 		/// <param name="topleft">Origin (top left corner) of the chunk. Measured in pixels.</param>
 		public Chunk GenerateChunk(Vector2 topleft)
 		{
-            Console.WriteLine($"\u001b[32m[Debug]\u001b[0m ChunkGen \u001b[30;1m{topleft / Chunk.SizePx}\u001b[0m");
-            Chunk chunk = new();
+			Console.WriteLine($"\u001b[32m[Debug]\u001b[0m ChunkGen \u001b[30;1m{topleft / Chunk.SizePx}\u001b[0m");
+			Chunk chunk = new();
 			Vector2 tilepos = topleft / Tile.Size;
-			for(int x = 0; x < Chunk.Width; x++)
+			for (int x = 0; x < Chunk.Width; x++)
 			{
-				for(int y = 0; y < Chunk.Height; y++)
+				for (int y = 0; y < Chunk.Height; y++)
 				{
-					chunk.Grid[x, y] = GenerateTile(tilepos + new Vector2(x,y) ).Clone() as Tile;
+					chunk.Grid[x, y] = GenerateTile(tilepos + new Vector2(x, y)).Clone() as Tile;
 				}
 			}
 			Chunks[topleft] = chunk;
@@ -195,7 +194,7 @@ namespace AsliipaJiliicofmog.Env
 			List<Vector2> list = new();
 			var main_chunk_coords = Chunk.Modulo(Camera.Position);
 			var rendered_px = Chunk.SizePx * Camera.RenderDistance;
-			for(float x = main_chunk_coords.X - rendered_px.X; x < main_chunk_coords.X + rendered_px.X; x += rendered_px.X)
+			for (float x = main_chunk_coords.X - rendered_px.X; x < main_chunk_coords.X + rendered_px.X; x += rendered_px.X)
 			{
 				for (float y = main_chunk_coords.Y - rendered_px.Y; y < main_chunk_coords.Y + rendered_px.Y; y += rendered_px.Y)
 				{
@@ -236,33 +235,33 @@ namespace AsliipaJiliicofmog.Env
 			}
 
 			//Render entities
-			foreach(var e in Entities)
+			foreach (var e in Entities)
 			{
 				e.RenderInWorld(sb, gt, this);
 			}
-			foreach(Emitter x in Emitters) x.Render(sb, this);
+			foreach (Emitter x in Emitters) x.Render(sb, this);
 
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(null);
 			sb.Begin(samplerState: SamplerState.PointWrap);
 
 
-			sb.Draw(RenderTexture, 
-				middle_px, null, Color.White, 0f, middle_px, 
+			sb.Draw(RenderTexture,
+				middle_px, null, Color.White, 0f, middle_px,
 				Camera.Scale, SpriteEffects.None, 0);
 			sb.End();
 		}
 
 		public void Update()
 		{
-			Camera.Scale = 
+			Camera.Scale =
 				MathHelper.Clamp(
-					Camera.Scale + InputManager.GetConsumer("Gameplay").GetScrollDelta() / 1000f, 
+					Camera.Scale + InputManager.GetConsumer("Gameplay").GetScrollDelta() / 1000f,
 					1f, 3f);
 
 			Entities.Sort((e1, e2) => e1.Position.Y.CompareTo(e2.Position.Y));
-			foreach(var e in Entities) { e.Update(this); }
-			foreach(Emitter x in Emitters) x.Update();
+			foreach (var e in Entities) { e.Update(this); }
+			foreach (Emitter x in Emitters) x.Update();
 			WorldEvents.Update();
 			//TODO async IO to offload the chunk info
 		}
