@@ -58,12 +58,12 @@ namespace AsliipaJiliicofmog.Tests
 		{
 			ElementUI.Viewport = new Viewport(0, 0, 500, 500);
 			var element = new ElementUI(
-				new DimUI(new(.5f, .5f), new(0), new(0), new(.5f, .5f))
+				DimUI.Global(new(.5f,.5f), new(.5f,.5f))
 				)
 			{ Pivot = new(.5f) };
 
 			Assert.AreEqual(new Vector2(250, 250), element.AbsoluteSize);
-			Assert.AreEqual(new Vector2(375, 375), element.AbsolutePosition);
+			Assert.AreEqual(new Vector2(125, 125), element.AbsolutePosition);
 		}
 	}
 }

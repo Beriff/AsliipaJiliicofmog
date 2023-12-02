@@ -12,42 +12,77 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 		protected RenderTarget2D? PreviousTarget;
 
-		public ContainerUI(DimUI dims) : base(dims)
+		public ContainerUI(DimUI dims, string name = "ui-container") : base(dims, name)
 		{
-			ContainerRT = new RenderTarget2D(GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+			ContainerRT = new(
+					GraphicsDevice,
+					(int)AbsoluteSize.X,
+					(int)AbsoluteSize.Y,
+					false,
+					SurfaceFormat.Color,
+					DepthFormat.None,
+					0, RenderTargetUsage.PreserveContents);
+
+        }
+
+		public ElementUI GetChild(string name) 
+		{
+			return Children.Find(x => x.Name == name) ??
+				throw new KeyNotFoundException("Child ui element not found");
 		}
+
+		public void Add(ElementUI element)
+		{
+			Children.Add(element);
+			element.Parent = this;
+		}
+
 		public override void Update()
 		{
 			if (ContainerRT.Bounds.Size != AbsoluteSize.ToPoint())
 			{
 				ContainerRT.Dispose();
-				ContainerRT = new RenderTarget2D(GraphicsDevice, (int)AbsoluteSize.X, (int)AbsoluteSize.Y);
+				ContainerRT = new(
+					GraphicsDevice,
+					(int)AbsoluteSize.X,
+					(int)AbsoluteSize.Y,
+					false,
+					SurfaceFormat.Color,
+					DepthFormat.None,
+					0, RenderTargetUsage.PreserveContents);
 			}
 
 			foreach (var child in Children)
 				child.Update();
 		}
 
-		protected void BeforeRender(SpriteBatch sb)
+		protected void SetContainerRenderer(SpriteBatch sb)
 		{
 			PreviousTarget = CurrentRenderTarget;
 			CurrentRenderTarget = ContainerRT;
+			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(CurrentRenderTarget);
+			sb.GraphicsDevice.Clear(Color.Black);
+			sb.Begin();
 		}
 
-		protected void AfterRender(SpriteBatch sb)
+		protected void RetractContainerRenderer(SpriteBatch sb)
 		{
 			CurrentRenderTarget = PreviousTarget;
+			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(CurrentRenderTarget);
+			sb.Begin();
 			sb.Draw(ContainerRT, AbsolutePosition, Color.White);
 		}
 
-		public override void Render(SpriteBatch sb)
+		protected void RenderChildren(SpriteBatch sb, GroupUI group)
 		{
-			BeforeRender(sb);
 			foreach (var child in Children)
-				child.Render(sb);
-			AfterRender(sb);
+			{
+				if (!child.Visible) continue;
+				child.Render(sb, group);
+			}
+				
 		}
 
 	}

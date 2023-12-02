@@ -40,22 +40,40 @@ namespace AsliipaJiliicofmog
 			World.Entities.Add(Registry.Entities["Crate"]);
 			World.Entities.Add(Registry.Entities["Tree"]);
 			Fonter = new(Registry.Textures["font"]);
+
+			Registry.MainUI.AddGroup(new("menu"));
+			Registry.MainUI["menu"].Add(
+				new Frame(DimUI.Global(new(.5f, .5f), new(.5f, .5f)), "testframe")
+				{ Pivot = new(.5f, .5f) }
+				);
+			(Registry.MainUI["menu"]["testframe"] as ContainerUI).Add(
+				new Frame(DimUI.Global(new(.5f, .5f), new(.5f, .5f)), "john")
+				{ Pivot = new(.5f, .5f), BaseColor = Color.Orange }
+				);
+			((Registry.MainUI["menu"]["testframe"] as ContainerUI).GetChild("john") as ContainerUI)
+				.Add(
+				new Frame(DimUI.Global(new(.5f, .5f), new(.5f, .5f)), "matt")
+				{ Pivot = new(.5f, .5f), BaseColor = Color.Blue }
+				);
 		}
 
 		protected override void Update(GameTime gameTime)
 		{
 			InputManager.Update();
 			World.Update();
+			Registry.MainUI.Update();
 			base.Update(gameTime);
         }
 
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.Black);
-			World.Render(SB, gameTime);
-			//Registry.UI.Render(SB);
 			
+			World.Render(SB, gameTime);
 			SB.Begin();
+			Registry.MainUI.Render(SB);
+			
+			
 			SB.End();
 			base.Draw(gameTime);
 		}

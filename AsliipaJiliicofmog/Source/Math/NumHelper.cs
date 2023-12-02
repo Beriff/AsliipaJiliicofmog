@@ -31,7 +31,6 @@ namespace AsliipaJiliicofmog.Math
 		{
 			return new Vector2(a.X + b.x, a.Y + b.y);
 		}
-
 		public static Vector2 Cartesian(this Vector2 a, Vector2 b, Func<float, float, float> action)
 		{
 			return new(action(a.X, b.X), action(a.Y, b.Y));

@@ -22,7 +22,7 @@ namespace AsliipaJiliicofmog.Data
 
 		public static RenderTarget2D? CurrentRenderTarget = null;
 
-		//public static UserInterface UI { get; set; } = new();
+		public static UI MainUI { get; set; } = new();
 
 		public static SpriteFont DefaultFont { get; set; }
 
@@ -138,6 +138,7 @@ namespace AsliipaJiliicofmog.Data
 			GenerateBiomes();
 			GenerateEntities(graphicsDevice);
 			GenerateItems(graphicsDevice);
+			ElementUI.Initialize(graphicsDevice);
 		}
 	}
 }
