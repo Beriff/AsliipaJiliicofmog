@@ -53,7 +53,12 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			}
 
 			foreach (var child in Children)
-				child.Update();
+			{
+				if (!child.Active) continue;
+                child.Update();
+			}
+
+			base.Update();
 		}
 
 		protected void SetContainerRenderer(SpriteBatch sb)

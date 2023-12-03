@@ -1,4 +1,5 @@
 ﻿using AsliipaJiliicofmog.Event;
+using AsliipaJiliicofmog.Input;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,6 +44,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	public class ElementUI
 	{
 		public static EventManager EventsUI;
+		public static InputConsumer Input;
 		public static Texture2D Texture;
 		public static Viewport Viewport;
 		public static GraphicsDevice GraphicsDevice;
@@ -58,12 +60,17 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			EventsUI = new();
 			Viewport = gd.Viewport;
 			GraphicsDevice = gd;
+			Input = InputManager.GetConsumer("UI");
 		}
 
 		public DimUI Dimensions;
 		public string Name { get; set; }
 		public bool Visible { get; set; } = true;
 		public bool Active { get; set; } = true;
+		public bool Hovered { get; set; }
+
+		public event EventHandler MouseEntered;
+		public event EventHandler MouseLeft;
 
 		public virtual ElementUI? Parent { get; set; }
 		public Vector2 Pivot { get; set; }
@@ -82,7 +89,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public Rectangle BoundsRect
 		{
 			get =>
-				new(Point.Zero, Bounds.ToPoint());
+				new(AbsolutePosition.ToPoint(), Bounds.ToPoint());
 		}
 		public Vector2 AbsoluteSize 
 		{
@@ -102,7 +109,25 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		}
 
 		public virtual void Render(SpriteBatch sb, GroupUI group) { }
-		public virtual void Update() { }
+		public virtual void Update() 
+		{
+			var mpos = Input.MousePos();
+			//offset the mouse pos if the current object inside a ui container
+			if (Parent != null)
+				mpos -= Parent.AbsolutePosition;
+
+            if (BoundsRect.Contains(mpos))
+			{
+				if (!Hovered) MouseEntered?.Invoke(this, null!);
+				Hovered = true;
+			}
+			else
+			{
+				if (Hovered) MouseLeft?.Invoke(this, null!);
+				Hovered = false;
+			}
+				
+		}
 
 		public virtual ElementUI WithParent(ElementUI parent)
 		{

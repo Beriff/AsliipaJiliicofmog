@@ -54,7 +54,9 @@
 			{
 				if (e == gameEvent)
 				{
-					Events.Remove(e); break;
+					Events.Remove(e);
+					Console.WriteLine($"\u001b[32m[Debug]\u001b[31;1m -Event \u001b[30;1m{gameEvent.Token}\u001b[0m");
+					break;
 				}
 			}
 		}
@@ -64,7 +66,9 @@
 			{
 				if (e.Token == name)
 				{
-					Events.Remove(e); break;
+					Events.Remove(e);
+					Console.WriteLine($"\u001b[32m[Debug]\u001b[31;1m -Event \u001b[30;1m{e.Token}\u001b[0m");
+					break;
 				}
 			}
 		}

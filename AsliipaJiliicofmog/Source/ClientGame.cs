@@ -47,14 +47,10 @@ namespace AsliipaJiliicofmog
 				{ Pivot = new(.5f, .5f) }
 				);
 			(Registry.MainUI["menu"]["testframe"] as ContainerUI).Add(
-				new Frame(DimUI.Global(new(.5f, .5f), new(.5f, .5f)), "john")
-				{ Pivot = new(.5f, .5f), BaseColor = Color.Orange }
-				);
-			((Registry.MainUI["menu"]["testframe"] as ContainerUI).GetChild("john") as ContainerUI)
-				.Add(
-				new Frame(DimUI.Global(new(.5f, .5f), new(.5f, .5f)), "matt")
-				{ Pivot = new(.5f, .5f), BaseColor = Color.Blue }
-				);
+				new Button(() => { Console.WriteLine("h"); }, "le buttone",
+				DimUI.Global(new(.5f, .5f), new(.5f, .5f))
+				)
+				{ Pivot = new(.5f,.5f)});
 		}
 
 		protected override void Update(GameTime gameTime)
