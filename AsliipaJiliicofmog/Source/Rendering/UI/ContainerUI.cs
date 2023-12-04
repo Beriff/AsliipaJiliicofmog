@@ -85,7 +85,9 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var child in Children)
 			{
 				if (!child.Visible) continue;
+				child.Dimensions.Offset -= AbsolutePosition;
 				child.Render(sb, group);
+				child.Dimensions.Offset += AbsolutePosition;
 			}
 				
 		}

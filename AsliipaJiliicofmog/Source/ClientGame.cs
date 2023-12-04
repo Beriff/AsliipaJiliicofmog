@@ -47,10 +47,16 @@ namespace AsliipaJiliicofmog
 				{ Pivot = new(.5f, .5f) }
 				);
 			(Registry.MainUI["menu"]["testframe"] as ContainerUI).Add(
+				new Frame(DimUI.Global(new(.6f, .6f), new(.4f, .4f)), "matt")
+				{ BaseColor=Color.Blue }
+				);
+			((Registry.MainUI["menu"]["testframe"] as ContainerUI).GetChild("matt")
+				as ContainerUI).Add(
 				new Button(() => { Console.WriteLine("h"); }, "le buttone",
 				DimUI.Global(new(.5f, .5f), new(.5f, .5f))
 				)
-				{ Pivot = new(.5f,.5f)});
+				{ Pivot = new(.5f, .5f) }
+				);
 		}
 
 		protected override void Update(GameTime gameTime)
@@ -58,6 +64,7 @@ namespace AsliipaJiliicofmog
 			InputManager.Update();
 			World.Update();
 			Registry.MainUI.Update();
+			ElementUI.EventsUI.Update();
 			base.Update(gameTime);
         }
 

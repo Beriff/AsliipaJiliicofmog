@@ -76,20 +76,12 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public Vector2 Pivot { get; set; }
 		public Vector2 PivotOffset
 		{
-			get =>
-				Bounds * Pivot;
+			get => AbsoluteSize * Pivot;
 		}
-		public Vector2 Bounds
+		public Rectangle Bounds
 		{
 			get =>
-			Parent == null ?
-				Dimensions.Size + ViewportSize() * Dimensions.Scale
-				: Parent.AbsoluteSize * Dimensions.Scale + Dimensions.Size;
-		}
-		public Rectangle BoundsRect
-		{
-			get =>
-				new(AbsolutePosition.ToPoint(), Bounds.ToPoint());
+				new(AbsolutePosition.ToPoint(), AbsoluteSize.ToPoint());
 		}
 		public Vector2 AbsoluteSize 
 		{
@@ -104,19 +96,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			get => (
 				Parent == null ?
 				Dimensions.Offset + Dimensions.Position * ViewportSize()
-				: Parent.AbsoluteSize * Dimensions.Position + Dimensions.Offset
+				: Parent.AbsoluteSize * Dimensions.Position + Dimensions.Offset + Parent.AbsolutePosition
 				) - PivotOffset;
 		}
 
 		public virtual void Render(SpriteBatch sb, GroupUI group) { }
 		public virtual void Update() 
 		{
-			var mpos = Input.MousePos();
-			//offset the mouse pos if the current object inside a ui container
-			if (Parent != null)
-				mpos -= Parent.AbsolutePosition;
 
-            if (BoundsRect.Contains(mpos))
+            if (Bounds.Contains(Input.MousePos()))
 			{
 				if (!Hovered) MouseEntered?.Invoke(this, null!);
 				Hovered = true;
