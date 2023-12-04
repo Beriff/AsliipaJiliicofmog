@@ -19,5 +19,22 @@ namespace AsliipaJiliicofmog.Rendering.UI
 
 			RetractContainerRenderer(sb);
 		}
+
+		public static Frame Window(string name, DimUI dims)
+		{
+			var f = new Frame(dims, name);
+			var closebtn = new Button(
+				() => { f.Active = false; f.Visible = false; },
+				"X", new DimUI(new(1, 0), new(0), new(15), new(0)),
+				name + "-clsbtn"
+				) { Pivot = new(1, 0) };
+			var title = new Label(
+				name, new(new(0), new(0), new(0, 15), new(1, 0)), 
+				ax: AlignmentX.Left);
+
+			f.Add(closebtn);
+			f.Add(title);
+			return f;
+		}
 	}
 }

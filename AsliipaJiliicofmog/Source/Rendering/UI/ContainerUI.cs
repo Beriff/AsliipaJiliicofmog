@@ -31,10 +31,16 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				throw new KeyNotFoundException("Child ui element not found");
 		}
 
-		public void Add(ElementUI element)
+		public virtual void Add(ElementUI element)
 		{
 			Children.Add(element);
 			element.Parent = this;
+		}
+
+		public virtual void Remove(ElementUI element)
+		{
+			element.Parent = null;
+			Children.Remove(element);
 		}
 
 		public override void Update()
@@ -68,7 +74,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(CurrentRenderTarget);
 			sb.GraphicsDevice.Clear(Color.Black);
-			sb.Begin();
+			sb.Begin(samplerState: SamplerState.PointWrap);
 		}
 
 		protected void RetractContainerRenderer(SpriteBatch sb)
@@ -76,7 +82,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			CurrentRenderTarget = PreviousTarget;
 			sb.End();
 			sb.GraphicsDevice.SetRenderTarget(CurrentRenderTarget);
-			sb.Begin();
+			sb.Begin(samplerState: SamplerState.PointWrap);
 			sb.Draw(ContainerRT, AbsolutePosition, Color.White);
 		}
 

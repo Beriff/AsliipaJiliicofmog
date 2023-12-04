@@ -42,21 +42,12 @@ namespace AsliipaJiliicofmog
 			Fonter = new(Registry.Textures["font"]);
 
 			Registry.MainUI.AddGroup(new("menu"));
-			Registry.MainUI["menu"].Add(
-				new Frame(DimUI.Global(new(.5f, .5f), new(.5f, .5f)), "testframe")
-				{ Pivot = new(.5f, .5f) }
-				);
-			(Registry.MainUI["menu"]["testframe"] as ContainerUI).Add(
-				new Frame(DimUI.Global(new(.6f, .6f), new(.4f, .4f)), "matt")
-				{ BaseColor=Color.Blue }
-				);
-			((Registry.MainUI["menu"]["testframe"] as ContainerUI).GetChild("matt")
-				as ContainerUI).Add(
-				new Button(() => { Console.WriteLine("h"); }, "le buttone",
-				DimUI.Global(new(.5f, .5f), new(.5f, .5f))
-				)
-				{ Pivot = new(.5f, .5f) }
-				);
+
+			var mainwindow = 
+				Frame.Window("Main Menu", DimUI.Global(new(.5f, .5f), new(.5f, .5f)));
+			mainwindow.Pivot = new(.5f, .5f);
+			Registry.MainUI["menu"].Add(mainwindow);
+			
 		}
 
 		protected override void Update(GameTime gameTime)

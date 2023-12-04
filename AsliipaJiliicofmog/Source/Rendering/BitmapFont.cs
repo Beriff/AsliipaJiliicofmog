@@ -3,10 +3,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering
 {
+	public interface IFont
+	{
+		public Vector2 StringSize(string s);
+		public void RenderString(SpriteBatch sb, float scale, string s, Vector2 position, Color c);
+	}
 	/// <summary>
 	/// Represents monospaced font constructed from a texture. Supports scaling and color codes.
 	/// </summary>
-	public class BitmapFont
+	public class BitmapFont : IFont
 	{
 		public Texture2D Bitmap;
 		public int CellWidth;
@@ -45,14 +50,14 @@ namespace AsliipaJiliicofmog.Rendering
 		/// Renders a string, provided all the characters are renderable. Doesn't support color codes
 		/// (use RenderColorcoded instead)
 		/// </summary>
-		public void RenderString(SpriteBatch sb, float scale, string s, Vector2 position)
+		public void RenderString(SpriteBatch sb, float scale, string s, Vector2 position, Color c)
 		{
 			Vector2 charpos = position;
 			for (int i = 0; i < s.Length; i++)
 			{
 				if (s[i] == '\n') { charpos.Y += CellHeight * scale; charpos.X = position.X; continue; }
 				else { charpos.X += CellHeight * scale; }
-				RenderChar(sb, scale, s[i], charpos, Color.White);
+				RenderChar(sb, scale, s[i], charpos, c);
 			}
 		}
 		/// <summary>
@@ -81,11 +86,44 @@ namespace AsliipaJiliicofmog.Rendering
 			}
 		}
 
+		public Vector2 StringSize(string s)
+		{
+			int maxlinewidth = 0;
+			int linecount = 0;
+			int widthbuffer = 0;
+			foreach(char c in s)
+			{
+				if(c == '\n') 
+				{
+					maxlinewidth = (int)MathF.Max(maxlinewidth, widthbuffer);
+					widthbuffer = 0; linecount++;
+				}
+				else
+				{
+					widthbuffer++;
+				}
+			}
+			return new(maxlinewidth * CellWidth, linecount * CellHeight);
+		}
+
 		public BitmapFont(Texture2D texture)
 		{
 			Bitmap = texture;
 			CellWidth = texture.Width / CharMap.Length;
 			CellHeight = texture.Height;
+		}
+	}
+
+	/// <summary>
+	/// Represents a wrapper around monogame SpriteFont
+	/// </summary>
+	public class StaticFont : IFont
+	{
+		public SpriteFont Font { get; set; }
+		public Vector2 StringSize(string s) => Font.MeasureString(s);
+		public void RenderString(SpriteBatch sb, float scale, string s, Vector2 position, Color c)
+		{
+			sb.DrawString(Font, s, position, c);
 		}
 	}
 }

@@ -59,12 +59,19 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public void Render(SpriteBatch sb)
 		{
 			foreach (var element in Elements)
+			{
+				if(!element.Visible) continue;
 				element.Render(sb, this);
+			}
+				
 		}
 		public void Update()
 		{
 			foreach(var element in Elements)
+			{
+				if (!element.Active) continue;
 				element.Update();
+			}
 		}
 
 		public void Disable()
