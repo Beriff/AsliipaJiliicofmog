@@ -1,5 +1,6 @@
 ﻿using AsliipaJiliicofmog.Env;
 using AsliipaJiliicofmog.Env.Items;
+using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Interactive;
 using AsliipaJiliicofmog.Rendering;
 using AsliipaJiliicofmog.Rendering.UI;
@@ -105,6 +106,25 @@ namespace AsliipaJiliicofmog.Data
 				HitboxScale = new(.5f, .2f),
 			};
 		}
+		private static void GenerateUI(GraphicsDevice gd)
+		{
+			MainUI.AddGroup(new("menus"));
+
+			//create main menu tab
+			var mainwindow =
+				Frame.Window("Main Menu", DimUI.Global(new(.5f, .5f), new(.5f, .5f)));
+			mainwindow.Pivot = new(.5f, .5f);
+			mainwindow.Add(new HorizontalScrollbar(new(new(0,.5f), new(0), new(0, 20), new(1, 0))));
+			MainUI["menus"].Add(mainwindow);
+			//make UI toggleable on esc key
+			ElementUI.Input.AddListener(
+				input =>
+				{
+					if (input.GetKeyState(Keys.Escape) == PressType.Pressed)
+						MainUI["menus"].Toggle();
+				});
+
+		}
 
 		public static void Initialize(ContentManager content, GraphicsDevice graphicsDevice)
 		{
@@ -139,6 +159,7 @@ namespace AsliipaJiliicofmog.Data
 			GenerateEntities(graphicsDevice);
 			GenerateItems(graphicsDevice);
 			ElementUI.Initialize(graphicsDevice);
+			GenerateUI(graphicsDevice);
 		}
 	}
 }

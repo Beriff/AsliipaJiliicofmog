@@ -40,13 +40,6 @@ namespace AsliipaJiliicofmog
 			World.Entities.Add(Registry.Entities["Crate"]);
 			World.Entities.Add(Registry.Entities["Tree"]);
 			Fonter = new(Registry.Textures["font"]);
-
-			Registry.MainUI.AddGroup(new("menu"));
-
-			var mainwindow = 
-				Frame.Window("Main Menu", DimUI.Global(new(.5f, .5f), new(.5f, .5f)));
-			mainwindow.Pivot = new(.5f, .5f);
-			Registry.MainUI["menu"].Add(mainwindow);
 			
 		}
 

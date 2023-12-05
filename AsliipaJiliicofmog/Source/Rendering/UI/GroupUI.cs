@@ -82,6 +82,10 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		{
 			foreach (var e in Elements) { e.Visible = false; e.Active = false; }
 		}
+		public void Toggle()
+		{
+			foreach (var e in Elements) { e.Visible = !e.Visible; e.Active = !e.Active; }
+		}
 
 		public ElementUI this[string name]
 		{
