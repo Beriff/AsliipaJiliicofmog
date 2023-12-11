@@ -40,6 +40,15 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		/// </summary>
 		public static DimUI Local(Vector2 offset, Vector2 size) =>
 			new(new(0), offset, size, new(0));
+		/// <summary>
+		/// a DimUI that is equal in position and size to its parent
+		/// </summary>
+		public static DimUI Full { get => Global(new(0), new(1)); }
+
+		public override string ToString()
+		{
+			return $"({Position}|{Offset})({Scale}|{Size})";
+		}
 	}
 	public class ElementUI
 	{

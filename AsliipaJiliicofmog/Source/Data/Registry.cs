@@ -114,8 +114,13 @@ namespace AsliipaJiliicofmog.Data
 			var mainwindow =
 				Frame.Window("Main Menu", DimUI.Global(new(.5f, .5f), new(.5f, .5f)));
 			mainwindow.Pivot = new(.5f, .5f);
-			mainwindow.Add(new HorizontalScrollbar(new(new(0,.5f), new(0), new(0, 20), new(1, 0))));
+			var list = new ListLayout(DimUI.Global(new(0), new(1)));
+            mainwindow.Add(list);
+			list.Add(new Button(() => { }, "h", DimUI.Global(new(0), new(.15f, .25f))));
+			list.Add(new Button(() => { }, "g", DimUI.Global(new(0), new(.15f, .25f))));
+
 			MainUI["menus"].Add(mainwindow);
+
 			//make UI toggleable on esc key
 			ElementUI.Input.AddListener(
 				input =>

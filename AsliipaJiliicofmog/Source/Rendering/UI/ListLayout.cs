@@ -22,11 +22,16 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public override void Add(ElementUI element)
 		{
 			int verticaloffset = 0;
-			foreach(var e in Children) verticaloffset += (int)e.AbsoluteSize.Y + Spacing;
+			foreach (var e in Children) 
+			{ 
+				verticaloffset += (int)e.AbsoluteSize.Y + Spacing;
+                Console.WriteLine(e.Parent.Parent);
+            }
 			Children.Add(element);
 			element.Dimensions.Offset.Y = verticaloffset;
+			element.Dimensions.Position = new(0);
 			element.Parent = this;
-		}
+        }
 
 		public override void Remove(ElementUI element)
 		{
