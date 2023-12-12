@@ -1,19 +1,12 @@
 ﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Rendering.UI;
 
-using Microsoft.Xna.Framework.Graphics;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace AsliipaJiliicofmog.Env.Items
 {
 	public class Inventory
 	{
 		protected List<Item> ItemList;
+		public string Owner { get; set; }
 
 		public bool HasItem(Item item) => ItemList.Contains(item);
 		public bool HasItem(string name) => ItemList.Exists(x => x.Name == name);
@@ -26,37 +19,43 @@ namespace AsliipaJiliicofmog.Env.Items
 			return dict;
 		}
 
-		/*public ScrollFrame GetUI(GraphicsDevice gd)
+		/// <summary>
+		/// Construct a new UI with basic inventory functionality
+		/// (displaying items, and being able to remove and equip items)
+		/// </summary>
+		public Frame GetUI()
 		{
-			var vp = gd.Viewport.Bounds.Size.ToVector2();
-			//Frame f = Frame.Window("Inventory", Registry.DefaultFont, vp / 2, vp / 2);
-			//f.Pivot = new(.5f, .5f);
+			var sf = new Scrollframe(
+				new (new(0), new(0,15), new(0,-15), new(1,1) ));
 
-			ScrollFrame sf = new(vp / 2, vp / 2)
-			{ Pivot = new(.5f) };
-			int i = 0;
+			var sf_list = new ListLayout(DimUI.Full, name: Owner + "-inventory-llayout");
 
-			foreach(var pair in Reduced())
+			var w = Frame.Window(Owner + " (inv)", DimUI.Global(new(.5f), new(.5f)));
+			w.Pivot = new(.5f);
+			w.Name = Owner + "-inventory";
+
+			w.Add(sf);
+			sf.Add(sf_list);
+
+			foreach( (Item item, int count) in Reduced() )
 			{
-				var name = pair.Key.GetDisplayName() + $" x{pair.Value}";
-				sf.AddElement(
+				sf_list.Add(
 					new Label(
-						null,
-						new(0, i * Registry.DefaultFont.MeasureString(name).Y),
-						new(1,1)
-					).WithText(name, Registry.DefaultFont));
-				i++;
+						$"{item.Name} x{count}", 
+						DimUI.Global(new(0), new(1, .2f)),
+						$"inv-label-{item.Name}"
+						));
 			}
 
-			//f.AddElement(sf);
-			return sf;
-		}*/
+			return w;
+		}
 
 		public virtual void Add(Item i) => ItemList.Add(i);
 
-		public Inventory()
+		public Inventory(string owner)
 		{
 			ItemList = new();
+			Owner = owner;
 		}
 	}
 }

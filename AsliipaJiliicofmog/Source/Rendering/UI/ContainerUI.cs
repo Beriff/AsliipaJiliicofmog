@@ -15,14 +15,13 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public ContainerUI(DimUI dims, string name = "ui-container") : base(dims, name)
 		{
 			ContainerRT = new(
-					GraphicsDevice,
-					(int)AbsoluteSize.X,
-					(int)AbsoluteSize.Y,
-					false,
-					SurfaceFormat.Color,
-					DepthFormat.None,
-					0, RenderTargetUsage.PreserveContents);
-
+							GraphicsDevice,
+							(int)AbsoluteSize.X,
+							(int)AbsoluteSize.Y,
+							false,
+							SurfaceFormat.Color,
+							DepthFormat.None,
+							0, RenderTargetUsage.PreserveContents);
         }
 
 		public ElementUI GetChild(string name) 
@@ -86,7 +85,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			sb.Draw(ContainerRT, AbsolutePosition, Color.White);
 		}
 
-		protected void RenderChildren(SpriteBatch sb, GroupUI group)
+		protected virtual void RenderChildren(SpriteBatch sb, GroupUI group)
 		{
 			foreach (var child in Children)
 			{
@@ -98,5 +97,23 @@ namespace AsliipaJiliicofmog.Rendering.UI
 				
 		}
 
+
+		public void Dispose()
+		{
+            ContainerRT.Dispose();
+            foreach (var child in Children)
+			{
+                
+                if (child.GetType().IsSubclassOf(typeof(ContainerUI)))
+				{
+					(child as ContainerUI).Dispose();
+				}
+			}
+		}
+
+		~ContainerUI()
+		{
+			Dispose();
+        }
 	}
 }

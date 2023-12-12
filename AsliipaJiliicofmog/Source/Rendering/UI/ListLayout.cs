@@ -25,7 +25,6 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			foreach (var e in Children) 
 			{ 
 				verticaloffset += (int)e.AbsoluteSize.Y + Spacing;
-                Console.WriteLine(e.Parent.Parent);
             }
 			Children.Add(element);
 			element.Dimensions.Offset.Y = verticaloffset;

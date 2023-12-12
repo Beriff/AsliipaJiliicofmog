@@ -45,6 +45,7 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public string Name;
 		public List<ElementUI> Elements;
 		public GroupAppendMode AppendMode;
+		public bool Enabled { get; private set; } = true;
 
 		public GroupUI(string name, GroupAppendMode appendMode = GroupAppendMode.Discard) 
 		{
@@ -77,14 +78,17 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		public void Disable()
 		{
 			foreach (var e in Elements) { e.Visible = false; e.Active = false; }
+			Enabled = false;
 		}
 		public void Enable()
 		{
 			foreach (var e in Elements) { e.Visible = false; e.Active = false; }
+			Enabled = true;
 		}
 		public void Toggle()
 		{
 			foreach (var e in Elements) { e.Visible = !e.Visible; e.Active = !e.Active; }
+			Enabled = !Enabled;
 		}
 
 		public ElementUI this[string name]
@@ -92,6 +96,9 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			get => Elements.Find(x => x.Name == name) ?? throw new KeyNotFoundException("invalid element name");
 			set => Elements[Elements.FindIndex(x => x.Name == name)] = value;
 		}
+
+		public bool HasElement(string name) => Elements.Exists(x => x.Name == name);
+
 	}
 
 	public class UI

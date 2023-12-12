@@ -31,10 +31,7 @@ namespace AsliipaJiliicofmog.Data
 
 		private static void GenerateItems(GraphicsDevice gd)
 		{
-			Items["stick"] = new("stick", Textures["arrow_down"], Materials["Wood"]);
-			Inventory inv = new();
-			inv.Add(Items["stick"]);
-			inv.Add(Items["stick"]);
+
 		}
 		private static void GenerateBiomes()
 		{
@@ -108,10 +105,10 @@ namespace AsliipaJiliicofmog.Data
 		}
 		private static void GenerateUI(GraphicsDevice gd)
 		{
-			MainUI.AddGroup(new("menus"));
+			MainUI.AddGroup(new("menu"));
 
 			//create main menu tab
-			var mainwindow =
+			/*var mainwindow =
 				Frame.Window("Main Menu", DimUI.Global(new(.5f, .5f), new(.5f, .5f)));
 			mainwindow.Pivot = new(.5f, .5f);
 			var list = new ListLayout(DimUI.Global(new(0), new(1)));
@@ -119,14 +116,23 @@ namespace AsliipaJiliicofmog.Data
 			list.Add(new Button(() => { }, "h", DimUI.Global(new(0), new(.15f, .25f))));
 			list.Add(new Button(() => { }, "g", DimUI.Global(new(0), new(.15f, .25f))));
 
-			MainUI["menus"].Add(mainwindow);
+			MainUI["menus"].Add(mainwindow);*/
+
+			var sf = new Scrollframe(DimUI.Global(new(.5f, .5f), new(.5f, .5f)))
+			{ Pivot = new(.5f) };
+			sf.Add(new Label("test-obj-1", DimUI.Global(new(0), new(1, .2f))));
+			sf.Add(new Label("test-obj-2", DimUI.Global(new(0,.9f), new(1, .2f))));
+			sf.Add(new Label("test-obj-3", DimUI.Global(new(0, 1.5f), new(1, .2f))));
+			sf.Add(new Label("test-obj-4", DimUI.Global(new(0, 2f), new(1, .2f))));
+
+			MainUI["menu"].Add(sf);
 
 			//make UI toggleable on esc key
 			ElementUI.Input.AddListener(
 				input =>
 				{
 					if (input.GetKeyState(Keys.Escape) == PressType.Pressed)
-						MainUI["menus"].Toggle();
+						MainUI["menu"].Toggle();
 				});
 
 		}

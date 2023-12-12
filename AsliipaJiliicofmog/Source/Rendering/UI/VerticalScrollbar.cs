@@ -8,7 +8,8 @@ namespace AsliipaJiliicofmog.Rendering.UI
 {
 	public class VerticalScrollbar : ElementUI
 	{
-		public float Progress;
+		protected float _Progress;
+		public float Progress { get => _Progress; set => _Progress = MathHelper.Clamp(value, 0, 1); }
 		public bool ButtonHovered = false;
 		public bool Held = false;
 

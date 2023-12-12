@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace AsliipaJiliicofmog.Rendering.UI
 {
@@ -10,10 +7,9 @@ namespace AsliipaJiliicofmog.Rendering.UI
 	{
 		public VerticalScrollbar Scrollbar;
 		public int Scroll;
-
+		
 		protected int HeightTop;
 		protected int HeightBottom;
-		protected ElementUI Holder;
 		protected int ElementSpan {  get => HeightBottom - HeightTop; }
 
 		protected void RecalculateSpan()
@@ -31,22 +27,22 @@ namespace AsliipaJiliicofmog.Rendering.UI
 			HeightBottom = (int)max;
 		}
 
-		public Scrollframe(DimUI dims, string name) : base(dims, name) 
+		public Scrollframe(DimUI dims, string name = "ui-scrollframe") : base(dims, name) 
 		{
 			Scrollbar = new(new(new(0), new(0), new(10, 0), new(0, 1)), name + "-scrollbar");
-			Children.Add(Scrollbar);
-			Holder = new ElementUI(DimUI.Full, "scrollframe-holder");
-			Children.Add(Holder);
+			//don't add it to children, so it doesn't scroll with the rest of contents
+			Scrollbar.Parent = this; 
+
 		}
 
 		public override void Add(ElementUI element)
 		{
-			element.Parent = Holder;
+			base.Add(element);
 			RecalculateSpan();
 		}
 		public override void Remove(ElementUI element)
 		{
-			element.Parent = Holder;
+			base.Remove(element);
 			RecalculateSpan();
 		}
 
@@ -54,11 +50,37 @@ namespace AsliipaJiliicofmog.Rendering.UI
 		{
 			if(Hovered)
 			{
-				Scrollbar.Progress += Input.GetScrollDelta() / 100.0f;
+                Scrollbar.Progress -= Input.GetScrollDelta() / 1200.0f;
 			}
-			Holder.Dimensions.Offset.Y = -ElementSpan * Scrollbar.Progress;
+			Scroll = (int)(Scrollbar.Progress * ElementSpan);
+			Scrollbar.Update();
 			
 			base.Update();
+		}
+
+		public override void Render(SpriteBatch sb, GroupUI group)
+		{
+			SetContainerRenderer(sb);
+
+			sb.Draw(Texture, new Rectangle(Point.Zero, AbsoluteSize.ToPoint()),
+				group.Palette.Background);
+			RenderChildren(sb, group);
+
+			RetractContainerRenderer(sb);
+			Scrollbar.Render(sb, group);
+		}
+
+		protected override void RenderChildren(SpriteBatch sb, GroupUI group)
+		{
+			foreach (var child in Children)
+			{
+				if (!child.Visible) continue;
+				child.Dimensions.Offset -= AbsolutePosition;
+				child.Dimensions.Offset.Y -= Scroll;
+				child.Render(sb, group);
+				child.Dimensions.Offset.Y += Scroll;
+				child.Dimensions.Offset += AbsolutePosition;
+			}
 		}
 	}
 }

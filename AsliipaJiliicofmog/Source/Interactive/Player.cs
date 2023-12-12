@@ -1,6 +1,8 @@
 ﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Input;
 using AsliipaJiliicofmog.Rendering;
+using AsliipaJiliicofmog.Rendering.UI;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -21,6 +23,14 @@ namespace AsliipaJiliicofmog.Interactive
 				  Bodypart.Humanoid())
 		{
 			SetBottomHitbox();
+			Inventory.Add(
+				new("the throngler",
+				Registry.Textures["arrow_up"],
+				new(Env.Items.MaterialType.Metal, "thronglersteel", 1, Color.White, 1)));
+			Inventory.Add(
+				new("anal obliterator",
+				Registry.Textures["arrow_up"],
+				new(Env.Items.MaterialType.Metal, "thronglersteel", 1, Color.White, 1)));
 		}
 
 		public override void Update(World w)
@@ -28,6 +38,28 @@ namespace AsliipaJiliicofmog.Interactive
 			//force the world camera to look at the player
 			w.Camera.Position = Position;
 			bool pressed = false;
+
+			if(LocalInput.GetKeyState(Keys.E) == PressType.Pressed)
+			{
+				if (!Registry.MainUI["menu"].Enabled)
+				{
+					if (Registry.MainUI["menu"].HasElement(Name+"-inventory"))
+					{
+						var previous_inv = Registry.MainUI["menu"][Name + "-inventory"] as ContainerUI;
+                        previous_inv.Dispose();
+					}
+					
+
+					GroupUI invmenu = new("menu", GroupAppendMode.Replace);
+					var invui = Inventory.GetUI();
+                    invmenu.Add(invui);
+					Registry.MainUI["menu"] = invmenu;
+					
+                } else
+				{
+					Registry.MainUI["menu"].Disable();
+				}
+			}
 
 			if (LocalInput.GetKeyboard().IsKeyDown(Keys.W))
 			{

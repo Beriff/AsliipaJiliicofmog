@@ -1,5 +1,6 @@
 ﻿using AsliipaJiliicofmog.Data;
 using AsliipaJiliicofmog.Env;
+using AsliipaJiliicofmog.Env.Items;
 using AsliipaJiliicofmog.Rendering;
 
 using Microsoft.Xna.Framework;
@@ -53,13 +54,16 @@ namespace AsliipaJiliicofmog.Interactive
 			return torso;
 		}
 	}
+
 	public class Creature : PhysicalEntity
 	{
 		public TreeNode<Bodypart> RootBodypart;
 		public float Speed = 1;
+		public Inventory Inventory { get; set; }
 		public Creature(string name, IGameTexture texture, TreeNode<Bodypart> root)
 			: base(name, texture)
 		{
+			Inventory = new(name);
 			RootBodypart = root;
 		}
 

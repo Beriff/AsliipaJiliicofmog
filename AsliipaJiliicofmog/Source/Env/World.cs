@@ -5,6 +5,7 @@ using AsliipaJiliicofmog.Math;
 using AsliipaJiliicofmog.Rendering;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace AsliipaJiliicofmog.Env
 {
@@ -254,10 +255,14 @@ namespace AsliipaJiliicofmog.Env
 
 		public void Update()
 		{
-			Camera.Scale =
+			if(InputManager.GetConsumer("Gameplay").GetKeyState(Keys.LeftControl) == PressType.Down)
+			{
+				Camera.Scale =
 				MathHelper.Clamp(
 					Camera.Scale + InputManager.GetConsumer("Gameplay").GetScrollDelta() / 1000f,
 					1f, 3f);
+			}
+			
 
 			Entities.Sort((e1, e2) => e1.Position.Y.CompareTo(e2.Position.Y));
 			foreach (var e in Entities) { e.Update(this); }
